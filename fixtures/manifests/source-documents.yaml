@@ -1,0 +1,39 @@
+schema_version: hyc.source-documents.v1
+classification: sensitive-source-evidence
+hash_algorithm: sha256
+git_source_files_allowed: false
+external_transmission_allowed: false
+p0a_provenance:
+  evidence_path: docs/evidence/2026-07-30-p0a-evidence-freeze.md
+  evidence_manifest_path: docs/evidence/2026-07-30-p0a-source-manifest.json
+  evidence_schema_version: 1
+  workbook_observation_path: read_only_observation.workbook_metadata[0]
+source_documents:
+  - filename: "QM301-7_RB 수입검사성적서.xlsx"
+    sha256: b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f
+    source_alias: qm301-7-rb-import-inspection
+    size_bytes: 338134
+    classification: sensitive-source-evidence
+    git_source_prohibited: true
+    external_transmission_allowed: false
+  - filename: "물먹는하마 내수8P 패키지_250213.pdf"
+    sha256: 6ae50fdd4c9e01be39ebf113bf3198d0407ab427c3de782799e9014c8a88d53f
+    source_alias: domestic-8p-package
+    size_bytes: 370049
+    classification: sensitive-source-evidence
+    git_source_prohibited: true
+    external_transmission_allowed: false
+  - filename: "수입검사성적서_Raw_Data.xlsx"
+    sha256: 4de7b781c80a8bf663a8983af03e9ae912919c8ac70bf3d1f5dda1e07f281ff1
+    source_alias: inbound-inspection-raw-data
+    size_bytes: 11836
+    classification: sensitive-source-evidence
+    git_source_prohibited: true
+    external_transmission_allowed: false
+  - filename: "업체COA_염화칼슘_세계로비드_2025.04.23.pdf"
+    sha256: da50e56873e37cd07401050bec2976697adabb47927268a8cbbd2674eec0ca48
+    source_alias: potassium-chloride-coa-2025-04-23
+    size_bytes: 904378
+    classification: sensitive-source-evidence
+    git_source_prohibited: true
+    external_transmission_allowed: false

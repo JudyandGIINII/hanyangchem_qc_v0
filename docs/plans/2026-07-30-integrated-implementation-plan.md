@@ -1,12 +1,12 @@
 # 한양화학 수입검사 디지털화 및 LOT 추적 시스템 — 통합 구현 계획
 
-**문서 상태:** `P0A_P0B_P1_AUTHORIZED`  
+**문서 상태:** `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`
 **정본 요구사항:** `Prd.md`  
 **독립 입력:** `2026-07-30-hermes-independent-plan.md`, `2026-07-30-claude-opus5-independent-plan.md`  
 **요구사항 추적 정본:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md) — 52개 FR, UI/매칭/데이터/API/보고서, 보안/감사/NFR/OCR, AT/DoD를 Phase·owner·planned test·gate에 연결  
 **독립 QA:** [`../reviews/2026-07-30-integrated-plan-alfred-qa.md`](../reviews/2026-07-30-integrated-plan-alfred-qa.md) — Alfred R1 formal/substantive **PASS**, 이전 HIGH/MEDIUM 5건 모두 `RESOLVED`, 신규 HIGH/MEDIUM blocker 0  
 **작성 원칙:** 두 계획의 공통 결론과 상호 보완되는 장점만 채택했다. 충돌 사항은 PRD의 fail-closed 원칙, 데이터 무결성, 실행 가능성 순으로 판정했다.  
-**권한 경계:** 사용자는 2026-07-30 AP-01~05와 P0A/P0B/P1 구현을 명시적으로 승인했다. 실데이터 apply/import, 외부 OCR/AI 호출, P2 이후 구현, 비일회성 migration, 배포 및 서비스 공개는 승인 범위가 아니다.
+**권한 경계:** AP-01~05는 승인됐다. P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 아직 시작·완료되지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 아직 시작·완료되지 않았다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 승인 범위가 아니다.
 
 ---
 
@@ -59,7 +59,7 @@
 |AP-07|판정 정책 기본|누락·미매핑·저신뢰·자체검사 미완은 `ON_HOLD`; 불명 규격은 `MANUAL`|순수 엔진 fail-closed 테스트|
 |AP-08|생산 전환 조건|AT/DoD, UAT, 권한 검토, backup/restore rehearsal, RPO/RTO 승인 후 별도 전환 승인|로컬 파일럿까지만|
 
-AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B/P1 구현도 승인됐으며 AP-06~08의 파일럿/생산 활성화와 P2 이후 구현은 별도 승인 대상으로 유지한다.
+AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 시작하지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 시작하지 않았다. AP-06~08의 파일럿/생산 활성화, 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포와 서비스 공개는 별도 승인 대상으로 유지한다.
 
 ## 4. 목표 아키텍처
 
@@ -186,6 +186,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 **선행:** AP-01~05와 **P0B 구현 착수에 대한 명시적 사용자 승인**.  
 **목표:** 승인된 범위 안에서 재현 가능한 importer dry-run과 비식별 fixture를 만든다.
+**실행 상태:** `COMPLETE_ACCEPTED` — frozen tracked diff SHA-256 `7f7be3324c4040bfc4b47a35f7d3643d22eb618ea380a2d30acbc0aaaf4b5b2c`; final independent review `APPROVE` after 67 in-memory probes (HIGH 0, MEDIUM 0). generic scheme-specific URI semantics의 accepted LOW note는 consumed relationship role의 exact allowlist 때문에 defense-in-depth다. Controller evidence: `127 passed`; approved real QM301 dry-run 38 templates/119 rows, discrepancy 0, DB write/apply 0, source hash/size/mtime unchanged, tracked sensitive documents 0.
 
 |Task|작업|산출물/테스트|완료 게이트|
 |---|---|---|---|
@@ -198,7 +199,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P1 — Repository/Contract foundation
 
-**선행:** AP-01~05, P0B 착수 승인, P0B 완료.  
+**선행:** AP-01~05 및 accepted P0B (충족). P1은 authorized and ready지만 아직 시작하지 않았고 완료되지 않았다.
 **목표:** 재현 가능한 개발환경과 계약을 먼저 만든다.
 
 1. `compose.yaml`, backend `uv` Python 3.12, frontend pnpm/TypeScript strict, lockfiles, CI를 생성한다. 전역 Python은 변경하지 않는다.
@@ -217,7 +218,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P2 — Pure domain + DB invariants
 
-**선행:** P1 contract.  
+**선행:** P1 contract gate. P2는 이 gate 후에 authorized이며 아직 시작하지 않았고 완료되지 않았다.
 **목표:** UI/OCR 전에 정본 모델과 fail-closed 규칙을 증명한다.
 
 |Task|의존|구현/테스트|
@@ -516,6 +517,8 @@ CI/golden에서는 실제 OCR 외부 호출을 금지한다. 기대 결과는 ex
 - [x] AP-03 canonical LOT+allocation 모델 승인
 - [x] AP-04 Local Auth/RBAC/ADMIN 비승인권 승인
 - [x] AP-05 실제 PDF/XLSX Git 커밋 금지·마스킹 fixture 정책 승인
-- [x] P0A/P0B/P1 구현 착수 승인
+- [x] P0A/P0B/P1 구현 착수 승인(기존 권한)
+- [x] P0A/P0B complete·accepted 및 P1 진행 권한 확인
+- [x] P2는 P1 contract gate 후 진행 권한 확인
 
-**현재 권고:** `P0A_P0B_P1_AUTHORIZED`. 승인된 범위는 자동 진행하되 P2, 실데이터 apply/import, 외부 OCR/AI, 배포 앞에서 중단한다.
+**현재 권고:** `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`. P1은 준비됐지만 아직 시작하지 않았고, P2는 P1 contract gate 전에는 시작하지 않는다. 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포 및 서비스 공개 앞에서 중단한다.

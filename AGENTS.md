@@ -3,16 +3,16 @@
 ## Authority
 
 - `Prd.md` is the canonical product requirement.
-- `docs/plans/2026-07-30-integrated-implementation-plan.md` is the approved delivery contract through P1.
+- `docs/plans/2026-07-30-integrated-implementation-plan.md` is the approved delivery contract through P2: P1 is ready after accepted P0B, and P2 remains gated on the P1 contract gate.
 - `docs/TRACEABILITY_MATRIX.md` is the requirement-to-phase/owner/test/gate mapping; keep it synchronized with PRD and the integrated plan.
 - When the plan and PRD conflict, stop and escalate; do not silently reinterpret the PRD.
 
 ## Approval boundary
 
-- Current state is `P0A_P0B_P1_AUTHORIZED`.
-- On 2026-07-30 the user approved AP-01 through AP-05 and authorized implementation of P0A, P0B, and P1.
-- Authorized scope is limited to read-only evidence freeze, masked/derived fixture and importer dry-run tooling, and repository/contract foundation.
-- Real-data apply/import, external OCR/AI calls, P2 or later implementation, migration against non-disposable data, deployment, and service exposure remain unauthorized.
+- Current state is `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`.
+- AP-01 through AP-05 remain approved. P0A and P0B are complete and accepted. P0B final independent review returned `APPROVE` (HIGH 0, MEDIUM 0); its one LOW lexical-contract note was accepted as defense-in-depth because consumed relationship roles use exact allowlists.
+- P1 is authorized and ready, but has not started and is not complete. P2 is authorized but must not start until the P1 contract gate passes; P2 is not complete.
+- P0B was limited to read-only evidence freeze plus derived fixture/importer dry-run tooling. Real-data apply/import, external OCR/AI calls, migration against non-disposable data, deployment, and service exposure remain unauthorized.
 - A test pass or feature flag does not substitute for a product/operations approval gate.
 
 ## Data and secrets

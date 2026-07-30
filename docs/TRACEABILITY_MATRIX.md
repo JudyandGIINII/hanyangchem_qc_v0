@@ -1,6 +1,6 @@
 # 요구사항 추적 매트릭스 — 한양화학 수입검사 디지털화 및 LOT 추적
 
-**상태:** P0A verified; P0B/P1 authorized and pending implementation  
+**상태:** P0A/P0B complete and accepted; P1 authorized and ready (not started); P2 authorized after the P1 contract gate (not started)
 **정본:** `Prd.md`  
 **계획:** `docs/plans/2026-07-30-integrated-implementation-plan.md`  
 **규칙:** 아래 경로는 모두 구현 시 `Create` 대상이다. `Planned`는 통과를 의미하지 않는다. 각 행은 해당 Phase의 테스트가 실제 exit 0이고 Hermes 독립 QA가 증빙을 확인해야 `Verified`로 바뀐다.
@@ -15,6 +15,17 @@
 - **OPS:** 보안/관측/백업/복구/배포
 - **QUALITY:** 품질팀 정책·golden/UAT 승인
 - **HERMES-QA:** 독립 검증·gate 판정
+
+## P0B delivery trace
+
+|P0B task|Delivered candidate|Verification / ADR binding|Current gate|
+|---|---|---|---|
+|P0B.1|`backend/scripts/import_spec_workbook.py`|`backend/tests/integration/importers/test_spec_workbook_dry_run.py`: synthetic-only dry run; bounded all-member CRC/decompression reads; canonical OPC Content-Type resolution and media-type-driven XML parsing; exact workbook/worksheet/shared-strings/`.rels` types; complete ASCII RFC 3986 Relationship-Type and conservative canonical OPC member/Override/Target lexical validation (including safe in-root `..` only), attribute-free `Relationships` roots, unique IDs while same-target distinct typed relationships remain permitted; all fail closed|accepted|
+|P0B.2|`fixtures/spec-import/qm301-7-expected.json`|Typed approved baseline binds 38 templates / 119 item rows to the approved source SHA-256; deterministic ordered `QUALITY_REVIEW_REQUIRED` digest/count discrepancy evidence, no auto-correction/apply|accepted|
+|P0B.3|`fixtures/manifests/source-documents.yaml`|Metadata-only manifest with P0A evidence/digest/alias provenance; `.gitignore` recursively excludes sensitive document basenames; importer tests generate temporary synthetic workbooks only|accepted|
+|P0B.4|`docs/adr/0001-deployment-and-data-boundary.md` through `docs/adr/0004-local-auth-rbac-and-real-source-prohibition.md`|Read-only, external-OCR-off, LOT/allocation, and source-prohibition decisions remain binding|accepted|
+
+P0B final independent review: `APPROVE` after 67 in-memory probes (HIGH 0, MEDIUM 0). The accepted LOW note—generic scheme-specific URI semantics—remains defense-in-depth because the relationship roles consumed by the importer use exact allowlists. Controller evidence records `127 passed`; the approved real QM301 dry-run returned 38 templates/119 rows with discrepancy 0, DB write/apply 0, unchanged source hash/size/mtime, and tracked sensitive documents 0.
 
 ## 1. 기능 요구사항 전수 추적
 
@@ -178,4 +189,4 @@ Planned tests:
 
 ## 8. 승인 상태
 
-현재 매트릭스는 계획상 추적을 완결한 것이며 구현 적합성을 증명하지 않는다. AP-01~05와 명시적 P0B/P1 구현 승인 전 상태는 `PLAN_REQUIRES_USER_APPROVAL`이다.
+현재 매트릭스는 계획상 추적을 완결한 것이며 P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 시작·완료되지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 완료를 주장할 수 없다. 실데이터 apply·import, 외부 OCR·AI, 비일회성 migration, 배포와 서비스 공개는 계속 미승인이다.

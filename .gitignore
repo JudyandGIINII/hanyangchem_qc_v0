@@ -1,9 +1,9 @@
 # Sensitive source evidence: AP-05 prohibits committing real source documents.
-/*.pdf
-/*.PDF
-/*.xlsx
-/*.xls
-/*.xlsm
+*.[pP][dD][fF]
+*.[xX][lL][sS]
+*.[xX][lL][sS][xX]
+*.[xX][lL][sS][mM]
+*.[xX][lL][sS][bB]
 
 # Local planning and agent coordination artifacts.
 /.agent/

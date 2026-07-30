@@ -1,0 +1,17 @@
+[project]
+name = "hyc-inspection-evidence-tools"
+version = "0.1.0"
+description = "Read-only evidence tooling for Hanyang Chemical inspection specifications"
+requires-python = ">=3.12,<3.13"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.uv]
+package = false

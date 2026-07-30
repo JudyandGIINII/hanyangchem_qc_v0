@@ -1,6 +1,6 @@
 # 한양화학 v0 — 수입검사 디지털화 및 LOT 추적
 
-현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A/P0B/P1 구현이 승인됐으며, 이후 Phase는 별도 승인 전까지 시작하지 않는다.
+현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05는 승인됐고 P0A와 P0B는 complete/accepted다. P1은 authorized and ready지만 아직 시작·완료되지 않았고, P2는 P1 contract gate 후에만 authorized다.
 
 ## 현재 상태
 
@@ -11,7 +11,8 @@
 - 요구사항 추적 정본: [`docs/TRACEABILITY_MATRIX.md`](./docs/TRACEABILITY_MATRIX.md)
 - 독립 계획 QA: [`docs/reviews/2026-07-30-integrated-plan-alfred-qa.md`](./docs/reviews/2026-07-30-integrated-plan-alfred-qa.md) — formal/substantive PASS
 - P0A read-only evidence freeze: [`docs/evidence/2026-07-30-p0a-evidence-freeze.md`](./docs/evidence/2026-07-30-p0a-evidence-freeze.md) — source immutable PASS
-- 구현 상태: `P0A_P0B_P1_AUTHORIZED`
+- P0B final independent review: `APPROVE` — 67 in-memory probes, HIGH 0, MEDIUM 0; one accepted LOW generic scheme-specific URI-semantics note is defense-in-depth because consumed relationship roles use exact allowlists
+- 구현 상태: `P0A_P0B_COMPLETE_ACCEPTED; P1_AUTHORIZED_READY_NOT_STARTED; P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE_NOT_STARTED`
 
 ## 핵심 안전 원칙
 
@@ -24,7 +25,7 @@
 
 ## 다음 게이트
 
-P0A/P0B/P1은 승인 범위 안에서 진행한다. 실데이터 apply/import, 외부 OCR/AI 호출, P2 이후 도메인·DB 구현, 비일회성 migration, 배포 및 서비스 공개는 다음 명시적 승인 전까지 시작하지 않는다.
+P1은 시작할 준비가 됐지만 아직 구현을 시작하지 않았다. P2는 P1 contract gate를 통과하기 전까지 시작하지 않는다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 계속 미승인이다.
 
 ## 작업 기록
 

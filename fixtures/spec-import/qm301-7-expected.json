@@ -1,0 +1,22 @@
+{
+  "schema_version": "hyc.spec-import-expectations.v1",
+  "source_reference": {
+    "classification": "sensitive-source-evidence",
+    "source_body_included": false,
+    "source_alias": "qm301-7-rb-import-inspection",
+    "source_sha256": "b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f",
+    "p0a_evidence_path": "docs/evidence/2026-07-30-p0a-evidence-freeze.md",
+    "p0a_evidence_manifest_path": "docs/evidence/2026-07-30-p0a-source-manifest.json",
+    "p0a_evidence_schema_version": 1,
+    "p0a_observation_path": "read_only_observation.workbook_metadata[0]"
+  },
+  "approved_structural_expectations": {
+    "template_count": 38,
+    "item_row_count": 119
+  },
+  "discrepancy_policy": {
+    "when_actual_differs": "QUALITY_REVIEW_REQUIRED",
+    "auto_correct": false,
+    "apply_performed": false
+  }
+}
