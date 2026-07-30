@@ -1,0 +1,40 @@
+# Sensitive source evidence: AP-05 prohibits committing real source documents.
+/*.pdf
+/*.PDF
+/*.xlsx
+/*.xls
+/*.xlsm
+
+# Local planning and agent coordination artifacts.
+/.agent/
+/untitled.md
+
+# Secrets and local environment.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+
+# Node / Next.js.
+node_modules/
+.next/
+dist/
+coverage/
+playwright-report/
+test-results/
+
+# Runtime data and IDE/OS noise.
+data/
+artifacts/
+.DS_Store
+.vscode/
+.idea/
