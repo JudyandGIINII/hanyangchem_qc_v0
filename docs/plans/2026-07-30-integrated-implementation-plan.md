@@ -170,6 +170,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P0A — 승인 전 읽기 전용 Evidence/결정 패킷
 
+**실행 상태:** `COMPLETE` — [`../evidence/2026-07-30-p0a-evidence-freeze.md`](../evidence/2026-07-30-p0a-evidence-freeze.md), 원본 before/after hash·size·mtime 재검증 PASS.  
 **선행:** 없음.  
 **허용:** 기존 파일 읽기, 현재 hash/metadata 산출, 문서·계획·추적표 작성만 허용한다. 신규 parser/애플리케이션 코드 작성, DB/import 실행, fixture 복제, 외부 전송은 금지한다.  
 **목표:** 원본을 변경·유출하지 않고 현재 관찰과 AP-0 질문을 고정한다.

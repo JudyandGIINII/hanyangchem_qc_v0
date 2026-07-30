@@ -30,7 +30,7 @@
 
 ## 실행 Backlog
 
-1. P0A read-only evidence freeze
+1. P0A read-only evidence freeze — Completed, source immutable PASS
 2. P0B Evidence tooling/fixture bootstrap와 ADR
 3. P1 Repository/Contract foundation
 4. P2 Pure domain + DB invariants — 승인 대기

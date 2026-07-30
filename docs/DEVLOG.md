@@ -58,3 +58,11 @@
 - 민감 실원본과 `.agent` coordination artifact를 제외한 계획 baseline을 먼저 `origin/main`에 커밋·푸시한다.
 - 이후 Orca orchestration Run/Task/Dispatch provenance와 isolated worktree를 사용하고 Codex CLI를 primary builder로 둔다.
 - Hermes가 실제 diff, 테스트, lint/typecheck/build, Git ancestry를 독립 검증한다.
+
+### P0A 완료
+
+- 로컬 실원본 4개(PDF 2, XLSX 2)의 SHA-256, byte size, mtime을 before/after로 계산했고 동일함을 재검증했다.
+- XLSX ZIP/XML metadata만 읽어 worksheet 수를 관찰했으며 cell value는 읽거나 evidence에 복제하지 않았다.
+- workbook worksheet 수는 각각 38개와 3개였다. `38 templates / 119 item rows`의 business 의미는 P0B parser 전까지 `UNVERIFIED_UNTIL_P0B_PARSER`로 유지한다.
+- `docs/evidence/2026-07-30-p0a-source-manifest.json`과 `docs/evidence/2026-07-30-p0a-evidence-freeze.md`를 생성했다.
+- 원본 Git 추가, DB/import, fixture 복제, 외부 전송, migration은 실행하지 않았다.

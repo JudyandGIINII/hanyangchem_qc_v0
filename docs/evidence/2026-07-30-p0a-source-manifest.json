@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "phase": "P0A",
+  "observed_at_utc": "2026-07-30T14:53:19.285115Z",
+  "policy": {
+    "classification": "sensitive-source-evidence",
+    "git_source_files_allowed": false,
+    "external_transmission_allowed": false,
+    "content_copied_into_manifest": false,
+    "hash_algorithm": "sha256"
+  },
+  "source_documents": [
+    {
+      "filename": "QM301-7_RB 수입검사성적서.xlsx",
+      "format": "xlsx",
+      "size_bytes": 338134,
+      "mtime_ns": 1785252166943389028,
+      "sha256": "b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f"
+    },
+    {
+      "filename": "물먹는하마 내수8P 패키지_250213.pdf",
+      "format": "pdf",
+      "size_bytes": 370049,
+      "mtime_ns": 1785252167613076981,
+      "sha256": "6ae50fdd4c9e01be39ebf113bf3198d0407ab427c3de782799e9014c8a88d53f"
+    },
+    {
+      "filename": "수입검사성적서_Raw_Data.xlsx",
+      "format": "xlsx",
+      "size_bytes": 11836,
+      "mtime_ns": 1785252174060242618,
+      "sha256": "4de7b781c80a8bf663a8983af03e9ae912919c8ac70bf3d1f5dda1e07f281ff1"
+    },
+    {
+      "filename": "업체COA_염화칼슘_세계로비드_2025.04.23.pdf",
+      "format": "pdf",
+      "size_bytes": 904378,
+      "mtime_ns": 1785252170965682459,
+      "sha256": "da50e56873e37cd07401050bec2976697adabb47927268a8cbbd2674eec0ca48"
+    }
+  ],
+  "read_only_observation": {
+    "source_count": 4,
+    "source_immutable_before_after": true,
+    "workbook_metadata": [
+      {
+        "filename": "QM301-7_RB 수입검사성적서.xlsx",
+        "worksheet_count": 38,
+        "aggregate_used_rows_metadata": 1438,
+        "max_used_columns_metadata": 71,
+        "dimension_parts_observed": 38
+      },
+      {
+        "filename": "수입검사성적서_Raw_Data.xlsx",
+        "worksheet_count": 3,
+        "aggregate_used_rows_metadata": 13,
+        "max_used_columns_metadata": 56,
+        "dimension_parts_observed": 3
+      }
+    ],
+    "claimed_template_count": 38,
+    "claimed_item_row_count": 119,
+    "claimed_counts_status": "UNVERIFIED_UNTIL_P0B_PARSER",
+    "discrepancy_policy": "report-only; never auto-correct source or inferred rows"
+  }
+}

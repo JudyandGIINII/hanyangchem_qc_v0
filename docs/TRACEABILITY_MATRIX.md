@@ -1,6 +1,6 @@
 # 요구사항 추적 매트릭스 — 한양화학 수입검사 디지털화 및 LOT 추적
 
-**상태:** P0A/P0B/P1 authorized — baseline 시점 구현·테스트 미실행  
+**상태:** P0A verified; P0B/P1 authorized and pending implementation  
 **정본:** `Prd.md`  
 **계획:** `docs/plans/2026-07-30-integrated-implementation-plan.md`  
 **규칙:** 아래 경로는 모두 구현 시 `Create` 대상이다. `Planned`는 통과를 의미하지 않는다. 각 행은 해당 Phase의 테스트가 실제 exit 0이고 Hermes 독립 QA가 증빙을 확인해야 `Verified`로 바뀐다.
