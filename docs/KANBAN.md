@@ -9,7 +9,7 @@
 |`t_7d493a1e`|Completed|PRD 기반 독립 계획 2개 비교·통합·문서화|Opus 5 증빙 확인, 비교표/통합 계획/전수 추적, Alfred R1 formal+substantive PASS, DEVLOG/링크 검증 완료|
 |`t_715483aa`|Completed|P0B correction candidate final independent review/acceptance|P0A/P0B complete·accepted, final independent `APPROVE` 확인|
 |P1-local-candidate|Completed / accepted|P1 repository/contract foundation|User-authorized Hermes direct final QA passed the P1 contract gate; P2 is authorized but not started|
-|FE8-frontend-fixture|Implemented / independently verified; docs-inclusive gate passed; integration pending|Deterministic synthetic eight-flow frontend workflow|Source `APPROVE` (0 blocker/major/minor), narrow UI `APPROVE` (0 high/medium/low), and post-doc full gate passed; not P2/P3 backend/domain completion|
+|FE8-frontend-fixture|Implemented / independently verified; docs-inclusive and fresh-main integration gates passed; push pending|Deterministic synthetic eight-flow frontend workflow|Source/UI approvals, post-doc and fresh integration full gates, integration standalone/desktop/390px QA, and active probe passed; not P2/P3 backend/domain completion|
 
 ## 검증 결과
 

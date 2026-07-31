@@ -1,6 +1,6 @@
 # P3 준비 — Frontend 8단계 Fixture Workflow 구현 계획
 
-**상태:** `IMPLEMENTED_INDEPENDENTLY_VERIFIED_AND_DOCS_GATE_PASSED`; P3/product/operations acceptance 전이며 P2/P3 backend/domain completion, backend 연결, real auth, 또는 production support를 주장하지 않는다. Git integration/push는 아직 pending이다.
+**상태:** `IMPLEMENTED_VERIFIED_AND_FRESH_MAIN_INTEGRATION_PASSED`; P3/product/operations acceptance 전이며 P2/P3 backend/domain completion, backend 연결, real auth, 또는 production support를 주장하지 않는다. Remote-race 확인과 push는 아직 pending이다.
 
 **정본:** `Prd.md`, `docs/plans/2026-07-30-integrated-implementation-plan.md`의 P3/§8, `docs/TRACEABILITY_MATRIX.md`, fixture UX 작업 계약.
 
@@ -28,4 +28,4 @@ Next.js App Router 위에 결정적인 합성 fixture만 사용하는 한국어 
 
 ## 게이트
 
-이 fixture increment는 P3 backend vertical slice 또는 P2 domain/DB gate를 우회하지 않는다. P0A/P0B/P1은 complete/accepted이고 P2는 authorized/not started 상태를 유지한다. Independent source/UI verification and the passed docs-inclusive controller gate do not authorize real-data apply/import, backend mutation, real auth, OCR/AI, ERP, non-disposable migration, deployment, service exposure, or production support. Git integration/push remains pending until the fresh-main regression and remote-race gates pass.
+이 fixture increment는 P3 backend vertical slice 또는 P2 domain/DB gate를 우회하지 않는다. P0A/P0B/P1은 complete/accepted이고 P2는 authorized/not started 상태를 유지한다. Independent source/UI verification and the passed docs-inclusive/fresh-main integration gates do not authorize real-data apply/import, backend mutation, real auth, OCR/AI, ERP, non-disposable migration, deployment, service exposure, or production support. Remote-race 확인과 `origin/main` push만 이 increment의 delivery gate로 남아 있다.
