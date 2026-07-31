@@ -62,6 +62,7 @@
 ### P0A 완료
 
 - 로컬 실원본 4개(PDF 2, XLSX 2)의 SHA-256, byte size, mtime을 before/after로 계산했고 동일함을 재검증했다.
+- 이 historical before/after 관찰·동일성 확인은 수행됐지만, 원본 v1 tracked artifact는 단일 canonical snapshot과 `source_immutable_before_after: true`만 보존한다. explicit per-source before/after 관찰은 2026-07-31 controller reverification sidecar가 최초 tracked evidence다.
 - XLSX ZIP/XML metadata만 읽어 worksheet 수를 관찰했으며 cell value는 읽거나 evidence에 복제하지 않았다.
 - workbook worksheet 수는 각각 38개와 3개였다. `38 templates / 119 item rows`의 business 의미는 P0B parser 전까지 `UNVERIFIED_UNTIL_P0B_PARSER`로 유지한다.
 - `docs/evidence/2026-07-30-p0a-source-manifest.json`과 `docs/evidence/2026-07-30-p0a-evidence-freeze.md`를 생성했다.
@@ -163,3 +164,151 @@ P0A remains complete. P0B remains pending final independent QA and controller ac
 ### Gate result and continuing boundary
 
 P0A and P0B are complete and accepted. P1 is authorized and ready, but this approval record does not claim that P1 has started or passed. P2 is authorized only after the P1 contract gate and has not started or passed. Real-data apply/import, external OCR/AI, non-disposable migration, deployment, and service exposure remain unauthorized. This documentation-only sync ran no code tests and did not access source PDF/XLS/XLSX evidence.
+
+## 2026-07-31 — P1 repository/contract foundation candidate
+
+### Candidate scope
+
+- Added Python 3.12 `uv` project declarations for FastAPI, Pydantic v2 settings, SQLAlchemy/Alembic/psycopg, Redis, strict Ruff/mypy and the retained P0B importer suite.
+- Added API and worker liveness/readiness seams, loopback-only Compose services, minimal Next.js health UI, P1 no-op Alembic baseline, local secret/tracked-sensitive-document scans, and CI workflow.
+- Added strict extraction/error contracts, deterministic schema/OpenAPI/client generation entrypoints, synthetic-only extraction port tests, and UTC-to-Asia/Seoul display helper. No external OCR/AI provider or real source data path was implemented.
+
+### Gate state and boundary
+
+This is a P1 **candidate under Hermes independent QA**, not complete or accepted. P2 remains blocked on the independent P1 contract gate. The candidate does not authorize real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure. No PDF/XLS/XLSX source evidence was opened by this P1 work.
+
+### Local verification record
+
+- `python3 -m compileall -q backend/src backend/scripts backend/tests scripts` — exit 0.
+- `docker compose config --quiet` — exit 0. Docker daemon access is unavailable in this sandbox, so no Compose service was started.
+- `python3 scripts/scan_secrets.py`, `python3 scripts/check_sensitive_documents.py`, and `git diff --check` — exit 0.
+- Required dependency resolution could not run: the sandbox DNS lookup for `pypi.org` and `registry.npmjs.org` fails, and Corepack's default cache is outside the writable sandbox. Therefore `uv lock/sync/run`, schema/OpenAPI/client artifact generation, backend pytest/Ruff/mypy/Alembic, and pnpm frozen install/lint/typecheck/test/build remain unverified. These failures are environmental blockers, not a P1 gate pass.
+
+## 2026-07-31 — P1 Hermes-audit remediation verification
+
+### Successful commands actually run
+
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv lock --project backend --check` and `XDG_CACHE_HOME="$PWD/.uv-cache" uv sync --project backend --extra dev` — exit 0.
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv run --project backend pytest -q` — `146 passed, 1 warning`; the byte-identical accepted P0B importer suite separately returned `127 passed in 5.91s`.
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/tests` — exit 0; only the accepted P0B importer and its accepted integration test are exact-path excluded.
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts` — `Success: no issues found in 11 source files`; the accepted P0B importer is exact-path excluded.
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv run --project backend python -m compileall -q backend/src backend/scripts backend/tests`, `... python backend/scripts/generate_contracts.py --check`, and `... python backend/scripts/check_migrations.py` — exit 0. The migration check performs disposable SQLite upgrade→downgrade→upgrade; it does not claim PostgreSQL runtime coverage.
+- `python3 scripts/scan_secrets.py`, `python3 scripts/check_sensitive_documents.py`, `docker compose config --quiet`, `git diff --check`, and a no-diff assertion over both accepted P0B files — exit 0.
+
+### Remediation details and remaining blockers
+
+- Root pytest is deterministic through `pytest.ini`; no shell-only source-path state is required. API/worker readiness catches connection exceptions and returns typed 503 envelopes. Contract artifacts are repository source candidates with strict `extra=forbid`, required UUID/time fields, Decimal-string schema boundaries, and matching health/error OpenAPI responses. The secret scan now scans docs/tests and permits only explicit line-level placeholder/fixture/redacted allowances.
+- `corepack pnpm --dir frontend install` cannot resolve `registry.npmjs.org` in this sandbox, so `frontend/pnpm-lock.yaml`, the generated OpenAPI TypeScript client, frozen install, and frontend checks cannot yet be verified. `docker info` is denied access to the local Docker socket, so disposable Compose build/up, live health probes, and in-Compose PostgreSQL migration cycling cannot run here. These are environmental blockers, not a P1 gate pass.
+
+P1 remains `CANDIDATE_UNDER_HERMES_QA`; P2 remains blocked. No source PDF/XLS/XLSX was accessed, and no real-data apply/import, external OCR/AI, non-disposable migration, deployment, or external service exposure occurred.
+
+## 2026-07-31 — P1 focused frontend remediation candidate
+
+### Changes made
+
+- Pinned `next` and the matching `eslint-config-next` from `15.4.5` to `15.5.22`, retaining the Next 15 architecture; `frontend/pnpm-lock.yaml` was regenerated with `pnpm` 10.32.1 in offline lockfile-only mode.
+- Converted the ESLint 9 flat config to `FlatCompat` with a deterministic config-file base directory. This adapts Next 15's legacy `next/core-web-vitals` shareable config instead of importing its extensionless CommonJS subpath as an ESM flat-config array.
+- Execution demonstrated that the generated-client drift script leaked its temporary directory on generation failure. It now uses a deterministic frontend cwd and `try`/`finally` cleanup; the leaked temporary directories from this verification were removed.
+
+### Actual verification and remaining boundary
+
+- `CI=true corepack pnpm --dir frontend install --lockfile-only --offline --no-frozen-lockfile` — exit 0; the lock imports `next@15.5.22`, `eslint-config-next@15.5.22`, and direct `@eslint/eslintrc@3.3.6` for the compatibility bridge.
+- `corepack pnpm --dir frontend install --frozen-lockfile` recognized the up-to-date lockfile, then failed while downloading packages because this Codex sandbox cannot resolve `registry.npmjs.org`. Consequently lint, typecheck, test, build, and generated-client drift validation could not run: their package binaries are absent. The generated client was not rewritten, but regeneration stability is not yet verified.
+- Docker/PostgreSQL runtime verification remains for the Hermes controller because this Codex sandbox cannot access the Docker socket. This is not a P1 contract-gate pass.
+
+P1 remains `CANDIDATE_UNDER_HERMES_QA`, not complete or accepted; P2 remains blocked on the independent P1 contract gate. No source PDF/XLS/XLSX was accessed, and no real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure occurred.
+
+## 2026-07-31 — P0A/P1 Claude Opus blocker remediation candidate
+
+### P0A evidence and boundary correction
+
+- Replaced current-tree P0A filename-as-evidence fields with stable aliases plus `filename_sha256`; the COA alias is `calcium-chloride-coa-2025-04-23`. Historical Git contained filename metadata already; no history rewrite was authorized, so this is forward masking only.
+- Added the controller-only, alias-only two-pass P0A reverification sidecar and linked it from the original v1 manifest/freeze without changing the accepted P0B importer contract or its required v1 workbook-observation path.
+- Recorded the separately approved controller-only local real-source dry-run at [`docs/evidence/2026-07-31-p0b-controller-real-dry-run.json`](./evidence/2026-07-31-p0b-controller-real-dry-run.json). Command template only: `uv run --project backend python backend/scripts/import_spec_workbook.py --dry-run <APPROVED_LOCAL_QM301_PATH>`. Masked-output SHA-256: `122c2be494f5d5b66c555303e08e41b9717b08e3de579b311afebf3badb9517c`; 38 templates, 119 rows, zero discrepancies, zero database writes, `apply_performed: false`, source unchanged. Claude did not access or rerun the source.
+
+### P1 candidate correction
+
+- Added one shared canonical Decimal-string regex for Pydantic runtime and JSON Schema; binary floats, non-finite values, exponent notation, whitespace, plus signs, and noncanonical spellings fail closed.
+- Added non-sensitive API/worker generic 500 envelopes with correlation UUIDs, fail-closed readiness defaults, URI-authority credential scanning, content/path-bound fixture policy, extension-pattern sensitive-document prevention, Next type generation before standalone typecheck, and disposable PostgreSQL `tmpfs`.
+- Expanded static command scope to `backend/src`, `backend/scripts`, `backend/alembic`, root `scripts`, and `backend/tests`; local aggregate checks include `docker compose config --quiet`.
+
+### Gate
+
+This is a candidate patch only. Hermes must rerun the bounded checks and Compose; no runtime success is claimed here. P1 remains `CANDIDATE_UNDER_HERMES_QA`, and P2 remains blocked. No real PDF/XLS/XLSX was accessed, no real-data apply/import occurred, and no external OCR/AI, deployment, or service exposure was performed.
+
+## 2026-07-31 — P1 frontend verification follow-up
+
+### Focused changes
+
+- Replaced the anonymous ESLint default-export array with named `config`, eliminating `import/no-anonymous-default-export`.
+- Updated the generated-client drift checker to invoke its project-local `node_modules/.bin/openapi-typescript` executable directly. It reports spawn errors safely, removes its temporary directory in `finally`, and compares generated and committed clients as raw bytes.
+
+### Hermes controller verification
+
+- Frozen install for the locked `next@15.5.22` and `eslint-config-next@15.5.22` — exit 0.
+- `corepack pnpm --dir frontend lint` — exit 0, warning-free.
+- `corepack pnpm --dir frontend typecheck` — exit 0.
+- `corepack pnpm --dir frontend test` — exit 0, `1 passed`.
+- `corepack pnpm --dir frontend build` — exit 0, production build completed.
+- `corepack pnpm --dir frontend check:client` — exit 0; generated client matches byte-for-byte.
+- `git diff --check` — exit 0.
+
+Docker/PostgreSQL runtime verification remains pending Hermes controller. P1 remains `CANDIDATE_UNDER_HERMES_QA`, not complete or accepted; P2 remains blocked on the independent P1 contract gate. No source PDF/XLS/XLSX was accessed, and no real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure occurred.
+
+## 2026-07-31 — P1 focused Compose collision/reproducibility remediation
+
+### Focused change and existing Hermes evidence
+
+- Parameterized only the loopback-published API and web host ports: `HYC_API_HOST_PORT` defaults to 18000 for container port 8000, and `HYC_WEB_HOST_PORT` defaults to 13000 for container port 3000. PostgreSQL and Redis remain unexposed.
+- Added the placeholder-only local host-port values to `.env.example` and documented default startup and health URLs: `http://127.0.0.1:18000/health/ready` and `http://127.0.0.1:13000/api/health`.
+- Pinned image-build `uv` to `0.11.14`, matching CI, rather than installing an unbounded latest package.
+- Hermes controller successfully built the Compose images. The original full startup correctly aborted and cleaned up because `127.0.0.1:8000` was occupied by another approved local backend; that backend was not disturbed.
+
+### Current verification and gate
+
+- `docker compose config --quiet` — exit 0 with the default `.env.example` values and again with `HYC_API_HOST_PORT=18123 HYC_WEB_HOST_PORT=13123`; the rendered override maps loopback 18123→container 8000 and 13123→container 3000.
+- `XDG_CACHE_HOME="$PWD/.uv-cache" uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/tests` — exit 0; `... mypy --config-file backend/pyproject.toml backend/src backend/scripts` — `Success: no issues found in 11 source files`.
+- `corepack pnpm --dir frontend lint` and `corepack pnpm --dir frontend typecheck` — exit 0.
+- `git diff --check` — exit 0.
+- Full Compose runtime health probes and the disposable PostgreSQL cycle remain pending a Hermes rerun using the parameterized non-conflicting host ports. This is not a P1 contract-gate pass.
+
+P1 remains `CANDIDATE_UNDER_HERMES_QA`, not complete or accepted; P2 remains blocked on the independent P1 contract gate. No source PDF/XLS/XLSX was accessed, and no real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure occurred.
+
+## 2026-07-31 — P1 focused web standalone runtime healthcheck remediation
+
+### Hermes rerun evidence and focused fix
+
+- Hermes Compose rerun found PostgreSQL, Redis, API, and worker healthy, but the web service unhealthy. The Next standalone server logged a bind only to its container hostname (`http://<container-id>:3000`); its container-loopback healthcheck then failed with `ECONNREFUSED 127.0.0.1:3000`.
+- The production stage of `frontend/Dockerfile` now pins `HOSTNAME=0.0.0.0` and `PORT=3000` alongside `NODE_ENV=production`. This makes Next standalone listen on all container interfaces at port 3000. `compose.yaml` remains unchanged: web publication is still loopback-only at `127.0.0.1:${HYC_WEB_HOST_PORT:-13000}:3000`.
+
+### Current verification and gate
+
+- `corepack pnpm --dir frontend lint` — exit 0.
+- `corepack pnpm --dir frontend typecheck` — exit 0.
+- `corepack pnpm --dir frontend test` — exit 0; Vitest: `1 passed`.
+- `corepack pnpm --dir frontend build` — exit 0; Next 15.5.22 production build completed.
+- `docker compose config --quiet` — exit 0.
+- `git diff --check` — exit 0.
+- A complete Compose runtime healthcheck and disposable PostgreSQL migration cycle remain pending the Hermes rerun. This is not a P1 contract-gate pass.
+
+P1 remains `CANDIDATE_UNDER_HERMES_QA`, not complete or accepted; P2 remains blocked on the independent P1 contract gate. No source PDF/XLS/XLSX was accessed, and no real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure occurred.
+
+## 2026-07-31 — P1 final Hermes direct acceptance
+
+### Authority and gate decision
+
+- The user explicitly authorized Hermes on 2026-07-31 to replace the unavailable Claude final reapproval with direct controller verification, decide the P1 approval, proceed, and cancel the 18:51 Claude retry. Cron job `d7e684c0b605` was removed.
+- Hermes directly recovered the final disposable Compose exact-candidate controller output for `proc_7e03db110d2f`. The process completed with exit 0: PostgreSQL, Redis, API, worker, and web were healthy; API live/ready and web probes returned HTTP 200 with expected JSON; the PostgreSQL migration roundtrip passed; and cleanup passed.
+- Hermes accepted P1 and passed the P1 contract gate. The resulting current state is `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`; P2 is authorized/unblocked but has not started.
+
+### Final verification record
+
+- P0A: all 4 historical filename-hash bindings remain valid; the explicit before/after two-pass comparison was 4/4 equal, `source_immutable_before_after: true`, and normalized current-tree basename hits are 0.
+- P0B: the accepted importer and integration test remain byte-identical to `origin/main`; the accepted review was `APPROVE` (HIGH 0, MEDIUM 0). Controller evidence remains 127 tests and the approved real dry-run at 38 templates/119 rows, discrepancy 0, DB write/apply 0, and source unchanged.
+- Pytest: root `pytest.ini` is canonical and there is no nested backend pytest configuration. `--collect-only -vv` reported repository rootdir and `configfile: pytest.ini`; a targeted direct test file passed 12 tests and the full suite passed 172. One upstream Starlette/httpx deprecation warning is non-blocking.
+- `make check` exited 0, including contracts/client drift, Ruff, strict mypy across 15 files, 172 pytest tests, compileall, frontend lint/typegen/typecheck/Vitest (1)/build, migration check, secret scan, sensitive-document scan, and Compose config.
+- Frontend determinism: typecheck is `tsc --noEmit --incremental false`, no `tsconfig.tsbuildinfo` remains, and the Makefile/CI run Corepack pnpm from frontend cwd with pinned pnpm `10.13.1`. Frozen install and all frontend gates passed; the lockfile is unchanged.
+
+### Continuing boundary
+
+No real source import/apply, external OCR/AI, non-disposable migration, deployment, or public service exposure occurred. Those operations remain unauthorized; P1 acceptance and P2 authorization do not substitute for their separate product/operations approvals.

@@ -1,0 +1,33 @@
+{
+  "name": "hyc-inspection-web",
+  "private": true,
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.13.1",
+  "scripts": {
+    "lint": "eslint .",
+    "typegen": "next typegen",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "vitest run",
+    "build": "next build",
+    "generate:client": "openapi-typescript ../contracts/openapi.json -o src/lib/api/generated.ts",
+    "check:client": "node scripts/check-generated-client.mjs"
+  },
+  "dependencies": {
+    "next": "15.5.22",
+    "react": "19.1.1",
+    "react-dom": "19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "3.3.6",
+    "@eslint/js": "9.33.0",
+    "@types/node": "22.17.2",
+    "@types/react": "19.1.10",
+    "@types/react-dom": "19.1.7",
+    "eslint": "9.33.0",
+    "eslint-config-next": "15.5.22",
+    "openapi-typescript": "7.8.0",
+    "typescript": "5.9.2",
+    "typescript-eslint": "8.39.0",
+    "vitest": "3.2.4"
+  }
+}

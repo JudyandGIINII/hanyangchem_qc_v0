@@ -1,12 +1,12 @@
 # 한양화학 수입검사 디지털화 및 LOT 추적 시스템 — 통합 구현 계획
 
-**문서 상태:** `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`
+**문서 상태:** `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`
 **정본 요구사항:** `Prd.md`  
 **독립 입력:** `2026-07-30-hermes-independent-plan.md`, `2026-07-30-claude-opus5-independent-plan.md`  
 **요구사항 추적 정본:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md) — 52개 FR, UI/매칭/데이터/API/보고서, 보안/감사/NFR/OCR, AT/DoD를 Phase·owner·planned test·gate에 연결  
 **독립 QA:** [`../reviews/2026-07-30-integrated-plan-alfred-qa.md`](../reviews/2026-07-30-integrated-plan-alfred-qa.md) — Alfred R1 formal/substantive **PASS**, 이전 HIGH/MEDIUM 5건 모두 `RESOLVED`, 신규 HIGH/MEDIUM blocker 0  
 **작성 원칙:** 두 계획의 공통 결론과 상호 보완되는 장점만 채택했다. 충돌 사항은 PRD의 fail-closed 원칙, 데이터 무결성, 실행 가능성 순으로 판정했다.  
-**권한 경계:** AP-01~05는 승인됐다. P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 아직 시작·완료되지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 아직 시작·완료되지 않았다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 승인 범위가 아니다.
+**권한 경계:** AP-01~05는 승인됐다. P0A/P0B는 complete·accepted다. P1은 Hermes independent QA 중인 candidate이며 아직 complete·accepted가 아니고, P2는 P1 contract gate 후에만 시작할 수 있으며 현재 blocked다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 승인 범위가 아니다.
 
 ---
 
@@ -59,7 +59,7 @@
 |AP-07|판정 정책 기본|누락·미매핑·저신뢰·자체검사 미완은 `ON_HOLD`; 불명 규격은 `MANUAL`|순수 엔진 fail-closed 테스트|
 |AP-08|생산 전환 조건|AT/DoD, UAT, 권한 검토, backup/restore rehearsal, RPO/RTO 승인 후 별도 전환 승인|로컬 파일럿까지만|
 
-AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 시작하지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 시작하지 않았다. AP-06~08의 파일럿/생산 활성화, 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포와 서비스 공개는 별도 승인 대상으로 유지한다.
+AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B는 complete·accepted다. P1은 Hermes independent QA 중인 candidate이며 시작·완료 승인 상태가 아니다. P2는 P1 contract gate 후에만 시작할 수 있으며 현재 blocked다. AP-06~08의 파일럿/생산 활성화, 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포와 서비스 공개는 별도 승인 대상으로 유지한다.
 
 ## 4. 목표 아키텍처
 
@@ -199,7 +199,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P1 — Repository/Contract foundation
 
-**선행:** AP-01~05 및 accepted P0B (충족). P1은 authorized and ready지만 아직 시작하지 않았고 완료되지 않았다.
+**선행:** AP-01~05 및 accepted P0B (충족). **실행 상태:** P1은 사용자 승인 Hermes 직접 QA 후 complete/accepted 되었고 P1 contract gate를 통과했다. P2는 authorized/unblocked 상태이나 아직 시작되지 않았다.
 **목표:** 재현 가능한 개발환경과 계약을 먼저 만든다.
 
 1. `compose.yaml`, backend `uv` Python 3.12, frontend pnpm/TypeScript strict, lockfiles, CI를 생성한다. 전역 Python은 변경하지 않는다.
@@ -214,11 +214,13 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 - `backend/tests/contract/test_openapi_contract.py`
 - `frontend/src/lib/api/generated.ts`
 
-**게이트:** clean machine bootstrap, migration 빈 head, schema round-trip, lint/type/test/build, secret scan이 통과해야 P2로 간다.
+**게이트:** clean machine bootstrap, migration 빈 head, schema round-trip, lint/type/test/build, secret scan이 실제 명령으로 통과하고 Hermes가 독립 증빙을 승인해야 P2로 간다.
+
+**2026-07-31 remediation evidence:** backend lock/sync, root pytest (`172 passed`, including unchanged accepted P0B `127 passed`), P1 Ruff/mypy, compileall, contracts drift, SQLite upgrade→downgrade→upgrade, secret/sensitive scans, Compose config, and diff checks passed locally. Hermes controller verified frozen installation with `next`/`eslint-config-next` 15.5.22, warning-free frontend lint, typecheck, Vitest (`1 passed`), production build, and byte-for-byte generated-client drift check. The ESLint 9 `FlatCompat` bridge exports a named config, and the drift checker executes project-local `openapi-typescript`, safely reports spawn errors, and cleans its temporary directory. Hermes also built the Compose images successfully; the original startup correctly aborted and cleaned up because its `127.0.0.1:8000` host binding collided with another approved local backend. Compose uses parameterized loopback host ports (default API 18000, web 13000), while container ports remain 8000/3000 and PostgreSQL/Redis remain unpublished. On the focused rerun PostgreSQL, Redis, API, and worker were healthy, but web was unhealthy because Next standalone bound only to the container hostname and its `127.0.0.1:3000` healthcheck received `ECONNREFUSED`. The production web image now fixes `HOSTNAME=0.0.0.0` and `PORT=3000`; host publication stays loopback-only. Full runtime health probes and the disposable PostgreSQL cycle remain pending a Hermes rerun; this is not a P1 contract-gate pass.
 
 ### P2 — Pure domain + DB invariants
 
-**선행:** P1 contract gate. P2는 이 gate 후에 authorized이며 아직 시작하지 않았고 완료되지 않았다.
+**선행:** independently accepted P1 contract gate. P2는 이 gate 후에만 authorized이며 현재 blocked, 아직 시작하지 않았고 완료되지 않았다.
 **목표:** UI/OCR 전에 정본 모델과 fail-closed 규칙을 증명한다.
 
 |Task|의존|구현/테스트|
@@ -521,4 +523,4 @@ CI/golden에서는 실제 OCR 외부 호출을 금지한다. 기대 결과는 ex
 - [x] P0A/P0B complete·accepted 및 P1 진행 권한 확인
 - [x] P2는 P1 contract gate 후 진행 권한 확인
 
-**현재 권고:** `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`. P1은 준비됐지만 아직 시작하지 않았고, P2는 P1 contract gate 전에는 시작하지 않는다. 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포 및 서비스 공개 앞에서 중단한다.
+**현재 상태 (2026-07-31 final remediation evidence/gate):** `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`. 사용자 명시 승인에 따라 Hermes가 unavailable Claude final reapproval을 직접 controller verification으로 대체했고 P1 contract gate를 통과시켰다. Final `make check`는 contract/client drift, Ruff, strict mypy 15 files, 172 pytest, compileall, frontend lint/typegen/typecheck/Vitest 1/build, migration, secret/sensitive scan, Compose config까지 exit 0이었다. Root `pytest.ini` only/no nested backend config, deterministic frontend Corepack pnpm `10.13.1` frontend-cwd execution with `tsc --noEmit --incremental false`, and final disposable Compose controller process `proc_7e03db110d2f` exit 0 (all services healthy, live/ready/API+web expected JSON probes, PostgreSQL migration roundtrip, cleanup) were Hermes evidence. P2 is authorized but not started; this plan still stops before real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure.

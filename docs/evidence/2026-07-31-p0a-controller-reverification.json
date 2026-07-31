@@ -1,0 +1,24 @@
+{
+  "before": [
+    {"format":"xlsx","mtime_ns":1785252166943389028,"observed_at_utc":"2026-07-31T05:30:43.931799Z","sha256":"b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f","size_bytes":338134,"source_alias":"qm301-7-rb-import-inspection","stable_during_read":true},
+    {"format":"pdf","mtime_ns":1785252167613076981,"observed_at_utc":"2026-07-31T05:30:43.933510Z","sha256":"6ae50fdd4c9e01be39ebf113bf3198d0407ab427c3de782799e9014c8a88d53f","size_bytes":370049,"source_alias":"domestic-8p-package","stable_during_read":true},
+    {"format":"xlsx","mtime_ns":1785252174060242618,"observed_at_utc":"2026-07-31T05:30:43.933910Z","sha256":"4de7b781c80a8bf663a8983af03e9ae912919c8ac70bf3d1f5dda1e07f281ff1","size_bytes":11836,"source_alias":"inbound-inspection-raw-data","stable_during_read":true},
+    {"format":"pdf","mtime_ns":1785252170965682459,"observed_at_utc":"2026-07-31T05:30:43.935632Z","sha256":"da50e56873e37cd07401050bec2976697adabb47927268a8cbbd2674eec0ca48","size_bytes":904378,"source_alias":"calcium-chloride-coa-2025-04-23","stable_during_read":true}
+  ],
+  "after": [
+    {"format":"xlsx","mtime_ns":1785252166943389028,"observed_at_utc":"2026-07-31T05:30:44.007892Z","sha256":"b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f","size_bytes":338134,"source_alias":"qm301-7-rb-import-inspection","stable_during_read":true},
+    {"format":"pdf","mtime_ns":1785252167613076981,"observed_at_utc":"2026-07-31T05:30:44.008603Z","sha256":"6ae50fdd4c9e01be39ebf113bf3198d0407ab427c3de782799e9014c8a88d53f","size_bytes":370049,"source_alias":"domestic-8p-package","stable_during_read":true},
+    {"format":"xlsx","mtime_ns":1785252174060242618,"observed_at_utc":"2026-07-31T05:30:44.008857Z","sha256":"4de7b781c80a8bf663a8983af03e9ae912919c8ac70bf3d1f5dda1e07f281ff1","size_bytes":11836,"source_alias":"inbound-inspection-raw-data","stable_during_read":true},
+    {"format":"pdf","mtime_ns":1785252170965682459,"observed_at_utc":"2026-07-31T05:30:44.010103Z","sha256":"da50e56873e37cd07401050bec2976697adabb47927268a8cbbd2674eec0ca48","size_bytes":904378,"source_alias":"calcium-chloride-coa-2025-04-23","stable_during_read":true}
+  ],
+  "classification":"sensitive-source-evidence",
+  "external_transmission_allowed":false,
+  "git_source_files_allowed":false,
+  "observation_method":"local read-only two-pass sha256/stat; no content or filename retained",
+  "phase":"P0A",
+  "producer":"hermes-controller",
+  "schema_version":"hyc.p0a-source-observation.v2",
+  "source_count":4,
+  "source_immutable_before_after":true,
+  "tool_version":"p0a-observer-v2"
+}

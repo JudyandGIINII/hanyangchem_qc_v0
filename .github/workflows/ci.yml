@@ -1,0 +1,49 @@
+name: contract-foundation-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with: { version: "0.11.14", enable-cache: true }
+      - run: uv lock --project backend --check
+      - run: uv sync --project backend --extra dev
+      - run: uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/alembic backend/tests scripts
+      - run: uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts backend/alembic scripts
+      - run: uv run --project backend pytest -q
+      - run: uv run --project backend python -m compileall -q backend/src backend/scripts backend/alembic backend/tests scripts
+      - run: uv run --project backend python backend/scripts/generate_contracts.py --check
+      - run: uv run --project backend python backend/scripts/check_migrations.py
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 24 }
+      - run: corepack enable
+      - run: corepack pnpm install --frozen-lockfile
+        working-directory: frontend
+      - run: corepack pnpm lint
+        working-directory: frontend
+      - run: corepack pnpm typegen
+        working-directory: frontend
+      - run: corepack pnpm typecheck
+        working-directory: frontend
+      - run: corepack pnpm test
+        working-directory: frontend
+      - run: corepack pnpm build
+        working-directory: frontend
+      - run: corepack pnpm check:client
+        working-directory: frontend
+  safeguards:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose config --quiet
+      - run: python3 scripts/scan_secrets.py
+      - run: python3 scripts/check_sensitive_documents.py

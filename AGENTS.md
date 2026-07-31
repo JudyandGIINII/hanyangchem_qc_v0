@@ -9,9 +9,9 @@
 
 ## Approval boundary
 
-- Current state is `P0A_P0B_COMPLETE_ACCEPTED_P1_AUTHORIZED_READY_P2_AUTHORIZED_AFTER_P1_CONTRACT_GATE`.
+- Current state is `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`.
 - AP-01 through AP-05 remain approved. P0A and P0B are complete and accepted. P0B final independent review returned `APPROVE` (HIGH 0, MEDIUM 0); its one LOW lexical-contract note was accepted as defense-in-depth because consumed relationship roles use exact allowlists.
-- P1 is authorized and ready, but has not started and is not complete. P2 is authorized but must not start until the P1 contract gate passes; P2 is not complete.
+- Under the user's explicit 2026-07-31 authorization, Hermes directly completed the final controller verification in place of the unavailable Claude reapproval, and the P1 contract gate passed. P1 is complete and accepted. P2 is authorized and unblocked, but has not started and is not complete.
 - P0B was limited to read-only evidence freeze plus derived fixture/importer dry-run tooling. Real-data apply/import, external OCR/AI calls, migration against non-disposable data, deployment, and service exposure remain unauthorized.
 - A test pass or feature flag does not substitute for a product/operations approval gate.
 

@@ -6,33 +6,34 @@ external_transmission_allowed: false
 p0a_provenance:
   evidence_path: docs/evidence/2026-07-30-p0a-evidence-freeze.md
   evidence_manifest_path: docs/evidence/2026-07-30-p0a-source-manifest.json
+  controller_reverification_path: docs/evidence/2026-07-31-p0a-controller-reverification.json
   evidence_schema_version: 1
   workbook_observation_path: read_only_observation.workbook_metadata[0]
 source_documents:
-  - filename: "QM301-7_RB 수입검사성적서.xlsx"
+  - source_alias: qm301-7-rb-import-inspection
+    filename_sha256: 4b9bd175f0fc6b83ba93c2396decc23289ad44276cae81218213f0653af1cf59
     sha256: b8ebb179b0dece9a6aa06229fe28feb1890082bd32a46e3ccc314febec138c9f
-    source_alias: qm301-7-rb-import-inspection
     size_bytes: 338134
     classification: sensitive-source-evidence
     git_source_prohibited: true
     external_transmission_allowed: false
-  - filename: "물먹는하마 내수8P 패키지_250213.pdf"
+  - source_alias: domestic-8p-package
+    filename_sha256: 152fda6e94a9758723e397943d43faa80e359c50cc7d4a6f964f695840ecec4f
     sha256: 6ae50fdd4c9e01be39ebf113bf3198d0407ab427c3de782799e9014c8a88d53f
-    source_alias: domestic-8p-package
     size_bytes: 370049
     classification: sensitive-source-evidence
     git_source_prohibited: true
     external_transmission_allowed: false
-  - filename: "수입검사성적서_Raw_Data.xlsx"
+  - source_alias: inbound-inspection-raw-data
+    filename_sha256: dd2a16233f3cad070ac5719e5ce1e40bec6c9ee2b0c1676cab111a34d74032ce
     sha256: 4de7b781c80a8bf663a8983af03e9ae912919c8ac70bf3d1f5dda1e07f281ff1
-    source_alias: inbound-inspection-raw-data
     size_bytes: 11836
     classification: sensitive-source-evidence
     git_source_prohibited: true
     external_transmission_allowed: false
-  - filename: "업체COA_염화칼슘_세계로비드_2025.04.23.pdf"
+  - source_alias: calcium-chloride-coa-2025-04-23
+    filename_sha256: feb7705addac0589e73eb5dfd7206010a1f3a3a4c1fd3386714402f1c2c2df1a
     sha256: da50e56873e37cd07401050bec2976697adabb47927268a8cbbd2674eec0ca48
-    source_alias: potassium-chloride-coa-2025-04-23
     size_bytes: 904378
     classification: sensitive-source-evidence
     git_source_prohibited: true

@@ -21,8 +21,7 @@
 
 ## 증빙
 
-- 1차 response: `.agent/plans/ALF-20260730-HYC-INTEGRATED-PLAN-QA/alfred-response.md`
-- R1 response: `.agent/plans/ALF-20260730-HYC-INTEGRATED-PLAN-QA-R1/alfred-response.md`
+- 1차/R1 response references are unversioned controller evidence under `.agent/plans/`; this repository does not track, read, or reproduce those ignored planning artifacts.
 - Adapter validator: 두 response 모두 `PASS READY_FOR_HERMES_REVIEW`
 - R1 결론: `substantive_plan_assessment: PASS`, `new_high_or_medium_blockers: []`
 

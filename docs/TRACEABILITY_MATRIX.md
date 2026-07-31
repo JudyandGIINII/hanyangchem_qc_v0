@@ -1,6 +1,6 @@
 # 요구사항 추적 매트릭스 — 한양화학 수입검사 디지털화 및 LOT 추적
 
-**상태:** P0A/P0B complete and accepted; P1 authorized and ready (not started); P2 authorized after the P1 contract gate (not started)
+**상태:** P0A/P0B/P1 complete and accepted; under the user's explicit 2026-07-31 authorization Hermes direct controller QA passed the P1 contract gate; P2 is authorized and unblocked but not started
 **정본:** `Prd.md`  
 **계획:** `docs/plans/2026-07-30-integrated-implementation-plan.md`  
 **규칙:** 아래 경로는 모두 구현 시 `Create` 대상이다. `Planned`는 통과를 의미하지 않는다. 각 행은 해당 Phase의 테스트가 실제 exit 0이고 Hermes 독립 QA가 증빙을 확인해야 `Verified`로 바뀐다.
@@ -22,10 +22,19 @@
 |---|---|---|---|
 |P0B.1|`backend/scripts/import_spec_workbook.py`|`backend/tests/integration/importers/test_spec_workbook_dry_run.py`: synthetic-only dry run; bounded all-member CRC/decompression reads; canonical OPC Content-Type resolution and media-type-driven XML parsing; exact workbook/worksheet/shared-strings/`.rels` types; complete ASCII RFC 3986 Relationship-Type and conservative canonical OPC member/Override/Target lexical validation (including safe in-root `..` only), attribute-free `Relationships` roots, unique IDs while same-target distinct typed relationships remain permitted; all fail closed|accepted|
 |P0B.2|`fixtures/spec-import/qm301-7-expected.json`|Typed approved baseline binds 38 templates / 119 item rows to the approved source SHA-256; deterministic ordered `QUALITY_REVIEW_REQUIRED` digest/count discrepancy evidence, no auto-correction/apply|accepted|
-|P0B.3|`fixtures/manifests/source-documents.yaml`|Metadata-only manifest with P0A evidence/digest/alias provenance; `.gitignore` recursively excludes sensitive document basenames; importer tests generate temporary synthetic workbooks only|accepted|
+|P0B.3|`fixtures/manifests/source-documents.yaml`|Metadata-only alias/hash manifest retains the v1 P0A observation path while linking the controller reverification; sensitive-document prevention covers extension patterns and importer tests generate temporary synthetic workbooks only|accepted|
 |P0B.4|`docs/adr/0001-deployment-and-data-boundary.md` through `docs/adr/0004-local-auth-rbac-and-real-source-prohibition.md`|Read-only, external-OCR-off, LOT/allocation, and source-prohibition decisions remain binding|accepted|
 
 P0B final independent review: `APPROVE` after 67 in-memory probes (HIGH 0, MEDIUM 0). The accepted LOW note—generic scheme-specific URI semantics—remains defense-in-depth because the relationship roles consumed by the importer use exact allowlists. Controller evidence records `127 passed`; the approved real QM301 dry-run returned 38 templates/119 rows with discrepancy 0, DB write/apply 0, unchanged source hash/size/mtime, and tracked sensitive documents 0.
+
+## P1 remediation verification trace
+
+|P1 control|Actual 2026-07-31 evidence|Current gate|
+|---|---|---|
+|Backend reproducibility and source layout|P0A’s 4 historical filename-hash bindings remain valid; explicit before/after two-pass check was 4/4 equal, `source_immutable_before_after: true`, and normalized current-tree basename hits 0. Root `pytest.ini` is canonical with no nested backend pytest config; `--collect-only -vv` reported repository rootdir/configfile, a targeted direct file passed 12 tests, and the full suite passed 172 (one non-blocking upstream Starlette/httpx deprecation warning). Accepted P0B importer and integration test remain byte-identical to `origin/main`; their accepted review was `APPROVE` (0H/0M), and controller dry-run evidence remains 38 templates/119 rows, discrepancy 0, DB write/apply 0, source unchanged.|accepted and verified by Hermes direct QA|
+|Contract/API readiness|Committed JSON Schema/OpenAPI and generated-client drift checks passed; strict extra/required UUID/time/Decimal-string boundaries and typed API/worker readiness 503 exception tests passed. Final `make check` exited 0.|accepted and verified by Hermes direct QA|
+|Static/security/migration|Final `make check` passed Ruff, strict mypy across 15 files, compileall, migration check, secret scan, sensitive-document scan, and Compose config. Ruff/mypy retain only the stated byte-identity preservation exclusions for accepted P0B content.|accepted and verified by Hermes direct QA|
+|Frontend and disposable runtime|Corepack `pnpm` runs from frontend cwd and selects pinned pnpm `10.13.1`; frozen install, lint, `next typegen`, `tsc --noEmit --incremental false`, Vitest (1), production build, and client drift all passed with unchanged lockfile and no `tsconfig.tsbuildinfo`. Final disposable Compose exact-candidate process `proc_7e03db110d2f` exited 0: PostgreSQL/Redis/API/worker/web healthy, API live/ready and web HTTP 200 expected JSON, PostgreSQL migration roundtrip, and cleanup passed. PostgreSQL remains `tmpfs`, PostgreSQL/Redis remain unpublished, and API/web remain loopback-only.|accepted and verified by Hermes direct QA|
 
 ## 1. 기능 요구사항 전수 추적
 
@@ -51,10 +60,10 @@ P0B final independent review: `APPROVE` after 67 in-memory probes (HIGH 0, MEDIU
 |FR-DOC-002|파일 안정화|P6|WORKER|`backend/tests/integration/workers/test_stabilizing_watcher.py`|P6|
 |FR-DOC-003|원본 hash/불변/metadata|P2/P3|DATA/API/OPS|`backend/tests/integration/api/test_document_immutability.py`|AP-05, P3|
 |FR-DOC-004|SHA-256 중복 탐지/재사용|P3|API/DATA|`backend/tests/integration/api/test_document_dedup.py`|P3|
-|FR-DOC-005|Storage Adapter/Primary/Mirror|P1/P6|WORKER/OPS|storage contract + mirror failure test|AP-06, P6|
+|FR-DOC-005|Storage Adapter/Primary/Mirror|P1/P6|WORKER/OPS|P1 accepted port boundary; mirror failure test remains P6|AP-06, P6|
 |FR-OCR-001|정확도 우선 파이프라인|P4/P5|WORKER/QUALITY|`backend/tests/golden/test_pipeline_regression.py`|AP-02, QUALITY benchmark|
-|FR-OCR-002|Provider 추상화|P1/P4|WORKER|`backend/tests/contract/test_extraction_port.py`|P4|
-|FR-OCR-003|구조화 출력 schema/원문 위치|P1/P4|WORKER/API|JSON Schema/Pydantic contract + golden bbox|P1/P4|
+|FR-OCR-002|Provider 추상화|P1/P4|WORKER|P1 accepted `backend/tests/contract/test_extraction_port.py`; provider use remains P4|P1 accepted/P4|
+|FR-OCR-003|구조화 출력 schema/원문 위치|P1/P4|WORKER/API|P1 accepted JSON Schema/Pydantic contract + bbox validation; golden remains P4|P1 accepted/P4|
 |FR-OCR-004|손글씨는 참고 메모|P4|WORKER/QUALITY|`test_handwriting_never_business_field.py`|P4|
 |FR-OCR-005|confidence/Human Review|P3/P4|API/WEB/QUALITY|low-confidence hold + review E2E|P3/P4|
 |FR-OCR-006|합계/범위/날짜/누락 논리 검증|P2/P4|DOMAIN/WORKER|`backend/tests/unit/judgment/test_logical_validation.py`; golden|P4|
@@ -99,14 +108,14 @@ P0B final independent review: `APPROVE` after 67 in-memory probes (HIGH 0, MEDIU
 |DATA-001|§14.1/14.2 관계·테이블|P2|DATA|migration schema snapshot/constraints|AP-03|
 |DATA-002|§14.3 승인/기준/checksum/Decimal/FK/soft-delete/UTC|P2|DATA/DOMAIN|DB invariant suite|P2|
 |DATA-003|canonical LOT 보정|P2|DATA/DOMAIN|identity conflict/merge/concurrency/re-entry tests|AP-03|
-|API-001|§15.1 endpoint surface/OpenAPI|P1~P5|API|`backend/tests/contract/test_openapi_contract.py`|P5|
+|API-001|§15.1 endpoint surface/OpenAPI|P1~P5|API|P1 accepted `backend/tests/contract/test_openapi_contract.py`, generated OpenAPI/client drift check|P1 accepted/P5|
 |API-002|§15.2 upload/approve/report Idempotency-Key|P2/P3/P5|API/DATA|endpoint별 same-key same-hash replay + key/hash conflict tests|P3/P5|
-|API-003|§15.2 RBAC/correlation/error/page/filter/sort/version/reason/size/Job ID|P1~P5|API|common middleware/contract/integration suite|P5|
+|API-003|§15.2 RBAC/correlation/error/page/filter/sort/version/reason/size/Job ID|P1~P5|API|P1 accepted correlation/error envelope contract; remaining surface P2~P5|P1 accepted/P5|
 |REP-001|§16.1 Raw 호환+Long+Documents+optional Audit, 무절단|P5|WORKER/QUALITY|`test_raw_excel_lossless.py`|QUALITY sample approval|
 |REP-002|§16.2 승인 Snapshot 통합보고서·정정 버전|P5|WORKER/DATA|`test_integrated_report_from_snapshot.py`|P5|
 |REP-003|§16.3 LOT trace·분할 입고·production link seam|P3/P5|API/WORKER|`test_split_lot_trace.py`; `test_production_lot_link_seam.py`|AP-08; 자동 ERP 비범위|
 |REP-004|§16.4 월별/공급사 품질 통계|P5|API/WORKER|`test_supplier_quality_report.py`|P5|
-|ARCH-001|§17.1 stack와 OCR/판정 분리|P1/P2|HERMES-QA|import-linter, process/component smoke|P2|
+|ARCH-001|§17.1 stack와 OCR/판정 분리|P1/P2|HERMES-QA|P1 accepted process/component health smoke; import-linter remains P2|P1 accepted/P2|
 |ARCH-002|§17.2 API/DB/storage/queue/worker/ERP adapter|P1~P6|API/WORKER/OPS|contract/smoke/feature-off tests|P6|
 |ARCH-003|§17.3 metadata vs immutable source/derived artifacts/mirror|P2/P6|DATA/WORKER/OPS|storage/mirror/lineage tests|AP-06, P6|
 
@@ -189,4 +198,4 @@ Planned tests:
 
 ## 8. 승인 상태
 
-현재 매트릭스는 계획상 추적을 완결한 것이며 P0A/P0B는 complete·accepted다. P1은 authorized and ready지만 시작·완료되지 않았고, P2는 P1 contract gate 후에만 시작할 수 있으며 완료를 주장할 수 없다. 실데이터 apply·import, 외부 OCR·AI, 비일회성 migration, 배포와 서비스 공개는 계속 미승인이다.
+현재 매트릭스는 계획상 추적을 완결한 것이며 P0A/P0B는 complete·accepted다. P1은 Hermes 독립 QA 중인 candidate로 complete·accepted가 아니며, P2는 independently accepted P1 contract gate 후에만 시작할 수 있고 현재 blocked다. 실데이터 apply·import, 외부 OCR·AI, 비일회성 migration, 배포와 서비스 공개는 계속 미승인이다.

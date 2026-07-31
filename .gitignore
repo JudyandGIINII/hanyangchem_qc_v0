@@ -4,6 +4,13 @@
 *.[xX][lL][sS][xX]
 *.[xX][lL][sS][mM]
 *.[xX][lL][sS][bB]
+*.[dD][oO][cC]
+*.[dD][oO][cC][xX]
+*.[hH][wW][pP]
+*.[hH][wW][pP][xX]
+*.[pP][pP][tT]
+*.[pP][pP][tT][xX]
+*.[cC][sS][vV]
 
 # Local planning and agent coordination artifacts.
 /.agent/
@@ -22,11 +29,15 @@ __pycache__/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.uv-cache/
 .venv/
 
 # Node / Next.js.
 node_modules/
+.pnpm-store/
+.corepack/
 .next/
+*.tsbuildinfo
 dist/
 coverage/
 playwright-report/

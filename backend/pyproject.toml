@@ -1,17 +1,43 @@
 [project]
-name = "hyc-inspection-evidence-tools"
+name = "hyc-inspection-foundation"
 version = "0.1.0"
-description = "Read-only evidence tooling for Hanyang Chemical inspection specifications"
+description = "Contract-first foundation for Hanyang Chemical inspection"
 requires-python = ">=3.12,<3.13"
-dependencies = []
+dependencies = [
+    "alembic>=1.16,<2",
+    "fastapi>=0.115,<1",
+    "psycopg[binary]>=3.2,<4",
+    "pydantic-settings>=2.8,<3",
+    "redis>=5.2,<7",
+    "sqlalchemy>=2.0,<3",
+    "uvicorn>=0.34,<1",
+]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.3,<9",
+    "httpx>=0.28,<1",
+    "jsonschema>=4.23,<5",
+    "mypy>=1.15,<2",
+    "ruff>=0.11,<1",
 ]
 
-[tool.pytest.ini_options]
-testpaths = ["tests"]
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+extend-exclude = [
+    "scripts/import_spec_workbook.py",
+    "tests/integration/importers/test_spec_workbook_dry_run.py",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src", "scripts"]
+exclude = "(^|/)scripts/import_spec_workbook\\.py$"
 
 [tool.uv]
 package = false
