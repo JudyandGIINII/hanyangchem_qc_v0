@@ -9,6 +9,7 @@
 |`t_7d493a1e`|Completed|PRD 기반 독립 계획 2개 비교·통합·문서화|Opus 5 증빙 확인, 비교표/통합 계획/전수 추적, Alfred R1 formal+substantive PASS, DEVLOG/링크 검증 완료|
 |`t_715483aa`|Completed|P0B correction candidate final independent review/acceptance|P0A/P0B complete·accepted, final independent `APPROVE` 확인|
 |P1-local-candidate|Completed / accepted|P1 repository/contract foundation|User-authorized Hermes direct final QA passed the P1 contract gate; P2 is authorized but not started|
+|FE8-frontend-fixture|Implemented / independently verified; docs-inclusive gate passed; integration pending|Deterministic synthetic eight-flow frontend workflow|Source `APPROVE` (0 blocker/major/minor), narrow UI `APPROVE` (0 high/medium/low), and post-doc full gate passed; not P2/P3 backend/domain completion|
 
 ## 검증 결과
 
@@ -21,6 +22,7 @@
 - P0B final independent review: 67 in-memory probes, HIGH 0, MEDIUM 0, `APPROVE`. generic scheme-specific URI semantics의 LOW lexical-contract note는 소비 relationship role이 exact allowlist를 사용하므로 defense-in-depth로 수용됐다.
 - Controller evidence: `127 passed`; approved real QM301 dry-run 38 templates/119 rows, discrepancy 0, DB write/apply 0; source hash/size/mtime unchanged; tracked sensitive documents 0.
 - P1 final Hermes direct QA (explicitly authorized by the user in place of unavailable Claude reapproval): root `pytest.ini` is canonical and `--collect-only -vv` confirmed repository rootdir/configfile; direct targeted test file 12 passed; full suite 172 passed with one non-blocking upstream Starlette/httpx deprecation warning. Final `make check` exited 0 for contract/client drift, Ruff, strict mypy (15 files), pytest, compileall, frontend lint/typegen/typecheck/Vitest (1)/build, migration, secret/sensitive scans, and Compose config. Frontend Corepack pnpm runs from frontend cwd with pinned pnpm `10.13.1`; typecheck is `tsc --noEmit --incremental false`, no `tsconfig.tsbuildinfo` remains, frozen install and all gates passed, and the lockfile is unchanged. Final exact-candidate Compose controller process `proc_7e03db110d2f` exited 0 with all five services healthy, expected API/web probes, PostgreSQL migration roundtrip, and cleanup passing.
+- FE8 frontend fixture closure (pre-docs): eight deterministic synthetic flows are implemented and independently approved on source (`APPROVE`, BLOCKER/MAJOR/MINOR 0) and UI (`APPROVE`, HIGH/MEDIUM/LOW 0). The source-only 10-file manifest was `5b7f222fa5bba991499c3be4e8b49231fba59bb66b1b50dcc1e43ed29ddb6335`, with unchanged review status digest `754834d90ae0c30075a0e611383abc9f99e6c157d335c7e6ddcd6ff8cb569692`; it is not docs-inclusive final evidence. Local Decimal-string/BigInt, explicit confirmation, fail-closed/reducer-only frozen snapshot, and submission/approval locks were verified. Roles are simulation only; no backend mutation, persistence, real auth, OCR/AI, ERP, apply/import, or deployment occurred. Controller `make bootstrap && make check` exited 0 (backend pytest 172; frontend Vitest 3 files/32 tests; stated static/build/scans), and the 390×844 viewport had no page-level overflow.
 - 구현 상태: `P0A_P0B_P1_COMPLETE_ACCEPTED; P2_AUTHORIZED_NOT_STARTED`
 
 ## 승인 현황
@@ -41,7 +43,7 @@
 2. P0B evidence tooling/fixture bootstrap와 ADR — Completed/accepted
 3. P1 Repository/Contract foundation — Completed/accepted through user-authorized Hermes direct QA
 4. P2 Pure domain + DB invariants — Ready/authorized; not started
-5. P3 Fixture 기반 첫 수직 Slice
+5. P3 Fixture 기반 첫 수직 Slice — FE8 frontend fixture increment independently verified; P3 backend vertical slice remains pending
 6. P4 OCR Golden/Provider benchmark
 7. P5 Core MVP
 8. P6 수집/운영/Pilot

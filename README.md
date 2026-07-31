@@ -39,6 +39,14 @@ For the default local Compose endpoints, run `docker compose up --build -d`, the
 
 P1 is complete and accepted. This verification does not claim P2 implementation or relax the real-data, external OCR/AI, non-disposable migration, deployment, or public-exposure prohibitions.
 
+## FE8 frontend fixture workflow closure
+
+The eight deterministic synthetic frontend flows—queue, receipt/canonical LOT, document candidate finalization, section-allocation matching, internal testing, submit preflight, LEAD review, and LOT/audit timeline—are implemented and independently source/UI verified. This is a fixture-only UI increment: it has no backend mutation, persistence, real authentication/authorization, OCR/AI, ERP, real-data apply/import, or deployment. Role switching is a simulation, not authentication or authorization.
+
+The local reducer uses Decimal strings and `BigInt` aggregation (not binary floating point), requires explicit manual candidate confirmation, applies fail-closed guards, and keeps its snapshot builder private to the reducer module. Its value-complete local approval snapshot records explicit `null` thresholds where applicable, is recursively frozen, and UI evidence confirmed all business controls lock after submission and approval. These are frontend-fixture behaviors only; they do not claim a production DB snapshot/audit/RBAC contract or P2/P3 backend/domain implementation.
+
+Before this documentation update, the independently reviewed source-only candidate was the exact 10-file manifest `5b7f222fa5bba991499c3be4e8b49231fba59bb66b1b50dcc1e43ed29ddb6335` (sorted path + NUL + hex file SHA-256 + newline), at `HEAD`/base/`origin/main` `bfeb7c1267a41ff95da6c1abf1a30f6d7fb56ea5` with status digest `754834d90ae0c30075a0e611383abc9f99e6c157d335c7e6ddcd6ff8cb569692`. Source review was `APPROVE` (BLOCKER/MAJOR/MINOR 0); final narrow UI review was `APPROVE` (HIGH/MEDIUM/LOW 0). This pre-doc manifest is evidence for the reviewed source candidate, not a claim about the final docs-inclusive tree.
+
 ## 작업 기록
 
 - [`docs/DEVLOG.md`](./docs/DEVLOG.md)

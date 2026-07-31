@@ -312,3 +312,27 @@ P1 remains `CANDIDATE_UNDER_HERMES_QA`, not complete or accepted; P2 remains blo
 ### Continuing boundary
 
 No real source import/apply, external OCR/AI, non-disposable migration, deployment, or public service exposure occurred. Those operations remain unauthorized; P1 acceptance and P2 authorization do not substitute for their separate product/operations approvals.
+
+## 2026-07-31 — FE8 frontend fixture workflow independent closure (pre-docs evidence)
+
+### Implemented and independently reviewed scope
+
+- The deterministic synthetic frontend workflow implements eight flows: queue, receipt/canonical LOT, explicit document-candidate finalization, section-allocation matching, exact Decimal internal testing, submit preflight, LEAD review, and LOT/audit timeline.
+- This is fixture-only: no backend or network mutation, persistence, real authentication/authorization, OCR/AI, ERP, real-data apply/import, or deployment. Role switching is a UI simulation, not authentication or authorization.
+- Business numeric semantics use Decimal strings and `BigInt`, not binary floating point. Candidate values require an explicit manual confirmation. Qualitative internal values accept only `적합`/`부적합`, and blank rows remain held.
+- The local reducer fails closed for missing or trimmed-blank values/sources/reasons/evidence, non-authoritative selected roles, invalid source status, receipt/allocation LOT/quantity/unit mismatches, profile/version or canonical-trace drift, invalid/missing thresholds, incomplete internal confirmation, duplicate semantic relationships, and post-submit mutation.
+- The value-complete local approval snapshot includes receipt/allocation, document values/evidence, confirmed matches, internal samples/specifications/thresholds/decisions, local calculation policy, overall decision/reasons/roles, and canonical trace. `buildFrozenSnapshot` is private/non-exported; the exact entire `internalTests` contract is validated; threshold keys serialize explicit `null`; and approved state/snapshot are recursively frozen. This is not a claim of a production DB snapshot, audit, RBAC, idempotency, or backend decision contract.
+
+### Independent source and UI approvals
+
+- Source approval: `APPROVE` (BLOCKER 0, MAJOR 0, MINOR 0). It independently verified the private snapshot builder, exact internal-tests contract, previous threshold/relationship/authority/snapshot closures, valid reducer approval, 31 focused existing tests, and an external 14-attack probe.
+- Final narrow UI approval: `APPROVE` (HIGH 0, MEDIUM 0, LOW 0), on standalone BUILD_ID `yxIU8dalJEwMZG9Hg5YIz`. A fresh flow finalized document candidates, confirmed matching and both internal tests, reached `제출 준비`, submitted, switched to simulated LEAD, and reached `승인·동결`; frozen summary read back canonical LOT/specification and exact submission/review reasons.
+- UI lock evidence: `SUBMITTED` disabled receipt 8/8, document 12/12, matching 1/1, internal 8/8, and submission 2/2 controls with no enabled business controls. `APPROVED` retained those locks and disabled team review 6/6. A true 390×844 viewport had inner/document/body width 390 with no page-level overflow.
+- Both reviews verified the same source-only candidate before and after: 10-file manifest `5b7f222fa5bba991499c3be4e8b49231fba59bb66b1b50dcc1e43ed29ddb6335` (sorted path + NUL + hex SHA-256(file) + newline), `HEAD`/base/`origin/main` `bfeb7c1267a41ff95da6c1abf1a30f6d7fb56ea5`, and status digest `754834d90ae0c30075a0e611383abc9f99e6c157d335c7e6ddcd6ff8cb569692`. It is pre-documentation source evidence only, not a docs-inclusive final-manifest claim. Earlier `6b79...`, `4447...`, `0797...`, `987956...`, `b96da...`, and `97c508...` candidates are superseded and not final evidence.
+
+### Controller verification before documentation
+
+- `make bootstrap && make check` — exit 0. It covered backend pytest 172 passed (one upstream Starlette/httpx deprecation warning), Ruff, strict mypy across 15 files, compileall, generated-client drift, migrations, secret/sensitive scans, Compose config, frozen pnpm install, ESLint, next typegen, artifact-free tsc, frontend Vitest 3 files/32 tests, and production build.
+- `git diff --check` — exit 0. The protected P0B importer and masked dry-run integration test were byte-identical to accepted base `bfeb7c1267a41ff95da6c1abf1a30f6d7fb56ea5`; isolated `/tmp/hanyang_p2` was not imported. The controller active public-surface probe also passed.
+
+P0A/P0B/P1 remain complete/accepted and P2 remains authorized/not started. After this documentation sync, `make bootstrap && make check` again exited 0 with the same backend 172/frontend 32 and static/build/scan results, so the docs-inclusive controller gate passed. This verified fixture increment does not complete P2, P3, backend/domain work, real auth, real production support, Git integration, push, or deployment; those broader boundaries remain pending.
