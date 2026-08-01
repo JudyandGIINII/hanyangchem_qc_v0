@@ -9,7 +9,7 @@ PRD: 한양화학 수입검사 디지털화 및 LOT 추적 시스템
 > **제품 범위:** 한양화학에 입고되는 모든 원자재/부자재   
 > **문서 목적:** 다른 AI 개발 에이전트 또는 개발팀이 본 문서만으로 시스템 구조, 업무 흐름, 데이터 모델, 화면, 판정 규칙, 테스트와 인수 조건을 일관되게 구현하도록 한다.
 
-> **구현 증거 상태 (2026-08-01):** P0A/P0B/P1/P2에 이어 synthetic P3 source candidate도 Hermes controller 독립 QA를 통과해 source accepted다. 이는 이 PRD의 제품·운영 승인이나 전체 MVP 완료를 뜻하지 않는다. 문서 작성 시점 P3는 base `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf` 위의 uncommitted/unintegrated/unpushed exact candidate이며, P4/P5는 시작하지 않았다. 실데이터 apply/import, 외부 OCR/AI, production migration·DB-role activation, 배포·release·public service는 계속 미승인이다.
+> **구현 증거 상태 (2026-08-01):** P0A/P0B/P1/P2/P3 source increments는 complete·accepted다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` (`feat: complete P3 vertical slice`; 52 files, 8911 insertions, 119 deletions)는 fresh baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`에서 merge commit·rebase 없이 fast-forward 통합됐고 `origin/main`에 전달됐다. Post-fetch local `main`, `origin/main`, remote `main`은 모두 이 commit과 같고 base/source commit은 모두 `origin/main`의 ancestor며, main/candidate worktree는 이 docs-only reconciliation 직전 clean으로 검증됐다. Git history가 live tip의 정본이다. 이는 이 PRD의 제품·운영 승인이나 전체 MVP 완료를 뜻하지 않는다. P4/P5는 시작하지 않았고, 실데이터 apply/import, 외부 OCR/AI, production/non-disposable migration·DB-role activation, 배포·release·public service·production readiness는 계속 미승인이다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 production 활성화 전 재검토할 accepted debt다.
 
   
 

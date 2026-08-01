@@ -1,12 +1,12 @@
 # 한양화학 수입검사 디지털화 및 LOT 추적 시스템 — 통합 구현 계획
 
-**문서 상태:** `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED_P3_GIT_INTEGRATION_PENDING`
+**문서 상태:** `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED_P3_DELIVERED_TO_ORIGIN_MAIN`
 **정본 요구사항:** `Prd.md`  
 **독립 입력:** `2026-07-30-hermes-independent-plan.md`, `2026-07-30-claude-opus5-independent-plan.md`  
 **요구사항 추적 정본:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md) — 52개 FR, UI/매칭/데이터/API/보고서, 보안/감사/NFR/OCR, AT/DoD를 Phase·owner·planned test·gate에 연결  
 **독립 QA:** [`../reviews/2026-07-30-integrated-plan-alfred-qa.md`](../reviews/2026-07-30-integrated-plan-alfred-qa.md) — Alfred R1 formal/substantive **PASS**, 이전 HIGH/MEDIUM 5건 모두 `RESOLVED`, 신규 HIGH/MEDIUM blocker 0  
 **작성 원칙:** 두 계획의 공통 결론과 상호 보완되는 장점만 채택했다. 충돌 사항은 PRD의 fail-closed 원칙, 데이터 무결성, 실행 가능성 순으로 판정했다.  
-**권한 경계:** AP-01~05는 승인됐다. P0A/P0B/P1/P2/P3 source increments는 complete·accepted이고 P2는 독립 Hermes QA와 final Claude source-diff gate를 통과한 뒤 별도 Git 승인으로 committed, fresh-main integrated, `origin/main`에 delivered 됐다. 2026-08-01 별도 사용자 승인에 따라 구현한 P3 수직 Slice도 final independent backend/UI/API review와 Hermes controller QA를 통과했다. 다만 P3는 이 문서 작성 시점 uncommitted/unintegrated/unpushed exact candidate이며, source acceptance는 Git integration, deployment, release 또는 운영 활성화를 뜻하지 않는다. P4/P5는 unstarted이고 실데이터 apply/import, 외부 OCR/AI, 비일회성/production migration, production DB-role activation, public service exposure는 미승인이다.
+**권한 경계:** AP-01~05는 승인됐다. P0A/P0B/P1/P2/P3 source increments는 complete·accepted이고 P2와 P3는 각각 별도 Git 승인으로 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` (52 files, 8911 insertions, 119 deletions)는 clean fresh baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`에서 merge commit·rebase 없이 fast-forward 통합됐고 fresh integrated gates와 push/post-fetch equality·ancestry 검증을 통과했다. Git history가 live tip의 정본이다. P4/P5는 unstarted이고 실데이터 apply/import, 외부 OCR/AI, 비일회성/production migration, production DB-role activation, public service exposure, deployment, release, production readiness는 미승인이다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt다.
 
 ---
 
@@ -59,7 +59,7 @@
 |AP-07|판정 정책 기본|누락·미매핑·저신뢰·자체검사 미완은 `ON_HOLD`; 불명 규격은 `MANUAL`|순수 엔진 fail-closed 테스트|
 |AP-08|생산 전환 조건|AT/DoD, UAT, 권한 검토, backup/restore rehearsal, RPO/RTO 승인 후 별도 전환 승인|로컬 파일럿까지만|
 
-AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B/P1/P2/P3 source increments는 complete·accepted이고 각 source gate가 통과했다. P3는 2026-08-01 별도 구현 승인과 최종 독립 review/controller QA를 완료했지만 exact-candidate Git integration은 아직 수행하지 않았다. AP-06~08의 파일럿/생산 활성화, P4/P5 착수, 실데이터 apply/import, 외부 OCR/AI, 비일회성/production migration, production DB-role activation, 배포와 서비스 공개는 별도 승인 대상이며 현재 blocked/미승인이다.
+AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B/P1/P2/P3 source increments는 complete·accepted이고 각 source gate가 통과했다. P3는 2026-08-01 별도 구현 승인과 최종 독립 review/controller QA를 완료한 후 source commit `91465f0413d0c0ca2633577078ec1300a6096442`로 committed, fresh-main fast-forward integrated, `origin/main`에 delivered 됐다. AP-06~08의 파일럿/생산 활성화, P4/P5 착수, 실데이터 apply/import, 외부 OCR/AI, 비일회성/production migration, production DB-role activation, 배포와 서비스 공개는 별도 승인 대상이며 현재 blocked/미승인이다.
 
 ## 4. 목표 아키텍처
 
@@ -220,7 +220,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P2 — Pure domain + DB invariants
 
-**선행:** independently accepted P1 contract gate (충족). **실행 상태:** P2.1–P2.8은 독립 Hermes QA와 final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1) 후 source-complete·accepted다. 별도 명시적 사용자 승인으로 P2는 committed, fresh-main clean integration 되었고 source commit `996056b`와 first integration-documentation commit `58e963c`가 `origin/main`에 delivered 됐다. `58e963c`는 verified first-push/integration-evidence commit 및 durable ancestor이고, 이 post-push docs reconciliation은 later descendant이며 Git history가 live tip의 정본이다. 이후 별도 승인된 P3도 source-complete·accepted 상태에 도달했으나 Git integration은 아직 수행하지 않았다.
+**선행:** independently accepted P1 contract gate (충족). **실행 상태:** P2.1–P2.8은 독립 Hermes QA와 final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1) 후 source-complete·accepted다. 별도 명시적 사용자 승인으로 P2는 committed, fresh-main clean integration 되었고 source commit `996056b`와 first integration-documentation commit `58e963c`가 `origin/main`에 delivered 됐다. `58e963c`는 verified first-push/integration-evidence commit 및 durable ancestor이고 Git history가 live tip의 정본이다. 이후 별도 승인된 P3도 source-complete·accepted, committed, fresh-main fast-forward integrated, `origin/main` delivered 상태에 도달했다.
 **목표:** UI/OCR 전에 정본 모델과 fail-closed 규칙을 증명한다.
 
 |Task|의존|구현/테스트|
@@ -252,7 +252,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P3 — 첫 작동 수직 Slice
 
-**선행:** accepted P2 (충족). **현재 gate:** P3 구현은 별도 명시적으로 승인됐고 final independent backend/UI/API review와 Hermes controller QA를 통과해 source complete·accepted다. 문서 작성 시점에는 아직 uncommitted/unintegrated/unpushed exact candidate이며 Git integration 대기 상태다.
+**선행:** accepted P2 (충족). **현재 gate:** P3 구현은 별도 명시적으로 승인됐고 final independent backend/UI/API review와 Hermes controller QA를 통과해 source complete·accepted다. Source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 fresh baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`에서 fast-forward 통합되어 fresh integrated gate를 통과한 뒤 `origin/main`에 delivered 됐다.
 **범위:** 염화칼슘 비드 1개 품목/기준/실제 허가 fixture. 모델은 일반화하되 다른 문서 유형 UI는 만들지 않는다.
 
 1. 검사자가 수동 입고, 정본 LOT, 입고 배분을 등록한다.
@@ -291,7 +291,9 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 **2026-08-01 final DB serialization/immutability and source-acceptance evidence:** 모든 supplier/internal/sample evidence I/U/D는 deterministic old/new parent-case lock 뒤 terminality를 검사해 approval과 직렬화한다. Extraction run/field/section/link I/U/D/reparent도 deterministic old/new authoritative-run lock 뒤 `CONFIRMED` 불변성을 검사하며, legitimate first confirm과 failed-confirm rollback을 유지하고 direct app-role cross-LOT rebind를 거부한다. Final independent backend review는 P3 PostgreSQL 67, mutation-first reverse-order probe 6 cycles, terminal-first focused 27, P2 regression 10, substantive gates backend 346/77 deselected·mypy 39·frontend 32·migration 4를 통과해 blocker/major/medium 0이었다. Final independent UI/API review는 real Playwright 3/3, 별도 live-stack desktop 및 375×812 smoke, intake 201+409·inspection 201+409·approval 200+409, byte-identical replay, invalid upload 422/413 residue 0, P3 API 67, repository fingerprint unchanged, cleanup 0/0/0/0으로 `PASS`였다. Hermes controller도 `make bootstrap && make check`, P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3, `test_db_serialization.py` 27 tests × 3 fresh cycles = 81을 독립 재검증했다. Docker HYC containers/networks/volumes는 0/0/0이고 user-owned n8n만 running 상태로 untouched였다. Historical blocker/major는 모두 fixed다.
 
-**Exact-candidate freeze/Git boundary:** base HEAD는 `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`다. Pre-doc-final freeze는 changed/untracked 50 files, source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`였고, 이 문서 변경 이후 hash라고 주장하지 않는다. P3는 source accepted이며 exact-candidate commit과 fresh-main fast-forward integration 준비가 됐지만 문서 작성 시점에는 uncommitted/unintegrated/unpushed다. N-1/N-2/N-5와 P2 N-M3는 accepted non-production debt이고 P4/P5는 unstarted다.
+**Exact-candidate freeze/Git boundary (historical pre-integration checkpoint):** base HEAD는 `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`다. Pre-doc-final freeze는 changed/untracked 50 files, source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`였고, 이 문서 변경 이후 hash라고 주장하지 않는다. 당시 P3는 source accepted이며 exact-candidate commit과 fresh-main fast-forward integration 준비가 됐지만 uncommitted/unintegrated/unpushed였다.
+
+**2026-08-01 post-integration closure:** P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` (`feat: complete P3 vertical slice`; exactly 52 files, 8911 insertions, 119 deletions)는 clean local main/`origin/main` baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`에서 `git merge --ff-only` 방식으로 merge commit·rebase 없이 통합됐다. Fresh integrated bootstrap/check, Ruff, mypy 39, backend 346/77, frontend 32/build, migration 4, scans/Compose, P2/P3 PostgreSQL 10/67, real Playwright 3/3이 모두 통과했고 HYC cleanup은 containers/networks/volumes 0/0/0이며 n8n은 untouched였다. Push `b7bc4a8..91465f0 main -> main` 후 local main, `origin/main`, remote main이 모두 source commit과 같음, base/source ancestry, 이 docs-only reconciliation 직전 main/candidate clean 상태를 검증했다. N-1/N-2/N-5와 P2 N-M3는 accepted non-production debt이고 P4/P5는 unstarted다. 배포·release·public service·실데이터·외부 OCR/AI·production/non-disposable migration·production DB-role activation·production readiness는 여전히 미승인이다.
 
 ### P4 — OCR Golden/Provider benchmark
 
@@ -546,6 +548,6 @@ CI/golden에서는 실제 OCR 외부 호출을 금지한다. 기대 결과는 ex
 - [x] P3 final idempotency/upload builder gate: intake/inspection/approval no-row first-reservation savepoint races, same/different payload 409 contracts, byte-stable replay, typed empty 422/over-limit 413 with exact residue cleanup
 - [x] P3 final DB serialization/immutability builder gate: deterministic old/new parent locks for every evidence and extraction-lineage I/U/D/reparent operation; repeated approval/confirmation races, confirmed direct app-role mutation/cross-LOT rebind denial, pending→confirmed preservation, failed-confirm rollback, migration runtime-object roundtrip
 - [x] P3 independent backend/UI/API review and Hermes controller QA source gate
-- [ ] P3 exact-candidate commit and fresh-main fast-forward integration gate
+- [x] P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` fresh-main fast-forward integration, fresh gates, push, and post-fetch equality/ancestry gate
 
-**현재 상태 (2026-08-01 P3 final source acceptance):** `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED_P3_GIT_INTEGRATION_PENDING`. P2는 complete/accepted/committed/fresh-main integrated/원격 delivered 상태를 유지한다. P3는 모든 historical blocker/major가 fixed되고 independent backend/UI/API review와 Hermes controller QA를 통과했다. Final counts는 backend 346/77 PostgreSQL deselected, mypy 39, frontend 32, migration 4, P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3/3, focused serialization 27×3=81이다. Alembic head는 `20260801_0004`이고 frozen P2 migrations는 byte-identical이다. N-1/N-2/N-5와 N-M3는 accepted non-production debt다. P3는 source accepted이나 문서 작성 시점 uncommitted/unintegrated/unpushed이며, separately authorized exact-candidate commit과 fresh-main fast-forward integration만 다음 안전 단계다. P4/P5는 unstarted다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public exposure, deployment/release는 여전히 미승인이다.
+**현재 상태 (2026-08-01 P3 post-push closure):** `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED_P3_DELIVERED_TO_ORIGIN_MAIN`. P2와 P3는 complete/accepted/committed/fresh-main integrated/원격 delivered 상태다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 fresh integrated final counts는 backend 346/77 PostgreSQL deselected, mypy 39, frontend 32, migration 4, P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3/3이다. Alembic head는 `20260801_0004`이고 frozen P2 migrations는 byte-identical이다. Push/post-fetch equality·ancestry와 이 docs-only reconciliation 직전 main/candidate clean 상태가 검증됐고 Git history가 live tip의 정본이다. N-1/N-2/N-5와 N-M3는 accepted non-production debt다. P4/P5는 unstarted다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public exposure, deployment/release, production readiness는 여전히 미승인이다.

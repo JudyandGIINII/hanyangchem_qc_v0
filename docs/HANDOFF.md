@@ -1,6 +1,19 @@
-# P3 source-accepted exact-candidate handoff
+# P3 delivery handoff and post-push closure
 
-## 1. 인계 상태
+## 0. 현재 post-push closure
+
+- Current gate: P0A/P0B/P1/P2/P3 source complete/accepted; P3 committed, fresh-main fast-forward integrated, and delivered to `origin/main`.
+- Source commit: `91465f0413d0c0ca2633577078ec1300a6096442` (`feat: complete P3 vertical slice`), exactly 52 files, 8911 insertions, 119 deletions.
+- Parent/fresh baseline: `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. Before integration, clean local `main` and `origin/main` both equaled this commit.
+- Integration: `git merge --ff-only 91465f0413d0c0ca2633577078ec1300a6096442`; no merge commit or rebase.
+- Fresh integrated gates: `make bootstrap` and `make check`; Ruff; strict mypy 39; backend 346 passed/77 deselected; frontend Vitest 32 and Next production build; migration contract 4; scans/Compose; P2 PostgreSQL 10; P3 PostgreSQL 67; real Playwright 3/3. All passed.
+- Cleanup: HYC containers/networks/volumes 0/0/0; only user-owned n8n remained running and untouched.
+- Delivery: push succeeded as `b7bc4a8..91465f0 main -> main`. After fetch, local `main`, `origin/main`, and `git ls-remote` main all equaled `91465f0413d0c0ca2633577078ec1300a6096442`; both the baseline and source commit are ancestors of `origin/main`; main and candidate worktrees were clean immediately before this documentation-only reconciliation. Git history is authoritative.
+- Boundary: this closure does not authorize or claim deployment, release, public service, real-data import/apply, external OCR/AI, production/non-disposable migration, production DB-role activation, P4/P5 start, or production readiness. Fixture-only N-1/N-2/N-5 and P2 N-M3 remain accepted debt to revisit before production activation.
+
+The sections below preserve the pre-integration handoff snapshot and its then-valid next-step instructions as historical evidence; they do not override this closure.
+
+## 1. 인계 상태 (historical pre-integration snapshot)
 
 - Worktree: `/Users/hipgiinii/orca/workspaces/한양화학_v0/hanyang-p3-vertical-20260801`
 - Branch: `JudyandGIINII/hanyang-p3-vertical-20260801`

@@ -11,7 +11,7 @@
 |P1-local-candidate|Completed / accepted|P1 repository/contract foundation|User-authorized Hermes direct final QA passed the P1 contract gate and enabled the subsequently accepted P2 source increment|
 |FE8-frontend-fixture|Completed / independently verified / delivered to `origin/main`|Deterministic synthetic eight-flow frontend workflow|Source/UI approvals, post-doc and fresh integration full gates, standalone/desktop/390px QA, active probe, remote-race, push and post-push verification passed; not P2/P3 backend/domain completion|
 |P2-domain-db-candidate|Completed / accepted / committed / fresh-main integrated / delivered to `origin/main`|P2.1–P2.8 pure domain and DB invariants|Under separate explicit user authorization, source commit `996056b` and first integration-documentation commit `58e963c` were delivered from fresh `origin/main` baseline `1e96836`. Git history is authoritative for the live tip. N-M3 remains an accepted follow-up before production DB-role activation.|
-|P3-vertical-slice-candidate|Source complete / accepted; exact-candidate Git integration pending|Synthetic calcium-chloride-bead PostgreSQL/FastAPI/Next.js vertical slice|Independent backend and UI/API reviews plus Hermes controller QA passed with blocker/major/medium 0. Backend 346/77 deselected, mypy 39, frontend 32, migration 4, P2/P3 PostgreSQL 10/67, real Playwright 3/3, focused serialization 27×3=81, live desktop/375×812 smoke, concurrency/status/replay/upload contracts, repository fingerprint, and cleanup gates are green. N-1/N-2/N-5 and P2 N-M3 remain accepted non-production debt. At document time the source-accepted candidate is still uncommitted/unintegrated/unpushed and is not deployed/released/production-ready.|
+|P3-vertical-slice-candidate|Completed / accepted / committed / fresh-main fast-forward integrated / delivered to `origin/main`|Synthetic calcium-chloride-bead PostgreSQL/FastAPI/Next.js vertical slice|Source commit `91465f0413d0c0ca2633577078ec1300a6096442` (52 files, +8911/−119) was fast-forwarded without merge commit/rebase from clean baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. Fresh integrated bootstrap/check, Ruff, mypy 39, backend 346/77, frontend 32/build, migration 4, scans/Compose, P2/P3 PostgreSQL 10/67, and Playwright 3/3 passed. Push and post-fetch equality/ancestry checks passed; both worktrees were clean before this docs-only reconciliation, and cleanup is 0/0/0 with n8n untouched. N-1/N-2/N-5 and P2 N-M3 remain accepted non-production debt; no deployment/release/production-readiness claim.|
 
 ## 검증 결과
 
@@ -35,7 +35,8 @@
 - P3 final independent source acceptance: backend review `PASS` with blocker/major/medium 0 after P3 PostgreSQL 67, mutation-first reverse-order 6 cycles, terminal-first focused 27, P2 regression 10, and substantive `make check` gates (backend 346/77 deselected, mypy 39, frontend 32, migration 4). UI/API review `PASS` after real Playwright 3/3, a separate live-stack desktop and 375×812 smoke, expected concurrent status pairs 201+409 intake, 201+409 inspection, 200+409 approval, byte-identical sequential replay, invalid-upload 422/413 with no residue, P3 API 67, unchanged repository fingerprint, and cleanup 0/0/0/0.
 - Hermes controller acceptance evidence: `make bootstrap && make check` passed Ruff, mypy 39, backend 346/77 deselected, frontend Vitest 32 and Next build, migration 4, scans and Compose; P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3, and `test_db_serialization.py` 27 tests across three fresh cycles (81 total) passed. Candidate hash remained the frozen pre-doc source value, Docker HYC containers/networks/volumes were 0/0/0, and only user-owned n8n remained running and untouched.
 - P3 pre-doc-final freeze: base HEAD `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`, 50 changed/untracked files, source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`. This is not claimed as the post-documentation hash.
-- 구현 상태: `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED; P3_GIT_INTEGRATION_PENDING`
+- P3 post-integration closure: source commit `91465f0413d0c0ca2633577078ec1300a6096442` (`feat: complete P3 vertical slice`) contains exactly 52 files, 8911 insertions, and 119 deletions. Clean local `main`/`origin/main` baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf` was fast-forwarded with `git merge --ff-only 91465f0...`, with no merge commit or rebase. Fresh integrated gates all passed: bootstrap/check, Ruff, mypy 39, backend 346/77, frontend 32/build, migration 4, scans/Compose, P2 PostgreSQL 10, P3 PostgreSQL 67, and Playwright 3/3. HYC cleanup was 0/0/0 and n8n was untouched. Push `b7bc4a8..91465f0 main -> main` succeeded; post-fetch local main, `origin/main`, and remote main all equal the full source commit, both base/source are ancestors of `origin/main`, and main/candidate worktrees were clean before this docs-only reconciliation.
+- 구현 상태: `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED; P3_DELIVERED_TO_ORIGIN_MAIN`
 
 ## 승인 현황
 
@@ -46,7 +47,7 @@
 |AP-03|canonical LOT + inbound allocation 데이터 모델|승인|
 |AP-04|Local Auth/RBAC 및 ADMIN 비승인권|승인|
 |AP-05|실 PDF/XLSX Git 커밋 금지·마스킹 fixture 정책|승인|
-|Implementation|P0A/P0B/P1/P2/P3 source increments|P0A/P0B/P1/P2/P3 source complete·accepted; P2 delivered to `origin/main`. P3 passed independent review and Hermes controller QA, but at document time remains uncommitted/unintegrated/unpushed. Product/operations gates remain unauthorized.|
+|Implementation|P0A/P0B/P1/P2/P3 source increments|P0A/P0B/P1/P2/P3 source complete·accepted; P2 and P3 committed, fresh-main integrated, and delivered to `origin/main`. Product/operations gates remain unauthorized.|
 |Still prohibited|실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포/서비스 공개|미승인|
 
 ## 실행 Backlog
@@ -55,9 +56,9 @@
 2. P0B evidence tooling/fixture bootstrap와 ADR — Completed/accepted
 3. P1 Repository/Contract foundation — Completed/accepted through user-authorized Hermes direct QA
 4. P2 Pure domain + DB invariants — Completed/accepted, committed, fresh-main integrated, and delivered to `origin/main` (`996056b`, verified first-push/integration-evidence commit `58e963c`); `58e963c` remains a durable ancestor and Git history is authoritative for the live tip; N-M3 retained as pre-production-privilege follow-up
-5. P3 Fixture 기반 첫 수직 Slice — Source complete/accepted; exact-candidate commit 및 fresh-main fast-forward integration 대기
+5. P3 Fixture 기반 첫 수직 Slice — Completed/accepted, committed as `91465f0413d0c0ca2633577078ec1300a6096442`, fresh-main fast-forward integrated, and delivered to `origin/main`
 6. P4 OCR Golden/Provider benchmark — Unstarted
 7. P5 Core MVP — Unstarted
 8. P6 수집/운영/Pilot
 
-P1/P2 gate는 통과했고 P2는 별도 Git 승인으로 `origin/main`에 delivered 됐다. P3도 독립 review와 Hermes controller QA를 통과해 source accepted지만, 문서 작성 시점에는 uncommitted/unintegrated/unpushed다. 다음 단계는 별도 권한을 가진 controller가 frozen exact candidate를 커밋하고 fresh `origin/main` 기준 fast-forward 통합 검증을 수행하는 것이다. 이는 deployment, release, production readiness 또는 운영 활성화를 뜻하지 않으며 P4/P5는 시작하지 않았다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public service exposure는 계속 시작하지 않는다.
+P1/P2/P3 source gate는 통과했고 P2와 P3는 각각 별도 Git 승인에 따라 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 Git history가 live tip의 정본이다. 이는 deployment, release, production readiness 또는 운영 활성화를 뜻하지 않으며 P4/P5는 시작하지 않았다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 유지한다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public service exposure, deployment/release는 계속 시작하지 않는다.
