@@ -1,12 +1,12 @@
 # 한양화학 수입검사 디지털화 및 LOT 추적 시스템 — 통합 구현 계획
 
-**문서 상태:** `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`
+**문서 상태:** `P0A_P0B_P1_P2_COMPLETE_ACCEPTED_P3_BLOCKED_NOT_AUTHORIZED`
 **정본 요구사항:** `Prd.md`  
 **독립 입력:** `2026-07-30-hermes-independent-plan.md`, `2026-07-30-claude-opus5-independent-plan.md`  
 **요구사항 추적 정본:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md) — 52개 FR, UI/매칭/데이터/API/보고서, 보안/감사/NFR/OCR, AT/DoD를 Phase·owner·planned test·gate에 연결  
 **독립 QA:** [`../reviews/2026-07-30-integrated-plan-alfred-qa.md`](../reviews/2026-07-30-integrated-plan-alfred-qa.md) — Alfred R1 formal/substantive **PASS**, 이전 HIGH/MEDIUM 5건 모두 `RESOLVED`, 신규 HIGH/MEDIUM blocker 0  
 **작성 원칙:** 두 계획의 공통 결론과 상호 보완되는 장점만 채택했다. 충돌 사항은 PRD의 fail-closed 원칙, 데이터 무결성, 실행 가능성 순으로 판정했다.  
-**권한 경계:** AP-01~05는 승인됐다. P0A/P0B는 complete·accepted다. P1은 Hermes independent QA 중인 candidate이며 아직 complete·accepted가 아니고, P2는 P1 contract gate 후에만 시작할 수 있으며 현재 blocked다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 승인 범위가 아니다.
+**권한 경계:** AP-01~05는 승인됐다. P0A/P0B/P1/P2는 complete·accepted이고 P2는 독립 Hermes QA와 final Claude source-diff gate를 통과했다. 이 source-gate acceptance는 commit, main integration, push, deployment, release 또는 운영 활성화를 뜻하지 않는다. P3, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 blocked/미승인이다.
 
 ---
 
@@ -59,7 +59,7 @@
 |AP-07|판정 정책 기본|누락·미매핑·저신뢰·자체검사 미완은 `ON_HOLD`; 불명 규격은 `MANUAL`|순수 엔진 fail-closed 테스트|
 |AP-08|생산 전환 조건|AT/DoD, UAT, 권한 검토, backup/restore rehearsal, RPO/RTO 승인 후 별도 전환 승인|로컬 파일럿까지만|
 
-AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B는 complete·accepted다. P1은 Hermes independent QA 중인 candidate이며 시작·완료 승인 상태가 아니다. P2는 P1 contract gate 후에만 시작할 수 있으며 현재 blocked다. AP-06~08의 파일럿/생산 활성화, 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포와 서비스 공개는 별도 승인 대상으로 유지한다.
+AP-01~05는 2026-07-30 권장 기본값대로 승인됐다. P0A/P0B/P1/P2는 complete·accepted이고 P1 contract gate와 P2 source gate가 통과했다. AP-06~08의 파일럿/생산 활성화, P3, 실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포와 서비스 공개는 별도 승인 대상이며 현재 blocked/미승인이다.
 
 ## 4. 목표 아키텍처
 
@@ -199,7 +199,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P1 — Repository/Contract foundation
 
-**선행:** AP-01~05 및 accepted P0B (충족). **실행 상태:** P1은 사용자 승인 Hermes 직접 QA 후 complete/accepted 되었고 P1 contract gate를 통과했다. P2는 authorized/unblocked 상태이나 아직 시작되지 않았다.
+**선행:** AP-01~05 및 accepted P0B (충족). **실행 상태:** P1은 사용자 승인 Hermes 직접 QA 후 complete/accepted 되었고 P1 contract gate를 통과했다. P2도 독립 Hermes QA와 final Claude source-diff gate 후 complete/accepted다.
 **목표:** 재현 가능한 개발환경과 계약을 먼저 만든다.
 
 1. `compose.yaml`, backend `uv` Python 3.12, frontend pnpm/TypeScript strict, lockfiles, CI를 생성한다. 전역 Python은 변경하지 않는다.
@@ -220,7 +220,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P2 — Pure domain + DB invariants
 
-**선행:** independently accepted P1 contract gate. P2는 이 gate 후에만 authorized이며 현재 blocked, 아직 시작하지 않았고 완료되지 않았다.
+**선행:** independently accepted P1 contract gate (충족). **실행 상태:** P2.1–P2.8은 독립 Hermes QA와 final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1) 후 source-complete·accepted다. P3는 별도 승인을 받지 않아 blocked다.
 **목표:** UI/OCR 전에 정본 모델과 fail-closed 규칙을 증명한다.
 
 |Task|의존|구현/테스트|
@@ -230,7 +230,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 |P2.3 LOT/입고 관계|P1|`material_lots`, `inbound_receipts`, `receipt_lot_allocations`; versioned identity policy/key, provisional/conflict/merge, 동시 생성, 동일 LOT 재입고·분할 입고 계약 테스트|
 |P2.4 문서/section/link|P2.3|immutable checksum, section↔allocation M:N, canonical dedupe|
 |P2.5 결과/샘플/mapping|P2.1~4|supplier/internal 분리, sample XOR FK, alias/manual confirmed|
-|P2.6 판정 엔진|P2.1/2/5|source→mapping→unit→sample→missing→overall의 순수 평가와 canonical snapshot|
+|P2.6 판정 엔진|P2.1/2/5|mapping→parse/type→unit→sample→supplier/HYC/internal decision→source→missing→overall의 순수 평가와 canonical snapshot|
 |P2.7 상태 머신|P2.3~6|document/case transition table, role/guard/reason, 엔진 3상태와 workflow 5상태 분리|
 |P2.8 승인/감사/멱등|P2.6/7|expected version, request hash, approval/snapshot/audit/outbox atomicity, correction revision|
 
@@ -248,9 +248,11 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 **게이트:** migration upgrade→downgrade→upgrade, domain infra import 0, property/boundary/state/constraint integration tests 통과.
 
+**수용된 follow-up N-M3:** 현재 스키마에서는 광범위한 직접 `inspection_cases` INSERT/UPDATE와 네 개 append-only evidence 테이블 INSERT 권한을 모두 가진 app-role DB-direct writer가 unfinalized case를 바로 `LEAD_REVIEW`로 생성한 뒤 완전하고 유효한 근거를 넣어 확정할 수 있어 중간 상태 이력을 우회할 수 있다. N1 판정 무결성, 근거 필수성, 확정 후 불변성은 유지된다. 이 defense-in-depth gap은 fixed가 아니며 production DB-role 활성화 전에 P3 correction-revision flow와 함께 재검토한다.
+
 ### P3 — 첫 작동 수직 Slice
 
-**선행:** P2.  
+**선행:** accepted P2 (충족). **현재 gate:** P3는 미승인/blocked이며 구현을 시작하지 않았다.
 **범위:** 염화칼슘 비드 1개 품목/기준/실제 허가 fixture. 모델은 일반화하되 다른 문서 유형 UI는 만들지 않는다.
 
 1. 검사자가 수동 입고, 정본 LOT, 입고 배분을 등록한다.
@@ -522,5 +524,6 @@ CI/golden에서는 실제 OCR 외부 호출을 금지한다. 기대 결과는 ex
 - [x] P0A/P0B/P1 구현 착수 승인(기존 권한)
 - [x] P0A/P0B complete·accepted 및 P1 진행 권한 확인
 - [x] P2는 P1 contract gate 후 진행 권한 확인
+- [x] P2 source gate: independent Hermes QA + final Claude `PASS` 후 complete·accepted
 
-**현재 상태 (2026-07-31 final remediation evidence/gate):** `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`. 사용자 명시 승인에 따라 Hermes가 unavailable Claude final reapproval을 직접 controller verification으로 대체했고 P1 contract gate를 통과시켰다. Final `make check`는 contract/client drift, Ruff, strict mypy 15 files, 172 pytest, compileall, frontend lint/typegen/typecheck/Vitest 1/build, migration, secret/sensitive scan, Compose config까지 exit 0이었다. Root `pytest.ini` only/no nested backend config, deterministic frontend Corepack pnpm `10.13.1` frontend-cwd execution with `tsc --noEmit --incremental false`, and final disposable Compose controller process `proc_7e03db110d2f` exit 0 (all services healthy, live/ready/API+web expected JSON probes, PostgreSQL migration roundtrip, cleanup) were Hermes evidence. P2 is authorized but not started; this plan still stops before real-data apply/import, external OCR/AI, non-disposable migration, deployment, or service exposure.
+**현재 상태 (2026-08-01 P2 final acceptance):** `P0A_P0B_P1_P2_COMPLETE_ACCEPTED_P3_BLOCKED_NOT_AUTHORIZED`. Independent Hermes evidence reproduced `make check` exit 0, backend 346 passed/10 PostgreSQL deselected, strict mypy 29 files, migration contract 4, unchanged FE8 frontend 32 plus lint/typecheck/build, scans/Compose, the disposable PostgreSQL runner's 10 passed plus upgrade→downgrade→upgrade and empty drift, and cleanup 0/0/0. Final Claude source-diff report `/tmp/hyc-p2-absolute-final-claude-review.md` returned `PASS` with BLOCKER 0, MAJOR 0, MINOR 1 and closed B1–B5, M1–M9, m1–m7, H1, N1–N3, N-M1, and N-M2. Alembic head is `20260801_0003`; frozen `20260731_0002` remains SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`. N-M3 remains an accepted, unfixed defense-in-depth follow-up with the broad DB-direct writer precondition described above and must be revisited before production DB-role activation. P3 remains blocked/unapproved, and this plan still stops before commit/main integration/push, real-data apply/import, external OCR/AI, non-disposable migration, deployment, release, or service exposure.

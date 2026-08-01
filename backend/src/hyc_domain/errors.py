@@ -1,0 +1,19 @@
+from enum import StrEnum
+
+
+class FailureCode(StrEnum):
+    INVALID_DECIMAL = "INVALID_DECIMAL"
+    INVALID_SNAPSHOT = "INVALID_SNAPSHOT"
+    UNMAPPED_RESULT = "UNMAPPED_RESULT"
+    INVALID_TRANSITION = "INVALID_TRANSITION"
+    STALE_VERSION = "STALE_VERSION"
+    IDEMPOTENCY_CONFLICT = "IDEMPOTENCY_CONFLICT"
+    APPROVAL_PRECONDITION_FAILED = "APPROVAL_PRECONDITION_FAILED"
+    AUTHORIZATION_DENIED = "AUTHORIZATION_DENIED"
+    INVALID_RULE = "INVALID_RULE"
+
+
+class CodedDomainError(ValueError):
+    """Base for errors whose external contract is a non-sensitive stable code."""
+
+    code: FailureCode

@@ -32,9 +32,21 @@ ASSIGNMENT = re.compile(
     """
 )
 URI_CREDENTIALS = re.compile(r"(?i)[a-z][a-z0-9+.-]*://[^\s:/@]+:([^\s/@?#]+)@")
-KNOWN_PLACEHOLDER_VALUES = {"***", "local-placeholder-only"}
+KNOWN_PLACEHOLDER_VALUES = {
+    "***",
+    "local-placeholder-only",
+}
 CREDENTIAL_KEY_PREFIXES = {"api", "private", "access", "auth", "secret"}
 APPROVED_FIXTURES = {
+    "compose.p2-test.yaml": (
+        "06f4dc443eef10a118e80212718cfcd353b4932c945a28d9875ef6de14072842"
+    ),
+    "backend/scripts/p2_postgres_init.sql": (
+        "60ab3f7e2fb14014257174ef47872bfaea4f046d9b33ca2cc9cf20aebb44ed5c"
+    ),
+    "backend/scripts/run_p2_postgres_tests.sh": (
+        "1aad16df84645c1b1eb9a39f590245d58e7b44e0d5327f8d509959c19d794cb6"
+    ),
     "backend/tests/integration/importers/test_spec_workbook_dry_run.py": (
         "c0799b0413f093b06de41d56f9c27b20e388cb2448ef55e39de6e78120dba801"
     )
@@ -62,7 +74,11 @@ def is_credential_key(key: str) -> bool:
     tokens = tuple(token for token in re.split(r"[._-]+", key.lower()) if token)
     return bool(tokens) and (
         tokens[-1] in {"password", "passwd", "secret", "token"}
-        or (len(tokens) > 1 and tokens[-1] == "key" and tokens[-2] in CREDENTIAL_KEY_PREFIXES)
+        or (
+            len(tokens) > 1
+            and tokens[-1] == "key"
+            and tokens[-2] in CREDENTIAL_KEY_PREFIXES
+        )
     )
 
 
@@ -97,7 +113,9 @@ def main() -> int:
         content = path.read_text(errors="replace")
         approved_fixture = is_approved_fixture(relative, content)
         for number, line in enumerate(content.splitlines(), start=1):
-            finding = credential_finding(relative, number, line, approved_fixture=approved_fixture)
+            finding = credential_finding(
+                relative, number, line, approved_fixture=approved_fixture
+            )
             if finding:
                 findings.append(finding)
     if findings:

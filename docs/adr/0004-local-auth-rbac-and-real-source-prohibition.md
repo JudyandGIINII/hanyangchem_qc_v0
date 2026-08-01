@@ -4,11 +4,11 @@
 
 ## Decision
 
-The pilot default is Local Auth with Argon2id and roles `INSPECTOR`, `LEAD`, `ADMIN`, `VIEWER`, and `SERVICE`; `ADMIN` cannot approve quality decisions. Real PDF/XLSX source files are prohibited from Git, mirrors, uploads, and external transmission; only approved hashes and masked/derived fixtures may be versioned.
+The pilot default is Local Auth with Argon2id and roles `INSPECTOR`, `LEAD`, `ADMIN`, `VIEWER`, and `SERVICE`. Only `LEAD` may approve a quality decision after inspector submission and separation-of-duty checks; `ADMIN` cannot finalize, override, or otherwise approve a quality decision. `ADMIN` participates only as the distinct master-data actor in a two-actor LOT identity merge. Real PDF/XLSX source files are prohibited from Git, mirrors, uploads, and external transmission; only approved hashes and masked/derived fixtures may be versioned.
 
 ## Consequences
 
-P0B has no authentication service implementation and stores no source body. Future approval paths must enforce role separation and audit evidence at API and database boundaries, while all source handling remains subject to the evidence prohibition.
+P0B has no authentication service implementation and stores no source body. Approval paths enforce inspector/LEAD actor separation and LEAD-only quality authority at application and database boundaries. LOT merge separately enforces distinct `LEAD` quality and `ADMIN` master-data actors; ADMIN participation never changes quality authority. All source handling remains subject to the evidence prohibition.
 
 ## Rollback and exceptions
 

@@ -1,0 +1,17 @@
+services:
+  postgres-p2-test:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: hyc_p2_test
+      POSTGRES_USER: p2_test
+      POSTGRES_PASSWORD: TEST_FIXTURE_ONLY_P2_OWNER_PASSWORD
+    ports: ["127.0.0.1:${HYC_P2_TEST_POSTGRES_PORT}:5432"]
+    tmpfs:
+      - /var/lib/postgresql/data
+    volumes:
+      - ./backend/scripts/p2_postgres_init.sql:/docker-entrypoint-initdb.d/00-p2-app-role.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U p2_test -d hyc_p2_test"]
+      interval: 2s
+      timeout: 2s
+      retries: 20

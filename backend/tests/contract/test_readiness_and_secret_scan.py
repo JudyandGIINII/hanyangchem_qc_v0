@@ -111,13 +111,16 @@ def test_secret_scan_rejects_generic_allowance_comments_and_uri_credentials() ->
     )
     for key in keys:
         assert credential_finding("docs/sentinel.md", 1, f"{key}={suffix}")
-    assert credential_finding(
-        "docs/sentinel.json", 1, '{"OPENAI_' + 'API_KEY": "value-for-test"}'
-    )
+    assert credential_finding("docs/sentinel.json", 1, '{"OPENAI_' + 'API_KEY": "value-for-test"}')
 
 
-def test_secret_scan_allows_only_known_local_placeholders() -> None:
+def test_secret_scan_allows_only_global_placeholders_without_fixture_binding() -> None:
     assert credential_finding(".env.example", 1, "password=local-placeholder-only") is None
+    assert credential_finding(
+        "compose.p2-test.yaml",
+        1,
+        "POSTGRES_PASSWORD=TEST_FIXTURE_ONLY_P2_OWNER_PASSWORD",
+    )
     assert (
         credential_finding(
             "compose.yaml", 1, "postgresql://local_user:local-placeholder-only@postgres/hyc"
@@ -145,11 +148,20 @@ def test_secret_scan_fixture_policy_is_path_and_content_bound() -> None:
 
 
 def test_secret_scan_approved_fixture_cannot_be_renamed_or_shifted() -> None:
+    repository_root = Path(__file__).resolve().parents[3]
     fixture_path = Path("backend/tests/integration/importers/test_spec_workbook_dry_run.py")
-    fixture_content = fixture_path.read_text()
+    fixture_content = (repository_root / fixture_path).read_text()
     assert is_approved_fixture(fixture_path.as_posix(), fixture_content)
     assert not is_approved_fixture("backend/tests/renamed.py", fixture_content)
     assert not is_approved_fixture(fixture_path.as_posix(), "\n" + fixture_content)
+    for synthetic_path in (
+        Path("compose.p2-test.yaml"),
+        Path("backend/scripts/p2_postgres_init.sql"),
+        Path("backend/scripts/run_p2_postgres_tests.sh"),
+    ):
+        content = (repository_root / synthetic_path).read_text()
+        assert is_approved_fixture(synthetic_path.as_posix(), content)
+        assert not is_approved_fixture(synthetic_path.as_posix(), content + "\n")
 
 
 def test_sensitive_document_prevention_covers_all_required_extensions() -> None:

@@ -1,17 +1,23 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
 
 config = context.config
-target_metadata = None
+backend_src = Path(__file__).resolve().parents[1] / "src"
+if str(backend_src) not in sys.path:
+    sys.path.insert(0, str(backend_src))
+from hyc_data.models import Base  # noqa: E402
+
+target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    context.configure(
-        url=config.get_main_option("sqlalchemy.url"), target_metadata=target_metadata
-    )
+    context.configure(url=config.get_main_option("sqlalchemy.url"), target_metadata=target_metadata)
     with context.begin_transaction():
         context.run_migrations()
 

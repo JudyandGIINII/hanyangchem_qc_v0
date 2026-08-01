@@ -1,6 +1,6 @@
 # 한양화학 v0 — 수입검사 디지털화 및 LOT 추적
 
-현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1은 complete/accepted다. 사용자 명시 승인에 따른 Hermes 직접 최종 QA로 P1 contract gate가 통과됐으며, P2는 authorized but not started다.
+현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2는 source gate에서 complete/accepted다. P2는 독립 Hermes QA와 final Claude source-diff `PASS` 후 accepted 되었고, P3는 blocked/not authorized다.
 
 ## 현재 상태
 
@@ -12,7 +12,10 @@
 - 독립 계획 QA: [`docs/reviews/2026-07-30-integrated-plan-alfred-qa.md`](./docs/reviews/2026-07-30-integrated-plan-alfred-qa.md) — formal/substantive PASS
 - P0A original read-only freeze and controller reverification: [`docs/evidence/2026-07-30-p0a-evidence-freeze.md`](./docs/evidence/2026-07-30-p0a-evidence-freeze.md), [`docs/evidence/2026-07-31-p0a-controller-reverification.json`](./docs/evidence/2026-07-31-p0a-controller-reverification.json)
 - P0B final independent review: `APPROVE` — 67 in-memory probes, HIGH 0, MEDIUM 0; one accepted LOW generic scheme-specific URI-semantics note is defense-in-depth because consumed relationship roles use exact allowlists
-- 구현 상태: `P0A_P0B_P1_COMPLETE_ACCEPTED; P2_AUTHORIZED_NOT_STARTED`
+- 구현 상태: `P0A_P0B_P1_P2_COMPLETE_ACCEPTED; P3_BLOCKED_NOT_AUTHORIZED`
+- P2 final evidence: Hermes QA green; final Claude `PASS` (BLOCKER 0, MAJOR 0, MINOR 1); backend `346 passed, 10 PostgreSQL deselected`; strict mypy 29 files; migration contract 4; frontend 32 plus lint/typecheck/build; PostgreSQL 10 plus upgrade→downgrade→upgrade and empty drift
+- P2 migration state: Alembic head `20260801_0003`; frozen `20260731_0002` SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`
+- Accepted follow-up N-M3 is not fixed: an app-role DB-direct writer needs broad direct case-table INSERT/UPDATE and all required evidence-table INSERT privileges to create an unfinalized case already at `LEAD_REVIEW` and finalize it with complete valid evidence, bypassing intermediate status history. Decision integrity, mandatory evidence, and finalized-row immutability still hold; revisit this defense-in-depth gap before production DB-role activation
 
 ## 핵심 안전 원칙
 
@@ -25,7 +28,7 @@
 
 ## 다음 단계와 계속되는 경계
 
-P1 contract gate는 2026-07-31 Hermes 직접 QA로 통과했다. P2는 이제 시작 권한이 있지만 아직 시작하거나 완료되지 않았다. 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 계속 미승인이다.
+P1 contract gate는 2026-07-31 Hermes 직접 QA로 통과했고, P2도 독립 Hermes+Claude source gate를 통과해 complete/accepted다. P3는 blocked/not authorized며, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포·release·서비스 공개는 계속 미승인이다. 이 README 문서 조정은 P2 source increment의 commit, main integration, push, deployment 또는 운영 활성화를 주장하지 않는다.
 
 ## P1 accepted verification
 
@@ -37,7 +40,7 @@ Frontend verification is deterministic: `typecheck` runs `tsc --noEmit --increme
 
 For the default local Compose endpoints, run `docker compose up --build -d`, then use `curl -fsS http://127.0.0.1:18000/health/ready` and `curl -fsS http://127.0.0.1:13000/api/health`. Set `HYC_API_HOST_PORT` and `HYC_WEB_HOST_PORT` in the local environment or `.env` before startup if those default host ports are occupied; container ports stay 8000 and 3000.
 
-P1 is complete and accepted. This verification does not claim P2 implementation or relax the real-data, external OCR/AI, non-disposable migration, deployment, or public-exposure prohibitions.
+P1 is complete and accepted. At that 2026-07-31 checkpoint, this P1 verification did not itself claim P2 implementation; the later accepted P2 source gate is summarized in the current-state sections above. It did not relax the real-data, external OCR/AI, non-disposable migration, deployment, or public-exposure prohibitions.
 
 ## FE8 frontend fixture workflow closure
 

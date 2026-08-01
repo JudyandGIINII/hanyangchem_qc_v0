@@ -33,6 +33,10 @@ extend-exclude = [
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]
 
+[tool.ruff.lint.per-file-ignores]
+"alembic/versions/20260731_0002_p2_domain_invariants.py" = ["E501"]
+"tests/integration/db/test_p2_postgres_invariants.py" = ["E501"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = true

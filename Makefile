@@ -1,4 +1,4 @@
-.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check secret-scan sensitive-documents-check check
+.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check secret-scan sensitive-documents-check check
 
 bootstrap:
 	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv sync --project backend --extra dev
@@ -15,7 +15,7 @@ contracts-check:
 backend-check:
 	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/alembic backend/tests scripts
 	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts backend/alembic scripts
-	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend pytest -q
+	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend pytest -q -m "not postgres"
 	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend python -m compileall -q backend/src backend/scripts backend/alembic backend/tests scripts
 
 frontend-check:
@@ -26,7 +26,10 @@ frontend-check:
 	cd frontend && corepack pnpm build
 
 migration-check:
-	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend python backend/scripts/check_migrations.py
+	XDG_CACHE_HOME="$(PWD)/.uv-cache" uv run --project backend pytest -q backend/tests/contract/test_migrations.py
+
+p2-postgres-check:
+	XDG_CACHE_HOME="$(PWD)/.uv-cache" sh backend/scripts/run_p2_postgres_tests.sh
 
 secret-scan:
 	python3 scripts/scan_secrets.py

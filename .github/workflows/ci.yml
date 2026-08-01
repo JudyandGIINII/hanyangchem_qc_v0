@@ -1,9 +1,7 @@
 name: contract-foundation-ci
-
 on:
   push:
   pull_request:
-
 jobs:
   backend:
     runs-on: ubuntu-latest
@@ -15,7 +13,8 @@ jobs:
       - run: uv sync --project backend --extra dev
       - run: uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/alembic backend/tests scripts
       - run: uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts backend/alembic scripts
-      - run: uv run --project backend pytest -q
+      - run: uv run --project backend pytest -q -m "not postgres"
+      - run: sh backend/scripts/run_p2_postgres_tests.sh
       - run: uv run --project backend python -m compileall -q backend/src backend/scripts backend/alembic backend/tests scripts
       - run: uv run --project backend python backend/scripts/generate_contracts.py --check
       - run: uv run --project backend python backend/scripts/check_migrations.py

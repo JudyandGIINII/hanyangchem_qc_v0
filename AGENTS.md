@@ -3,15 +3,16 @@
 ## Authority
 
 - `Prd.md` is the canonical product requirement.
-- `docs/plans/2026-07-30-integrated-implementation-plan.md` is the approved delivery contract through P2: P1 is ready after accepted P0B, and P2 remains gated on the P1 contract gate.
+- `docs/plans/2026-07-30-integrated-implementation-plan.md` is the approved delivery contract through P2: P0A through P2 are complete and accepted at their source gates, while P3 remains separately gated and unauthorized.
 - `docs/TRACEABILITY_MATRIX.md` is the requirement-to-phase/owner/test/gate mapping; keep it synchronized with PRD and the integrated plan.
 - When the plan and PRD conflict, stop and escalate; do not silently reinterpret the PRD.
 
 ## Approval boundary
 
-- Current state is `P0A_P0B_P1_COMPLETE_ACCEPTED_P2_AUTHORIZED_NOT_STARTED`.
+- Current state is `P0A_P0B_P1_P2_COMPLETE_ACCEPTED_P3_BLOCKED_NOT_AUTHORIZED`.
 - AP-01 through AP-05 remain approved. P0A and P0B are complete and accepted. P0B final independent review returned `APPROVE` (HIGH 0, MEDIUM 0); its one LOW lexical-contract note was accepted as defense-in-depth because consumed relationship roles use exact allowlists.
-- Under the user's explicit 2026-07-31 authorization, Hermes directly completed the final controller verification in place of the unavailable Claude reapproval, and the P1 contract gate passed. P1 is complete and accepted. P2 is authorized and unblocked, but has not started and is not complete.
+- Under the user's explicit 2026-07-31 authorization, Hermes directly completed the final controller verification in place of the unavailable Claude reapproval, and the P1 contract gate passed. P1 is complete and accepted. P2 is source-complete and accepted after independent Hermes QA and the final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1). P3 is not authorized and remains blocked.
+- P2 follow-up N-M3 is accepted technical debt, not a fixed finding: an app-role DB-direct writer with broad direct case-table and evidence-table privileges can create an unfinalized case already at `LEAD_REVIEW` and then finalize it with complete valid evidence, bypassing intermediate status history. Decision integrity and evidence/immutability controls still hold; revisit this defense-in-depth gap before any production DB-role activation.
 - P0B was limited to read-only evidence freeze plus derived fixture/importer dry-run tooling. Real-data apply/import, external OCR/AI calls, migration against non-disposable data, deployment, and service exposure remain unauthorized.
 - A test pass or feature flag does not substitute for a product/operations approval gate.
 

@@ -336,3 +336,139 @@ No real source import/apply, external OCR/AI, non-disposable migration, deployme
 - `git diff --check` — exit 0. The protected P0B importer and masked dry-run integration test were byte-identical to accepted base `bfeb7c1267a41ff95da6c1abf1a30f6d7fb56ea5`; isolated `/tmp/hanyang_p2` was not imported. The controller active public-surface probe also passed.
 
 P0A/P0B/P1 remain complete/accepted and P2 remains authorized/not started. After documentation sync, `make bootstrap && make check` again exited 0 with backend 172/frontend 32 and the static/build/scan results, so the docs-inclusive controller gate passed. Feature commit `e79f00ca367bb43d3c0d370d228b9dad0e57e99c` was then fast-forwarded from fresh `origin/main` base `bfeb7c1267a41ff95da6c1abf1a30f6d7fb56ea5` into an isolated Orca integration worktree. The fresh tree passed frozen bootstrap and the full gate, standalone `/` and `/api/health` returned HTTP 200 on loopback BUILD_ID `U9jrUNlnVYwIknPKm1GwF`, desktop visual QA found no visible defect, true 390×844 QA measured inner/document/body width 390 with no page-level overflow, and the active adversarial probe passed 32 asserted results. Push-time fetch confirmed `origin/main` still equaled the expected base and was the merge base of the clean integration HEAD; the fast-forward delivery to `origin/main` and post-push remote equality/ancestry checks passed. This verified fixture increment does not complete P2, P3, backend/domain work, real auth, real production support, or deployment.
+
+## 2026-08-01 — P2 pure-domain/DB implementation candidate
+
+### Implemented candidate scope
+
+- Ported the useful parts of the older read-only `/tmp/hanyang_p2` candidate onto current `origin/main` without overwriting the delivered FE8 frontend. Added standard-library-only Decimal/unit, specification selection, canonical LOT identity, judgment, workflow, canonical snapshot, stable failure-code, and lease-recovery contracts.
+- Added the initial SQLAlchemy persistence models and frozen Alembic revision `20260731_0002`. This pre-review candidate attempted PostgreSQL serialization/immutability/privilege guards, but Claude later proved that its app role was not operationally representative, snapshot/finalization authority was incomplete, and DRAFT finalization remained possible. Those initial capability claims are retracted and superseded by the remediation entry below; the command measurements remain historical evidence only.
+- Added portable boundary/state/constraint/idempotency/snapshot tests and PostgreSQL owner/app-role/concurrency/trigger tests. The PostgreSQL runner uses a unique Compose project, loopback-only random port, synthetic credentials, tmpfs storage, upgrade→downgrade→upgrade migration replay, and cleanup assertions.
+- Preserved supplier specification/decision, HYC decision, and internal result paths as separate values. The engine emits only `ACCEPTED / REJECTED / ON_HOLD`; `RETEST / SPECIAL_ACCEPTED` remain workflow-only transitions requiring the quality-manager role, reason where applicable, and deterministic re-evaluation.
+
+### Actual builder verification
+
+- `uv lock --project backend --check` — exit 0; `XDG_CACHE_HOME="$PWD/.uv-cache" uv sync --project backend --extra dev` — exit 0.
+- Focused portable P2 gate — `136 passed`; Ruff passed and strict mypy passed across 28 source files.
+- `sh backend/scripts/run_p2_postgres_tests.sh` — exit 0: 7 PostgreSQL tests passed, followed by the explicit PostgreSQL migration upgrade→downgrade→upgrade cycle; the unique Compose container/network/volume cleanup assertions passed.
+- `make check` — exit 0: contract/client drift, Ruff, strict mypy (28 source files), backend pytest `307 passed, 7 deselected` with one upstream Starlette/httpx warning, compileall, frontend lint/typegen/typecheck, frontend Vitest 3 files/`32 passed`, production build, migration contract `4 passed`, secret scan, sensitive-document scan, and Compose rendering all passed.
+- Protected P0B SHA-256 values remain `61caebd06f8ee7697c77a2f3c07265e1578b10924fea6fbd74e53bd76f818e23` for `backend/scripts/import_spec_workbook.py` and `c0799b0413f093b06de41d56f9c27b20e388cb2448ef55e39de6e78120dba801` for its integration test, byte-identical to current `origin/main`.
+
+### Gate and continuing boundary
+
+This is `P2_IMPLEMENTATION_CANDIDATE_QA_PENDING`, not P2 complete or accepted. Hermes and Claude independent QA remain required, P3 remains blocked, and FE8 remains a separate verified fixture-only frontend increment. No real source PDF/XLS/XLSX content was accessed or copied; no real-data apply/import, external OCR/AI, non-disposable migration, Git add/commit/push/merge/reset/rebase/stash, deployment, or service exposure occurred.
+
+## 2026-08-01 — P2 Claude review remediation candidate
+
+Claude's read-only review returned `REQUEST_CHANGES` with 5 BLOCKER, 9 MAJOR, and 7 MINOR findings. The earlier P2 builder entry above is retained as historical measurement evidence, but its five capability claims about AP-03 identity, authoritative finalization, value-complete snapshots, exact/context-independent Decimal behavior, and realistic PostgreSQL privilege/finalization guards were overstated and are superseded by this remediation record.
+
+The remediation implements the exact AP-03 v1 key and conflict evidence, LEAD-only separated quality approval with distinct ADMIN master-data participation only for LOT merge, persisted-input in-transaction re-evaluation, internally derived canonical snapshots with repository/PostgreSQL hash verification, versioned local Decimal context, realistic app-role DML/append-only privileges, ACTIVE/effective spec enforcement, bounded merged-LOT resolution, strict numeric persistence, DB allowlists/operator parity, coded optimistic/authorization failures, explicit BOTH_ALL and ON_HOLD precedence, SQLAlchemy versioning, the complete deterministic 15-state workflow, and every requested minor/negative gate. ADR 0003/0004, the integrated plan, traceability, Kanban, and the detailed closure artifact were synchronized.
+
+Post-remediation verification (superseded by the final re-review remediation measurement below): `uv lock --project backend --check` and `uv sync --project backend --extra dev` exited 0; the final `make check` exited 0 with Ruff, strict mypy 28 files, backend 344 passed/9 PostgreSQL deselected, migration contract 4 passed, FE8 frontend 32 passed plus build, scans, and Compose rendering. The final disposable PostgreSQL runner exited 0 with 9 tests, upgrade→downgrade→upgrade, empty autogenerate diff, realistic privilege/denial probes, and empty container/network/volume cleanup inventory. `git diff --check` passed; protected P0B hashes remained byte-identical to `origin/main`; frontend/contracts/API/worker/fixtures had no diff.
+
+Detailed finding-by-finding evidence is in `docs/reviews/2026-08-01-p2-claude-remediation.md`. State is `P2_CLAUDE_REVIEW_REMEDIATED_CANDIDATE_REREVIEW_PENDING`, not accepted or complete. No real source access, real-data apply/import, external OCR/AI, non-disposable migration, prohibited Git operation, deployment, or service exposure occurred.
+
+## 2026-08-01 — P2 Hermes controller-QA H1 correction
+
+Hermes controller QA found that finalization denied plain `ACCEPTED` only for a
+re-evaluated `REJECTED` candidate, so a persisted fail-closed `ON_HOLD` candidate could
+still be changed to plain `ACCEPTED` when a LEAD supplied a reason. The repository guard
+now permits plain `ACCEPTED` only for an engine `ACCEPTED`; accepting either `REJECTED`
+or `ON_HOLD` requires the existing reasoned `SPECIAL_ACCEPTED` state. A portable
+repository regression creates `ON_HOLD` from missing required internal evidence, proves
+plain acceptance is denied even with a reason and leaves zero partial mutation after
+rollback, then proves reasoned special acceptance succeeds.
+
+This targeted correction changes no migration, PostgreSQL SQL, privilege, API, contract,
+worker, or frontend behavior. P2 remains a remediated candidate awaiting Hermes and
+Claude re-review, not accepted or complete.
+
+The new test first failed because the plain acceptance call did not raise. After the
+repository guard correction, the focused adjacent approval slice passed 5 tests with 37
+deselected. At the later N1/N2/N3 remediation checkpoint, `make check` passed with backend
+344 passed/9 PostgreSQL deselected and the disposable PostgreSQL runner passed 9 tests plus
+migration roundtrip and empty drift; the final-minor-hardening entry below supersedes those
+historical counts.
+
+## 2026-08-01 — P2 final Claude re-review N1/N2/N3 remediation candidate
+
+N1 closed the remaining PostgreSQL-boundary gap: both persisted `REJECTED` and `ON_HOLD`
+candidates are denied when a DB-direct transaction attempts plain `ACCEPTED`, even with a
+reason. The regression failed against the pre-fix trigger (`DID NOT RAISE`), then passed
+after the accepting-override predicate was expanded. It proves complete rollback of case
+status/candidate/final/version plus snapshot, approval, audit, and outbox rows, with positive
+controls for normal `ACCEPTED` and reasoned `SPECIAL_ACCEPTED`.
+
+N2 carries the PRD receipt-lot nullable `model_id` on the normalized
+`receipt_lot_allocations` record. Repository and PostgreSQL selection now match the pure
+domain contract: unique highest specificity across material/supplier/model, nullable
+fallback, ACTIVE/effective filtering, cross-model exclusion, and fail-closed equal-rank or
+overlap ambiguity. Four focused portable repository tests cover those branches. N3 aligned
+that checkpoint to `344 passed, 9 PostgreSQL deselected`; the final-minor-hardening entry
+below supersedes those historical counts.
+
+Final candidate verification: `uv lock --project backend --check`, focused N1/N2 tests,
+`make check`, the 9-test disposable PostgreSQL runner with upgrade→downgrade→upgrade and
+empty model/migration drift, contract/client drift, `git diff --check`, protected P0B byte
+identity, scope inventory, and zero-container/network/volume cleanup all passed. P2 remains
+an unaccepted candidate awaiting Hermes independent QA and fresh Claude source-diff
+re-review; no P3, integration, push, deployment, real data, OCR, or AI action was performed.
+
+## 2026-08-01 — P2 final minor hardening N-M1/N-M2 verified candidate
+
+Claude's fresh read-only review passed with no blocker or major and identified two new
+minors. N-M1 is closed by immutable follow-up migration `20260801_0003`, whose PostgreSQL
+`BEFORE INSERT` guard rejects every inspection-case insert carrying a non-null
+`final_decision`; downgrade removes only that trigger/function and returns to frozen
+revision `20260731_0002`. The app-role regression first failed at `0002` with
+`DID NOT RAISE` after the attack transaction supplied a hash-valid snapshot, distinct LEAD
+approval, finalization audit, and outbox event; after `0003`, it passed with zero partial
+case/evidence state, while a normal unfinalized insert committed.
+
+N-M2 is closed by replacing the document transition `frozenset` scan with an ordered tuple
+and a map keyed by `(current, target, role)`, plus import-time cardinality enforcement. The
+focused matrix covers all 13 existing role paths, wrong-role denial, required-reason
+semantics, and uniqueness. A dedicated pure-domain regression also proves supplier-only
+and model-only scopes at equal specificity fail closed for the same matching context.
+
+Current verification supersedes the earlier 344/9/28 and PostgreSQL 9 measurements while
+retaining them above as historical evidence. `uv lock --project backend --check` and
+`make check` exited 0: Ruff, strict mypy 29 files, backend `346 passed, 10 PostgreSQL
+deselected`, migration contract 4, FE8 32 plus lint/typecheck/build, compileall,
+contract/client drift, scans, and Compose rendering passed. The disposable PostgreSQL
+runner exited 0 with 10 tests, upgrade→downgrade→upgrade, empty autogenerate drift, and
+cleanup assertions. Frozen `20260731_0002` remained exactly
+`546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`.
+
+This is a verified P2 candidate awaiting final Hermes QA and a fresh Claude source-diff
+review, not accepted, integrated, pushed, deployed, released, or P3-started. No real source
+access, real-data apply/import, external OCR/AI, non-disposable migration, or prohibited Git
+operation occurred.
+
+## 2026-08-01 — P2 final source-gate acceptance
+
+Independent Hermes QA is green, and the absolute-final Claude read-only source-diff review
+at `/tmp/hyc-p2-absolute-final-claude-review.md` (SHA-256
+`6a1ef045b9bbdfadb322a04819875a0b53ca2ec045bf09cfce8157918aa68848`) returned `PASS`:
+BLOCKER 0, MAJOR 0, MINOR 1. B1–B5, M1–M9, m1–m7, H1, N1, N2, N3, N-M1, and N-M2
+are closed. This entry supersedes the current-state pointers in the dated candidate entries
+above; their measurements remain historical evidence.
+
+The independently reproduced final gates were `make check` exit 0; backend `346 passed,
+10 PostgreSQL deselected`; strict mypy 29 files; migration contract 4; FE8 frontend 32 plus
+lint/typecheck/build; scans and Compose rendering; and the PostgreSQL runner's 10 passed plus
+upgrade→downgrade→upgrade, empty drift, and cleanup inventory 0/0/0. Alembic head is
+`20260801_0003`; frozen `20260731_0002` remains exactly
+`546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`.
+
+N-M3 is accepted follow-up/technical debt, not fixed. Its precondition is an app-role
+DB-direct writer with broad direct INSERT/UPDATE on `inspection_cases` and INSERT on all
+required append-only evidence tables. Such a writer can insert an unfinalized case already at
+`LEAD_REVIEW` and finalize it with complete valid evidence, bypassing intermediate status
+history; N1 decision integrity, mandatory evidence, and finalized-row immutability still hold.
+Revisit this defense-in-depth gap before any production DB-role activation.
+
+P2 is source-complete and accepted. This does not claim commit, main integration, push,
+deployment, release, or operationalization. P3 and every production/operations gate remain
+blocked and unapproved; no real-data apply/import, external OCR/AI, non-disposable migration,
+deployment, or service exposure was performed.
