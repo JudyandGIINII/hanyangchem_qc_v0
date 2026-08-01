@@ -1,12 +1,14 @@
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 
+from fastapi import Request
 from redis import Redis
 from redis.exceptions import RedisError
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import Session
 
 from hyc_api.config import Settings
 
@@ -48,3 +50,11 @@ class ReadinessDependencies:
 
 
 ReadinessFactory = Callable[[Settings], ReadinessDependencies]
+
+
+def database_session(request: Request) -> Generator[Session, None, None]:
+    session = request.app.state.session_factory()
+    try:
+        yield session
+    finally:
+        session.close()

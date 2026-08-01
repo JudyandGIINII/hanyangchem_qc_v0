@@ -1,6 +1,99 @@
 {
   "components": {
     "schemas": {
+      "ApprovalRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "APPROVE",
+              "RETURN"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "ApprovalRequest",
+        "type": "object"
+      },
+      "BoundingBox": {
+        "additionalProperties": false,
+        "properties": {
+          "bottom": {
+            "minimum": 0.0,
+            "title": "Bottom",
+            "type": "number"
+          },
+          "left": {
+            "minimum": 0.0,
+            "title": "Left",
+            "type": "number"
+          },
+          "right": {
+            "minimum": 0.0,
+            "title": "Right",
+            "type": "number"
+          },
+          "top": {
+            "minimum": 0.0,
+            "title": "Top",
+            "type": "number"
+          }
+        },
+        "required": [
+          "left",
+          "top",
+          "right",
+          "bottom"
+        ],
+        "title": "BoundingBox",
+        "type": "object"
+      },
+      "DocumentResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "checksum_sha256": {
+            "pattern": "^[0-9a-f]{64}$",
+            "title": "Checksum Sha256",
+            "type": "string"
+          },
+          "deduplicated": {
+            "title": "Deduplicated",
+            "type": "boolean"
+          },
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "storage_key": {
+            "title": "Storage Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_id",
+          "checksum_sha256",
+          "storage_key",
+          "deduplicated"
+        ],
+        "title": "DocumentResponse",
+        "type": "object"
+      },
       "ErrorEnvelope": {
         "additionalProperties": false,
         "properties": {
@@ -35,6 +128,227 @@
         "title": "ErrorEnvelope",
         "type": "object"
       },
+      "ExtractionFieldResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "bbox": {
+            "$ref": "#/components/schemas/BoundingBox"
+          },
+          "confidence": {
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+            "title": "Confidence",
+            "type": "string"
+          },
+          "field_key": {
+            "title": "Field Key",
+            "type": "string"
+          },
+          "ocr_text": {
+            "title": "Ocr Text",
+            "type": "string"
+          },
+          "original_text": {
+            "title": "Original Text",
+            "type": "string"
+          },
+          "page_number": {
+            "title": "Page Number",
+            "type": "integer"
+          },
+          "required": {
+            "title": "Required",
+            "type": "boolean"
+          },
+          "status": {
+            "enum": [
+              "REVIEW_REQUIRED",
+              "CONFIRMED"
+            ],
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field_key",
+          "original_text",
+          "ocr_text",
+          "confidence",
+          "page_number",
+          "bbox",
+          "required",
+          "status"
+        ],
+        "title": "ExtractionFieldResponse",
+        "type": "object"
+      },
+      "ExtractionRunResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "conflicts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Conflicts",
+            "type": "array"
+          },
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/ExtractionFieldResponse"
+            },
+            "title": "Fields",
+            "type": "array"
+          },
+          "run_id": {
+            "format": "uuid",
+            "title": "Run Id",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "REVIEW_REQUIRED",
+              "CONFIRMED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "run_id",
+          "document_id",
+          "status",
+          "version",
+          "fields",
+          "conflicts"
+        ],
+        "title": "ExtractionRunResponse",
+        "type": "object"
+      },
+      "FieldReviewInput": {
+        "additionalProperties": false,
+        "properties": {
+          "field_key": {
+            "title": "Field Key",
+            "type": "string"
+          },
+          "final_text": {
+            "maxLength": 4000,
+            "minLength": 1,
+            "title": "Final Text",
+            "type": "string"
+          },
+          "logic_conflict": {
+            "default": false,
+            "title": "Logic Conflict",
+            "type": "boolean"
+          },
+          "manual_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Manual Text"
+          },
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "source": {
+            "enum": [
+              "ORIGINAL",
+              "OCR",
+              "MANUAL"
+            ],
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "field_key",
+          "final_text",
+          "source",
+          "reason"
+        ],
+        "title": "FieldReviewInput",
+        "type": "object"
+      },
+      "FixtureContextResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "fixture_only": {
+            "const": true,
+            "default": true,
+            "title": "Fixture Only",
+            "type": "boolean"
+          },
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "material_name": {
+            "title": "Material Name",
+            "type": "string"
+          },
+          "model_id": {
+            "format": "uuid",
+            "title": "Model Id",
+            "type": "string"
+          },
+          "spec_version_id": {
+            "format": "uuid",
+            "title": "Spec Version Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "format": "uuid",
+            "title": "Supplier Id",
+            "type": "string"
+          },
+          "supplier_name": {
+            "title": "Supplier Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "supplier_id",
+          "material_id",
+          "model_id",
+          "spec_version_id",
+          "supplier_name",
+          "material_name"
+        ],
+        "title": "FixtureContextResponse",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
       "HealthEnvelope": {
         "additionalProperties": false,
         "properties": {
@@ -52,6 +366,526 @@
         ],
         "title": "HealthEnvelope",
         "type": "object"
+      },
+      "InspectionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation_id": {
+            "format": "uuid",
+            "title": "Allocation Id",
+            "type": "string"
+          },
+          "extraction_run_id": {
+            "format": "uuid",
+            "title": "Extraction Run Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "allocation_id",
+          "extraction_run_id"
+        ],
+        "title": "InspectionCreateRequest",
+        "type": "object"
+      },
+      "InspectionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation_id": {
+            "format": "uuid",
+            "title": "Allocation Id",
+            "type": "string"
+          },
+          "blockers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Blockers",
+            "type": "array"
+          },
+          "candidate_decision": {
+            "title": "Candidate Decision",
+            "type": "string"
+          },
+          "final_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Decision"
+          },
+          "inspection_id": {
+            "format": "uuid",
+            "title": "Inspection Id",
+            "type": "string"
+          },
+          "judgments": {
+            "items": {
+              "$ref": "#/components/schemas/JudgmentView"
+            },
+            "title": "Judgments",
+            "type": "array"
+          },
+          "material_lot_id": {
+            "format": "uuid",
+            "title": "Material Lot Id",
+            "type": "string"
+          },
+          "revision_no": {
+            "title": "Revision No",
+            "type": "integer"
+          },
+          "round_no": {
+            "title": "Round No",
+            "type": "integer"
+          },
+          "spec_snapshot": {
+            "additionalProperties": true,
+            "title": "Spec Snapshot",
+            "type": "object"
+          },
+          "spec_version_id": {
+            "format": "uuid",
+            "title": "Spec Version Id",
+            "type": "string"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "inspection_id",
+          "material_lot_id",
+          "allocation_id",
+          "spec_version_id",
+          "spec_snapshot",
+          "status",
+          "candidate_decision",
+          "final_decision",
+          "version",
+          "round_no",
+          "revision_no",
+          "blockers",
+          "judgments"
+        ],
+        "title": "InspectionResponse",
+        "type": "object"
+      },
+      "IntakeRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "inbound_no": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Inbound No",
+            "type": "string"
+          },
+          "material_id": {
+            "format": "uuid",
+            "title": "Material Id",
+            "type": "string"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "quantity_unit": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Quantity Unit",
+            "type": "string"
+          },
+          "receipt_date": {
+            "format": "date",
+            "title": "Receipt Date",
+            "type": "string"
+          },
+          "supplier_id": {
+            "format": "uuid",
+            "title": "Supplier Id",
+            "type": "string"
+          },
+          "supplier_lot_no": {
+            "maxLength": 512,
+            "minLength": 1,
+            "title": "Supplier Lot No",
+            "type": "string"
+          }
+        },
+        "required": [
+          "supplier_id",
+          "material_id",
+          "inbound_no",
+          "receipt_date",
+          "supplier_lot_no",
+          "quantity",
+          "quantity_unit"
+        ],
+        "title": "IntakeRequest",
+        "type": "object"
+      },
+      "IntakeResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation_id": {
+            "format": "uuid",
+            "title": "Allocation Id",
+            "type": "string"
+          },
+          "inbound_receipt_id": {
+            "format": "uuid",
+            "title": "Inbound Receipt Id",
+            "type": "string"
+          },
+          "material_lot_id": {
+            "format": "uuid",
+            "title": "Material Lot Id",
+            "type": "string"
+          },
+          "version": {
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "material_lot_id",
+          "inbound_receipt_id",
+          "allocation_id",
+          "version"
+        ],
+        "title": "IntakeResponse",
+        "type": "object"
+      },
+      "InternalResultItem": {
+        "additionalProperties": false,
+        "properties": {
+          "spec_item_id": {
+            "format": "uuid",
+            "title": "Spec Item Id",
+            "type": "string"
+          },
+          "values": {
+            "items": {
+              "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+              "type": "string"
+            },
+            "minItems": 1,
+            "title": "Values",
+            "type": "array"
+          }
+        },
+        "required": [
+          "spec_item_id",
+          "values"
+        ],
+        "title": "InternalResultItem",
+        "type": "object"
+      },
+      "InternalResultsRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "results": {
+            "items": {
+              "$ref": "#/components/schemas/InternalResultItem"
+            },
+            "title": "Results",
+            "type": "array"
+          }
+        },
+        "required": [
+          "results"
+        ],
+        "title": "InternalResultsRequest",
+        "type": "object"
+      },
+      "JudgmentView": {
+        "additionalProperties": false,
+        "properties": {
+          "effective_decision": {
+            "title": "Effective Decision",
+            "type": "string"
+          },
+          "hyc_reference_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Hyc Reference Decision"
+          },
+          "internal_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Internal Decision"
+          },
+          "item_code": {
+            "title": "Item Code",
+            "type": "string"
+          },
+          "spec_item_id": {
+            "format": "uuid",
+            "title": "Spec Item Id",
+            "type": "string"
+          },
+          "supplier_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Decision"
+          }
+        },
+        "required": [
+          "spec_item_id",
+          "item_code",
+          "supplier_decision",
+          "hyc_reference_decision",
+          "internal_decision",
+          "effective_decision"
+        ],
+        "title": "JudgmentView",
+        "type": "object"
+      },
+      "LineageRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "maxLength": 1000,
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "LineageRequest",
+        "type": "object"
+      },
+      "LocalSessionRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "fixture_principal": {
+            "enum": [
+              "p3-inspector",
+              "p3-lead",
+              "p3-admin"
+            ],
+            "title": "Fixture Principal",
+            "type": "string"
+          }
+        },
+        "required": [
+          "fixture_principal"
+        ],
+        "title": "LocalSessionRequest",
+        "type": "object"
+      },
+      "LocalSessionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "actor_id": {
+            "format": "uuid",
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "auth_label": {
+            "const": "P3 fixture local identity/session — not production authentication",
+            "title": "Auth Label",
+            "type": "string"
+          },
+          "role": {
+            "enum": [
+              "INSPECTOR",
+              "LEAD",
+              "ADMIN"
+            ],
+            "title": "Role",
+            "type": "string"
+          },
+          "session_handle": {
+            "title": "Session Handle",
+            "type": "string"
+          },
+          "token_type": {
+            "const": "bearer",
+            "default": "bearer",
+            "title": "Token Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "session_handle",
+          "actor_id",
+          "role",
+          "auth_label"
+        ],
+        "title": "LocalSessionResponse",
+        "type": "object"
+      },
+      "LotTraceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "allocations": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Allocations",
+            "type": "array"
+          },
+          "audits": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Audits",
+            "type": "array"
+          },
+          "documents": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Documents",
+            "type": "array"
+          },
+          "identity_key": {
+            "title": "Identity Key",
+            "type": "string"
+          },
+          "inspections": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Inspections",
+            "type": "array"
+          },
+          "material_lot_id": {
+            "format": "uuid",
+            "title": "Material Lot Id",
+            "type": "string"
+          },
+          "receipts": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Receipts",
+            "type": "array"
+          }
+        },
+        "required": [
+          "material_lot_id",
+          "identity_key",
+          "receipts",
+          "allocations",
+          "documents",
+          "inspections",
+          "audits"
+        ],
+        "title": "LotTraceResponse",
+        "type": "object"
+      },
+      "ReviewRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "allocation_id": {
+            "format": "uuid",
+            "title": "Allocation Id",
+            "type": "string"
+          },
+          "fields": {
+            "items": {
+              "$ref": "#/components/schemas/FieldReviewInput"
+            },
+            "minItems": 1,
+            "title": "Fields",
+            "type": "array"
+          }
+        },
+        "required": [
+          "fields",
+          "allocation_id"
+        ],
+        "title": "ReviewRequest",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
       }
     }
   },
@@ -61,6 +895,775 @@
   },
   "openapi": "3.1.0",
   "paths": {
+    "/api/v1/documents": {
+      "post": {
+        "operationId": "upload_document_api_v1_documents_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "X-Filename",
+            "required": true,
+            "schema": {
+              "title": "X-Filename",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Upload Document",
+        "tags": [
+          "p3-documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/extractions": {
+      "post": {
+        "operationId": "extract_document_api_v1_documents__document_id__extractions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractionRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Extract Document",
+        "tags": [
+          "p3-documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/reviews/{run_id}": {
+      "put": {
+        "operationId": "review_document_api_v1_documents__document_id__reviews__run_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReviewRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractionRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Review Document",
+        "tags": [
+          "p3-documents"
+        ]
+      }
+    },
+    "/api/v1/fixtures/p3/context": {
+      "get": {
+        "operationId": "fixture_context_api_v1_fixtures_p3_context_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FixtureContextResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Fixture Context",
+        "tags": [
+          "p3"
+        ]
+      }
+    },
+    "/api/v1/inspections": {
+      "post": {
+        "operationId": "create_case_api_v1_inspections_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Create Case Api V1 Inspections Post",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Case",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}": {
+      "get": {
+        "operationId": "get_case_api_v1_inspections__inspection_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Case",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/approvals": {
+      "post": {
+        "operationId": "approval_api_v1_inspections__inspection_id__approvals_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          },
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          },
+          {
+            "in": "header",
+            "name": "X-P3-Fault-At",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "X-P3-Fault-At"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApprovalRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approval",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/internal-results": {
+      "put": {
+        "operationId": "internal_results_api_v1_inspections__inspection_id__internal_results_put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalResultsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Internal Results",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/retests": {
+      "post": {
+        "operationId": "retest_api_v1_inspections__inspection_id__retests_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Retest",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/revisions": {
+      "post": {
+        "operationId": "revision_api_v1_inspections__inspection_id__revisions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LineageRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Revision",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/submit": {
+      "post": {
+        "operationId": "submit_case_api_v1_inspections__inspection_id__submit_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Submit Case",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/intakes": {
+      "post": {
+        "operationId": "intake_api_v1_intakes_post",
+        "parameters": [
+          {
+            "in": "header",
+            "name": "Idempotency-Key",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IntakeRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IntakeResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Intake",
+        "tags": [
+          "p3"
+        ]
+      }
+    },
+    "/api/v1/local-auth/sessions": {
+      "post": {
+        "operationId": "local_session_api_v1_local_auth_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LocalSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LocalSessionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Local Session",
+        "tags": [
+          "p3"
+        ]
+      }
+    },
+    "/api/v1/lots/{material_lot_id}/trace": {
+      "get": {
+        "operationId": "lot_trace_api_v1_lots__material_lot_id__trace_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "material_lot_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Material Lot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LotTraceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lot Trace",
+        "tags": [
+          "p3-trace"
+        ]
+      }
+    },
     "/health/live": {
       "get": {
         "operationId": "live_health_live_get",

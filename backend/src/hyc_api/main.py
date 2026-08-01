@@ -5,15 +5,22 @@ from uuid import UUID, uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, Response
 from redis.exceptions import RedisError
+from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.orm import sessionmaker
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from starlette.middleware.base import RequestResponseEndpoint
 
 from hyc_api.config import Settings
 from hyc_api.contracts import ErrorEnvelope, HealthEnvelope
 from hyc_api.dependencies import ReadinessDependencies
+from hyc_api.routes.documents import router as documents_router
+from hyc_api.routes.inspections import router as inspections_router
+from hyc_api.routes.intakes import router as intakes_router
+from hyc_api.routes.lots import router as lots_router
 
 
 def create_app(
@@ -24,6 +31,20 @@ def create_app(
     app = FastAPI(title="HYC Inspection API", version="0.1.0", openapi_version="3.1.0")
     app.state.settings = settings
     app.state.readiness_factory = readiness_factory
+    app.state.engine = create_engine(settings.database_url, pool_pre_ping=True)
+    app.state.session_factory = sessionmaker(app.state.engine, expire_on_commit=False)
+    app.state.p3_sessions = {}
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[],
+        allow_origin_regex=(
+            r"^http://(?:127\.0\.0\.1|localhost)(?::\d+)?$"
+            if settings.p3_fixture_mode
+            else None
+        ),
+        allow_methods=["GET", "POST", "PUT", "OPTIONS"],
+        allow_headers=["*"],
+    )
 
     @app.middleware("http")
     async def correlation_id_middleware(
@@ -99,6 +120,11 @@ def create_app(
             correlation_id=request.state.correlation_id,
         )
         return JSONResponse(status_code=503, content=payload.model_dump(mode="json"))
+
+    app.include_router(intakes_router)
+    app.include_router(documents_router)
+    app.include_router(inspections_router)
+    app.include_router(lots_router)
 
     return app
 

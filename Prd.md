@@ -9,6 +9,8 @@ PRD: 한양화학 수입검사 디지털화 및 LOT 추적 시스템
 > **제품 범위:** 한양화학에 입고되는 모든 원자재/부자재   
 > **문서 목적:** 다른 AI 개발 에이전트 또는 개발팀이 본 문서만으로 시스템 구조, 업무 흐름, 데이터 모델, 화면, 판정 규칙, 테스트와 인수 조건을 일관되게 구현하도록 한다.
 
+> **구현 증거 상태 (2026-08-01):** P0A/P0B/P1/P2에 이어 synthetic P3 source candidate도 Hermes controller 독립 QA를 통과해 source accepted다. 이는 이 PRD의 제품·운영 승인이나 전체 MVP 완료를 뜻하지 않는다. 문서 작성 시점 P3는 base `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf` 위의 uncommitted/unintegrated/unpushed exact candidate이며, P4/P5는 시작하지 않았다. 실데이터 apply/import, 외부 OCR/AI, production migration·DB-role activation, 배포·release·public service는 계속 미승인이다.
+
   
 
 0. 개발 에이전트가 반드시 지켜야 할 해석 원칙

@@ -4,6 +4,244 @@
  */
 
 export interface paths {
+    "/api/v1/documents": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Upload Document */
+        post: operations["upload_document_api_v1_documents_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/{document_id}/extractions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Extract Document */
+        post: operations["extract_document_api_v1_documents__document_id__extractions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/{document_id}/reviews/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Review Document */
+        put: operations["review_document_api_v1_documents__document_id__reviews__run_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/fixtures/p3/context": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fixture Context */
+        get: operations["fixture_context_api_v1_fixtures_p3_context_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Create Case */
+        post: operations["create_case_api_v1_inspections_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Case */
+        get: operations["get_case_api_v1_inspections__inspection_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}/approvals": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Approval */
+        post: operations["approval_api_v1_inspections__inspection_id__approvals_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}/internal-results": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Internal Results */
+        put: operations["internal_results_api_v1_inspections__inspection_id__internal_results_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}/retests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Retest */
+        post: operations["retest_api_v1_inspections__inspection_id__retests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Revision */
+        post: operations["revision_api_v1_inspections__inspection_id__revisions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/inspections/{inspection_id}/submit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Submit Case */
+        post: operations["submit_case_api_v1_inspections__inspection_id__submit_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/intakes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Intake */
+        post: operations["intake_api_v1_intakes_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/local-auth/sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Local Session */
+        post: operations["local_session_api_v1_local_auth_sessions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/lots/{material_lot_id}/trace": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lot Trace */
+        get: operations["lot_trace_api_v1_lots__material_lot_id__trace_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health/live": {
         parameters: {
             query?: never;
@@ -42,6 +280,41 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** ApprovalRequest */
+        ApprovalRequest: {
+            /**
+             * Action
+             * @enum {string}
+             */
+            action: "APPROVE" | "RETURN";
+            /** Reason */
+            reason?: string | null;
+        };
+        /** BoundingBox */
+        BoundingBox: {
+            /** Bottom */
+            bottom: number;
+            /** Left */
+            left: number;
+            /** Right */
+            right: number;
+            /** Top */
+            top: number;
+        };
+        /** DocumentResponse */
+        DocumentResponse: {
+            /** Checksum Sha256 */
+            checksum_sha256: string;
+            /** Deduplicated */
+            deduplicated: boolean;
+            /**
+             * Document Id
+             * Format: uuid
+             */
+            document_id: string;
+            /** Storage Key */
+            storage_key: string;
+        };
         /** ErrorEnvelope */
         ErrorEnvelope: {
             /** Code */
@@ -59,6 +332,112 @@ export interface components {
              */
             schema_version: "1.0";
         };
+        /** ExtractionFieldResponse */
+        ExtractionFieldResponse: {
+            bbox: components["schemas"]["BoundingBox"];
+            /** Confidence */
+            confidence: string;
+            /** Field Key */
+            field_key: string;
+            /** Ocr Text */
+            ocr_text: string;
+            /** Original Text */
+            original_text: string;
+            /** Page Number */
+            page_number: number;
+            /** Required */
+            required: boolean;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "REVIEW_REQUIRED" | "CONFIRMED";
+        };
+        /** ExtractionRunResponse */
+        ExtractionRunResponse: {
+            /** Conflicts */
+            conflicts: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Document Id
+             * Format: uuid
+             */
+            document_id: string;
+            /** Fields */
+            fields: components["schemas"]["ExtractionFieldResponse"][];
+            /**
+             * Run Id
+             * Format: uuid
+             */
+            run_id: string;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "REVIEW_REQUIRED" | "CONFIRMED";
+            /** Version */
+            version: number;
+        };
+        /** FieldReviewInput */
+        FieldReviewInput: {
+            /** Field Key */
+            field_key: string;
+            /** Final Text */
+            final_text: string;
+            /**
+             * Logic Conflict
+             * @default false
+             */
+            logic_conflict: boolean;
+            /** Manual Text */
+            manual_text?: string | null;
+            /** Reason */
+            reason: string;
+            /**
+             * Source
+             * @enum {string}
+             */
+            source: "ORIGINAL" | "OCR" | "MANUAL";
+        };
+        /** FixtureContextResponse */
+        FixtureContextResponse: {
+            /**
+             * Fixture Only
+             * @default true
+             * @constant
+             */
+            fixture_only: true;
+            /**
+             * Material Id
+             * Format: uuid
+             */
+            material_id: string;
+            /** Material Name */
+            material_name: string;
+            /**
+             * Model Id
+             * Format: uuid
+             */
+            model_id: string;
+            /**
+             * Spec Version Id
+             * Format: uuid
+             */
+            spec_version_id: string;
+            /**
+             * Supplier Id
+             * Format: uuid
+             */
+            supplier_id: string;
+            /** Supplier Name */
+            supplier_name: string;
+        };
+        /** HTTPValidationError */
+        HTTPValidationError: {
+            /** Detail */
+            detail?: components["schemas"]["ValidationError"][];
+        };
         /** HealthEnvelope */
         HealthEnvelope: {
             /**
@@ -66,6 +445,235 @@ export interface components {
              * @enum {string}
              */
             status: "live" | "ready";
+        };
+        /** InspectionCreateRequest */
+        InspectionCreateRequest: {
+            /**
+             * Allocation Id
+             * Format: uuid
+             */
+            allocation_id: string;
+            /**
+             * Extraction Run Id
+             * Format: uuid
+             */
+            extraction_run_id: string;
+        };
+        /** InspectionResponse */
+        InspectionResponse: {
+            /**
+             * Allocation Id
+             * Format: uuid
+             */
+            allocation_id: string;
+            /** Blockers */
+            blockers: string[];
+            /** Candidate Decision */
+            candidate_decision: string;
+            /** Final Decision */
+            final_decision: string | null;
+            /**
+             * Inspection Id
+             * Format: uuid
+             */
+            inspection_id: string;
+            /** Judgments */
+            judgments: components["schemas"]["JudgmentView"][];
+            /**
+             * Material Lot Id
+             * Format: uuid
+             */
+            material_lot_id: string;
+            /** Revision No */
+            revision_no: number;
+            /** Round No */
+            round_no: number;
+            /** Spec Snapshot */
+            spec_snapshot: {
+                [key: string]: unknown;
+            };
+            /**
+             * Spec Version Id
+             * Format: uuid
+             */
+            spec_version_id: string;
+            /** Status */
+            status: string;
+            /** Version */
+            version: number;
+        };
+        /** IntakeRequest */
+        IntakeRequest: {
+            /** Inbound No */
+            inbound_no: string;
+            /**
+             * Material Id
+             * Format: uuid
+             */
+            material_id: string;
+            /** Model Id */
+            model_id?: string | null;
+            /** Quantity */
+            quantity: string;
+            /** Quantity Unit */
+            quantity_unit: string;
+            /**
+             * Receipt Date
+             * Format: date
+             */
+            receipt_date: string;
+            /**
+             * Supplier Id
+             * Format: uuid
+             */
+            supplier_id: string;
+            /** Supplier Lot No */
+            supplier_lot_no: string;
+        };
+        /** IntakeResponse */
+        IntakeResponse: {
+            /**
+             * Allocation Id
+             * Format: uuid
+             */
+            allocation_id: string;
+            /**
+             * Inbound Receipt Id
+             * Format: uuid
+             */
+            inbound_receipt_id: string;
+            /**
+             * Material Lot Id
+             * Format: uuid
+             */
+            material_lot_id: string;
+            /** Version */
+            version: number;
+        };
+        /** InternalResultItem */
+        InternalResultItem: {
+            /**
+             * Spec Item Id
+             * Format: uuid
+             */
+            spec_item_id: string;
+            /** Values */
+            values: string[];
+        };
+        /** InternalResultsRequest */
+        InternalResultsRequest: {
+            /** Results */
+            results: components["schemas"]["InternalResultItem"][];
+        };
+        /** JudgmentView */
+        JudgmentView: {
+            /** Effective Decision */
+            effective_decision: string;
+            /** Hyc Reference Decision */
+            hyc_reference_decision: string | null;
+            /** Internal Decision */
+            internal_decision: string | null;
+            /** Item Code */
+            item_code: string;
+            /**
+             * Spec Item Id
+             * Format: uuid
+             */
+            spec_item_id: string;
+            /** Supplier Decision */
+            supplier_decision: string | null;
+        };
+        /** LineageRequest */
+        LineageRequest: {
+            /** Reason */
+            reason: string;
+        };
+        /** LocalSessionRequest */
+        LocalSessionRequest: {
+            /**
+             * Fixture Principal
+             * @enum {string}
+             */
+            fixture_principal: "p3-inspector" | "p3-lead" | "p3-admin";
+        };
+        /** LocalSessionResponse */
+        LocalSessionResponse: {
+            /**
+             * Actor Id
+             * Format: uuid
+             */
+            actor_id: string;
+            /**
+             * Auth Label
+             * @constant
+             */
+            auth_label: "P3 fixture local identity/session — not production authentication";
+            /**
+             * Role
+             * @enum {string}
+             */
+            role: "INSPECTOR" | "LEAD" | "ADMIN";
+            /** Session Handle */
+            session_handle: string;
+            /**
+             * Token Type
+             * @default bearer
+             * @constant
+             */
+            token_type: "bearer";
+        };
+        /** LotTraceResponse */
+        LotTraceResponse: {
+            /** Allocations */
+            allocations: {
+                [key: string]: unknown;
+            }[];
+            /** Audits */
+            audits: {
+                [key: string]: unknown;
+            }[];
+            /** Documents */
+            documents: {
+                [key: string]: unknown;
+            }[];
+            /** Identity Key */
+            identity_key: string;
+            /** Inspections */
+            inspections: {
+                [key: string]: unknown;
+            }[];
+            /**
+             * Material Lot Id
+             * Format: uuid
+             */
+            material_lot_id: string;
+            /** Receipts */
+            receipts: {
+                [key: string]: unknown;
+            }[];
+        };
+        /** ReviewRequest */
+        ReviewRequest: {
+            /**
+             * Allocation Id
+             * Format: uuid
+             */
+            allocation_id: string;
+            /** Fields */
+            fields: components["schemas"]["FieldReviewInput"][];
+        };
+        /** ValidationError */
+        ValidationError: {
+            /** Context */
+            ctx?: Record<string, never>;
+            /** Input */
+            input?: unknown;
+            /** Location */
+            loc: (string | number)[];
+            /** Message */
+            msg: string;
+            /** Error Type */
+            type: string;
         };
     };
     responses: never;
@@ -76,6 +684,472 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    upload_document_api_v1_documents_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "X-Filename": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DocumentResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    extract_document_api_v1_documents__document_id__extractions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_document_api_v1_documents__document_id__reviews__run_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                document_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ReviewRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    fixture_context_api_v1_fixtures_p3_context_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FixtureContextResponse"];
+                };
+            };
+        };
+    };
+    create_case_api_v1_inspections_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InspectionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: string;
+                    };
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_case_api_v1_inspections__inspection_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    approval_api_v1_inspections__inspection_id__approvals_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+                "Idempotency-Key"?: string | null;
+                "X-P3-Fault-At"?: string | null;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ApprovalRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    internal_results_api_v1_inspections__inspection_id__internal_results_put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InternalResultsRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    retest_api_v1_inspections__inspection_id__retests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LineageRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    revision_api_v1_inspections__inspection_id__revisions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LineageRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    submit_case_api_v1_inspections__inspection_id__submit_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    intake_api_v1_intakes_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "Idempotency-Key"?: string | null;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IntakeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["IntakeResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    local_session_api_v1_local_auth_sessions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LocalSessionRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LocalSessionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lot_trace_api_v1_lots__material_lot_id__trace_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                material_lot_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LotTraceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
     live_health_live_get: {
         parameters: {
             query?: never;

@@ -545,6 +545,7 @@ def test_every_quality_numeric_column_rejects_python_float(session: Session) -> 
         if column.type.__class__.__name__ == "StrictNumeric"
     }
     assert strict_columns == {
+        "extraction_field_reviews.confidence",
         "internal_results.evaluated_value",
         "receipt_lot_allocations.quantity",
         "sample_measurements.numeric_value",

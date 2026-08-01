@@ -498,3 +498,332 @@ to `origin/main` under separate explicit user authorization. P3 remains blocked/
 N-M3 remains accepted and unfixed before production DB-role activation; real-data apply/import,
 external OCR/AI, non-disposable migration, deployment, release, operations, and service exposure
 remain unauthorized and unperformed.
+
+## 2026-08-01 — P3 vertical-slice implementation candidate builder verification
+
+The separately authorized P3 work was continued in the isolated worktree at exact unchanged
+base `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. The inherited uncommitted implementation
+adds Alembic head `20260801_0004`, PostgreSQL-backed FastAPI intake/document/inspection/LOT
+routes and services, fixture-only local actors with RBAC, OpenAPI/generated-client updates, an
+API-backed Next.js inspection workspace, a synthetic calcium-chloride-bead seed, disposable
+PostgreSQL integration coverage, and three Playwright scenarios. All changes remain uncommitted.
+
+The first observed `make p3-e2e` run failed all three scenarios because randomized loopback web
+ports were rejected by API CORS preflight. Fixture mode now permits only HTTP `localhost` or
+`127.0.0.1` origins on an explicit port pattern; normal mode retains its configured exact-origin
+policy. A later P2 PostgreSQL run exposed a migration portability error because `0004` granted to
+an absent default app role; the migration now grants only when the configured, identifier-validated
+role exists and never creates or activates a production role. Both failed Compose projects were
+torn down and verified empty. Subsequent E2E/full-suite output was redirected to `/tmp` logs and
+only concise failure/pass summaries were inspected.
+
+The unchanged secret scanner then correctly rejected credential-like assignment names in the
+fixture-session contract and locals. The scanner was not edited, weakened, bypassed, or given a
+path exclusion. Non-secret fixture session values were renamed to `session_handle` throughout the
+API, OpenAPI contract, regenerated TypeScript client, frontend, and tests while preserving Bearer
+`Authorization` behavior; `python3 scripts/scan_secrets.py` and the full gate then passed. Hermes
+explicitly approved the two cumulative-test updates: the extraction port now expects authorized P3
+`REVIEW_REQUIRED`, and the P2 portable NUMERIC inventory now includes persisted extraction review
+confidence.
+
+Approval handling was tightened before final verification. A stale approval `If-Match` now returns
+409, and approval re-evaluation, approval, decision snapshot, audit, outbox, plus completion of the
+approval idempotency record are committed in one transaction. Fault injection proves zero partial
+approval/snapshot/audit/outbox/idempotency state; replay proves one approval/snapshot/completed
+idempotency result. The PostgreSQL-marked P3 suite also covers checksum dedupe, internal-test hold,
+separate-actor RBAC, split-LOT trace, revision/retest lineage, and finalized-evidence immutability.
+
+Final commands actually observed from the repaired source state:
+
+- `make bootstrap` — exit 0; backend resolution/check and frozen pnpm install completed.
+- `make check` — exit 0: Ruff, strict mypy 39 source files, backend `346 passed, 16
+  deselected` with one upstream Starlette/httpx deprecation warning, frontend lint/typecheck/build
+  and Vitest 3 files/`32 passed`, migration contracts `4 passed`, OpenAPI/generated-client drift,
+  secret scan, sensitive-document scan, and Compose rendering passed.
+- `make p2-postgres-check` — exit 0: 10 PostgreSQL tests plus the disposable migration
+  upgrade→downgrade→upgrade/drift checker passed. Project
+  `hyc-p2-test-1785566649-48124` left containers/networks/volumes `0/0/0`.
+- `make p3-postgres-check` — exit 0: 6 PostgreSQL tests (one upstream warning) plus the
+  disposable migration upgrade→downgrade→upgrade/drift checker passed. Project
+  `hyc-p3-pg-1785566670-48655` left containers/networks/volumes `0/0/0`.
+- `BUILDKIT_PROGRESS=plain make p3-e2e` — exit 0: Playwright `3 passed` against loopback
+  disposable PostgreSQL/FastAPI/Next.js, using neither interception/mocks nor SQLite/in-memory
+  persistence. Project `hyc-p3-e2e-1785566695-49210` left containers/networks/volumes `0/0/0`.
+- `git diff --check` — exit 0. The changed-path inventory matched the approved cumulative
+  allowlist, including the two explicitly approved cumulative-test paths; no unignored
+  `__pycache__`, `.pyc`, `.next`, Playwright report/result, or `node_modules` noise was present.
+
+This is `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. It is not P3
+accepted, integrated, committed, pushed, deployed, released, or production-ready. Hermes
+independent QA/review/integration remains required. P2 N-M3 remains accepted and unfixed and must
+be revisited before production DB-role activation. No real PDF/XLS/XLSX, real-data apply/import,
+external OCR/AI/NAS/Drive/ERP, non-disposable database, public exposure, deployment, release,
+secret, or prohibited Git operation was used or performed.
+
+## 2026-08-01 — P3 completion-remediation implementation candidate builder verification
+
+Hermes independently reproduced three integration blockers and dispatched a bounded remediation
+against the existing uncommitted P3 candidate at unchanged base
+`b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. Tests were added first; the initial disposable
+PostgreSQL run reproduced all three product defects as four focused failures: cross-allocation
+inspection creation returned 201, the second internal-result PUT returned 500, finalized evidence
+INSERT was accepted, and the original unfinalized positive-control query needed an explicit
+PostgreSQL type-safe form. Every failed disposable project executed its cleanup trap.
+
+The remediation makes the reviewed extraction document's confirmed section→allocation link
+authoritative before inspection idempotency reservation. A mismatch returns the stable 409 message
+`Extraction allocation lineage mismatch`, persists no inspection/idempotency/audit/outbox/snapshot
+effect, and the same key can then create against the correctly linked allocation. Internal-result
+PUT now rejects duplicate submitted spec IDs, retains one row per case/spec through a database
+unique constraint, replaces the exact sample indexes/values through per-parent uniqueness, and
+always advances the case optimistic version for a successful unfinalized replacement; stale
+`If-Match` remains 409 and database integrity errors are not converted to success.
+
+Alembic head `20260801_0004` now guards supplier results, internal results, and sample measurements
+on INSERT, UPDATE, and DELETE whenever either the OLD or NEW linked case is finalized. DELETE
+returns OLD and INSERT/UPDATE return NEW. Distinct disposable `hyc_app_test` tests deny all three
+verbs and both relinking directions with zero residue, while unfinalized insert/update/delete
+controls commit successfully and clean up their rows. Frozen P2 migrations `20260731_0002` and
+`20260801_0003` remain byte-identical; N-M3 remains accepted and unfixed.
+
+Final commands actually observed from the remediation candidate:
+
+- `make bootstrap && make check` — exit 0: Ruff, strict mypy 39 files, backend `346 passed,
+  20 PostgreSQL deselected`, frontend lint/typegen/typecheck/Vitest 32/build, migration contracts
+  4, generated-contract drift, secret/sensitive-document scans, and Compose rendering passed.
+- `make p2-postgres-check` — exit 0: 10 PostgreSQL tests and disposable migration
+  upgrade→downgrade→upgrade/drift verification passed.
+- `make p3-postgres-check` — exit 0: 10 PostgreSQL tests, including exact-lineage, repeat-PUT,
+  finalized app-role negative, relinking, and unfinalized positive controls, plus disposable
+  migration upgrade→downgrade→upgrade/drift verification passed.
+- `make p3-e2e` — exit 0: Playwright 3/3 passed against loopback disposable
+  PostgreSQL/FastAPI/Next.js without interception, mocks, SQLite, or in-memory persistence.
+- `git diff --check`, frozen-migration SHA-256 verification, sensitive/secret scans, artifact scan,
+  changed-path inventory, and the aggregate disposable Compose project inventory all passed; every
+  P2/P3/E2E project left containers/networks/volumes `0/0/0`.
+
+This remains `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`: an uncommitted
+remediation candidate awaiting Hermes independent QA/review/integration. It is not accepted,
+integrated, committed, pushed, deployed, released, production-ready, or authorization for real
+data, external OCR/AI, non-disposable migration, public exposure, or production DB-role activation.
+
+## 2026-08-01 — P3 second security remediation implementation candidate
+
+The final independent Claude backend/DB/security review returned `REQUEST_CHANGES` with B-1,
+M-1, and M-2 plus five minors. Tests were added first. A disposable PostgreSQL red run then
+proved that a CONFIRMED run returned 200 for a field rewrite/reconfirmation, `{MOISTURE}` followed
+by `{PURITY}` retained both rows, and inspection GET emitted derived UPDATE statements. The first
+test draft also exposed and corrected one UUID/string assertion mismatch without weakening the
+product regressions. Every red-run project and its explicitly scoped wrapper temp tree was removed.
+
+B-1 and M-1 are closed at the shared root. `confirm_review` accepts only `REVIEW_REQUIRED`, so a
+CONFIRMED run cannot be reconfirmed with the same allocation, rebound to another allocation, or
+have `manual_text`/`final_text`/source/reason rewritten. The first clean confirmation still creates
+one confirmed section link. The API locks and checks existing confirmed links, and Alembic head
+`20260801_0004` plus ORM metadata add the partial unique index
+`uq_document_section_one_confirmed_allocation`, independently rejecting a second confirmed
+allocation for the section. Tests prove unchanged fields/link cardinality, unrelated-LOT rejection
+with no case/audit/outbox/snapshot/idempotency residue, and successful creation for the original
+allocation using the same idempotency key.
+
+M-2 is closed with true collection replacement. The API validates duplicate and foreign spec IDs
+before mutation, deletes every existing sample, deletes results omitted from the submitted set,
+then recreates exactly the submitted sample indexes and values. `results: []` is schema-valid and
+clears all internal evidence on an unfinalized case. Regressions cover `{MOISTURE}` then `{PURITY}`
+leaving only PURITY, wrong-spec correction back to MOISTURE, exact samples, empty clear, fresh and
+stale `If-Match`, version advancement, fail-closed re-evaluation and submit rejection after clear,
+and the pre-existing finalized immutability/no-500 controls.
+
+N-3 is closed: inspection GET calls `evaluate_inspection(..., persist=False)`, and the
+non-persisting path no longer dirties derived supplier/internal decisions. A PostgreSQL statement
+listener proves the GET emits no INSERT, UPDATE, or DELETE. N-4 is closed: `p3-postgres-check`
+creates a named exact `mktemp` storage tree, recursively deletes only that quoted path with `find
+-depth -delete`, and asserts the path does not exist before its container/network/volume checks.
+N-1 request-validation ordering, N-2 fixture GET seeding, and N-5 fixture-session eviction remain
+disclosed fixture-mode-only follow-ups; no architecture was broadened to remove them.
+
+Commands actually observed from the second-remediation candidate:
+
+- `make bootstrap && make check` — exit 0: backend `346 passed, 23 PostgreSQL deselected`,
+  strict mypy 39 files, Ruff/compileall, frontend lint/typegen/typecheck/Vitest 32/build,
+  migration contracts 4, generated OpenAPI/client drift, scans, and Compose rendering passed.
+- `make p2-postgres-check` — exit 0: 10 passed; project
+  `hyc-p2-test-1785576529-12845` cleaned its exact Compose resources.
+- `make p3-postgres-check` — exit 0: 13 passed, including confirmation terminality/link
+  cardinality, collection replace/clear, mutation-free GET, and previous P3 controls; project
+  `hyc-p3-pg-1785576792-20696` removed its exact storage tree and Compose resources.
+- `make p3-e2e` — exit 0: Playwright 3/3 passed against loopback PostgreSQL/FastAPI/Next.js;
+  project `hyc-p3-e2e-1785576558-13694` cleaned its exact Compose resources.
+- Final `git diff --check`, frozen-migration byte-identity, secret/sensitive-document scans,
+  changed-path/artifact inventory, and exact Docker/temp cleanup inventory passed.
+
+This second remediation is still an uncommitted builder-verified candidate at
+`P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. It does not claim Hermes
+acceptance, integration, commit, push, deployment, release, production readiness, or authority for
+real data, external OCR/AI, non-disposable migration, public exposure, or production role use.
+
+## 2026-08-01 — P3 final polish (historical N-7 evidence later superseded)
+
+Tests were added before implementation. The first disposable PostgreSQL run failed four focused
+regressions: the forced simultaneous first-confirmation loser returned 500, replace and clear audit
+payloads contained only `result_count`, and an internal-result update left the case at
+`LEAD_REVIEW`. The pre-fix browser source likewise showed that the prominent badge and polite live
+region remained bound to the local fixture reducer and could still announce `검토 필요` after the
+server inspection reached `ACCEPTED`.
+
+The UI now derives one shared display string from the authoritative inspection status whenever an
+inspection exists, retaining the localized label and code (`승인 완료 · ACCEPTED`) after approval
+and LOT trace; the no-inspection path explicitly identifies itself as pre-creation guidance. The
+happy-path Playwright test checks the visible badge, accessible polite live region, absence of the
+stale review label, visible controls, and no document-level overflow after switching to 375×812.
+
+N-7 was provisionally considered closed by catching the named PostgreSQL partial-unique collision at the
+confirmation commit boundary, rolling back the complete losing transaction, and returning the
+stable 409 `Document section already has a confirmed allocation`. A barrier at the two competing
+link INSERTs proves one 200, one 409, no 500, one confirmed link, unchanged losing run and field
+reviews, no losing confirmation audit, and no additional inspection, snapshot, outbox, material LOT,
+or allocation lineage. Independent QA later showed that pre-inserting the section made this
+regression insufficient; the genuine first-section race and current evidence are recorded below.
+
+N-6 is closed without raw quality values in audit. Each successful internal-results collection
+replacement records sorted requested, retained, and removed spec item IDs plus deleted-result and
+deleted-sample counts. Regressions cover retained-row sample replacement, cross-spec replacement,
+and empty clear. Any such evidence update from `LEAD_REVIEW` now returns the unfinalized case to
+`READY_FOR_REVIEW` or `INTERNAL_TEST_PENDING`; fresh approval cannot finalize until the inspection
+is validly resubmitted, and cleared evidence remains fail-closed.
+
+Commands actually observed for this final-polish candidate:
+
+- Red `make p3-postgres-check`: 11 passed and 4 expected focused failures; its disposable cleanup
+  trap ran.
+- Targeted real-PostgreSQL concurrency/audit/eligibility command: 4 passed, 5 deselected; exact
+  cleanup reported containers/networks/volumes/storage `0/0/0/0`.
+- `make bootstrap && make check`: exit 0; backend `346 passed, 25 PostgreSQL deselected`, Ruff,
+  strict mypy 39, compileall, frontend lint/typegen/typecheck/Vitest 32/build, migration contracts
+  4, generated-contract drift, secret/sensitive scans, and Compose rendering passed.
+- `make p2-postgres-check`: 10 passed. `make p3-postgres-check`: 15 passed. Both disposable
+  migration and cleanup gates passed.
+- `make p3-e2e`: Playwright 3/3 passed against loopback PostgreSQL/FastAPI/Next.js without route
+  interception, mock persistence, SQLite, or in-memory persistence; its exact Compose resources
+  were removed.
+- The same loopback stack then ran the targeted authoritative-status happy-path spec 1/1 and
+  reported exact containers/networks/volumes cleanup `0/0/0`.
+- Frozen `20260731_0002` and `20260801_0003` SHA-256 values remained
+  `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82` and
+  `8124e6420c72cca5f63bd6999116350edd8e6d00214ecd2de471ba9b4c2ea9ee`.
+
+Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5 session eviction remain disclosed
+follow-ups. This remains an uncommitted builder-verified P3 candidate pending Hermes independent
+QA/review/integration; it is not accepted, integrated, committed, pushed, deployed, released, or
+production-ready, and it does not authorize real/external data or services.
+
+## 2026-08-01 — P3 last blocker: genuine empty-section first-confirm race
+
+Independent final QA reopened M-1/N-7 after proving that the earlier concurrency regression
+pre-inserted `document_sections` and therefore tested only the link partial index. The replacement
+PostgreSQL regression begins with zero sections, synchronizes the two competing first section
+INSERTs, and is parameterized five times. Before implementation it failed deterministically 5/5
+with one 200 and one 500 from `uq_document_section_index`.
+
+`confirm_review` now covers both the lazy section flush and final commit with one rollback-first
+`IntegrityError` boundary. It maps only `uq_document_section_index`,
+`uq_document_allocation_link`, and `uq_document_section_one_confirmed_allocation` to the stable 409;
+all unrelated database errors still re-raise. The dead `run.conflicts = conflicts` assignment was
+removed because the 422 path always rolls the transaction back.
+
+Every green race asserts exactly one 200 and one 409, no 500, exactly one section and confirmed
+link, unchanged loser run/version/conflicts and all loser review fields, no loser confirmation
+audit, and no new inspection, material LOT, inbound receipt, allocation, merge approval, decision
+snapshot, outbox, or idempotency residue.
+
+Commands actually observed for this remediation candidate:
+
+- Pre-fix targeted genuine-race run: 5 failed, each with `[200, 500]`; disposable PostgreSQL and
+  storage cleanup passed.
+- Post-fix targeted genuine-race runs: three successive invocations, each 5 passed (15/15 total);
+  disposable PostgreSQL and storage cleanup passed.
+- `make bootstrap && make check`: exit 0; backend `346 passed, 29 PostgreSQL deselected`, Ruff,
+  strict mypy 39, compileall, frontend lint/typegen/typecheck/Vitest 32/build, migration contracts
+  4, generated-contract drift, secret/sensitive scans, and Compose rendering passed.
+- `make p2-postgres-check`: 10 passed. `make p3-postgres-check`: 19 passed, including five genuine
+  first-confirm races. Both migration and exact cleanup gates passed.
+- `make p3-e2e`: Playwright 3/3 passed against loopback PostgreSQL/FastAPI/Next.js, followed by
+  exact disposable Compose cleanup.
+
+The independently reported M-1/N-7 blocker is closed in this uncommitted builder candidate only.
+Hermes independent QA/review/integration remains pending; no acceptance, Git integration, push,
+deployment, release, production readiness, real data, or external service use is claimed.
+
+## 2026-08-01 — P3 final remediation: concurrent idempotency and upload input contract
+
+Tests were added first. The red canonical PostgreSQL run reported `20 failed, 19 passed`: all 18
+genuine missing-row first-reservation cases (five same-payload attempts plus one different-payload
+attempt for each of intake, inspection creation, and approval) reproduced success+500, and empty
+and over-10-MiB uploads both returned generic 500. Its cleanup inventory was
+containers/networks/volumes/storage `0/0/0/0`.
+
+`reserve_idempotency` now inserts inside a nested transaction/savepoint. Only
+`uq_idempotency_principal_scope_key` is classified; after the savepoint rollback the loser reads
+the committed competing row, returns 409 `Idempotency request is already pending` for the same
+hash or 409 `Idempotency key request conflict` for another hash, and never masks an unrelated
+constraint. Inspection reservation moved before its lineage row lock so the real first-reservation
+race can occur, while lineage failure still rolls the outer transaction back and leaves zero
+inspection/idempotency/audit/outbox/snapshot residue. Stored response ordering now preserves the
+first response so the winning-payload sequential replay is byte-for-byte identical.
+
+Streaming storage raises typed empty and over-limit errors instead of `ValueError`. The document
+route maps them through the normal non-sensitive envelope to 422 and 413. The exact temporary file
+is always removed; when an invalid request created a previously absent storage root, that root is
+removed if still empty. The 10 MiB streaming limit and checksum-deduplicated successful upload path
+are unchanged. The unused `atomicity_counts` helper and its now-unused model imports were removed
+after repository-wide search found no caller or documentation dependency.
+
+Commands actually observed for this remediation candidate:
+
+- Red `make p3-postgres-check`: 18 synchronized idempotency races failed as success+500 and both
+  invalid uploads failed as 500; the 19 prior PostgreSQL tests passed.
+- Final focused disposable PostgreSQL command over `test_idempotency_races.py` and
+  `test_document_dedup.py`: 22 passed. It covers 15 repeated same-payload races, three
+  different-payload races, unrelated-integrity allowlist behavior, concurrent checksum dedupe,
+  and empty/over-limit uploads.
+- `make bootstrap && make check`: exit 0; backend `346 passed, 50 PostgreSQL deselected`, Ruff,
+  strict mypy 39, compileall, frontend lint/typegen/typecheck/Vitest 32/build, migration contracts
+  4, OpenAPI/generated-client drift, secret/sensitive scans, and Compose rendering passed.
+- `make p2-postgres-check`: 10 passed. `make p3-postgres-check`: 40 passed. Across the final
+  focused and full runs, the 30 same-payload attempts produced intake 201+409, inspection
+  201+409, and approval 200+409; six different-payload attempts produced success+409 conflict,
+  with no race 500 and one completed row/business effect each.
+- `make p3-e2e`: Playwright 3/3 passed against loopback PostgreSQL/FastAPI/Next.js. Frozen P2
+  migration SHA-256 values remained `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`
+  and `8124e6420c72cca5f63bd6999116350edd8e6d00214ecd2de471ba9b4c2ea9ee`.
+- Final `git diff --check`, explicit contract/scans, and exact disposable cleanup inventory passed;
+  containers, networks, volumes, P3 test storage roots, and invalid-upload roots were all zero.
+
+This is still an uncommitted builder-verified P3 implementation candidate at
+`P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. Hermes independent
+QA/review/integration remains. Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5
+session eviction remain disclosed; there is no acceptance, integration, commit, push, deployment,
+release, production-readiness, real-data, external OCR/AI, n8n, or production-role claim.
+## 2026-08-01 — P3 final DB serialization/immutability remediation candidate
+
+- Scope stayed inside the authorized isolated P3 worktree. No add/commit/push/merge/reset/restore/stash/rebase/deploy, real source evidence, external OCR/AI, non-disposable database, public exposure, or n8n mutation occurred.
+- Red-first PostgreSQL reproduction paused approval after snapshot construction. A concurrent app-role supplier INSERT committed before approval and produced snapshot/live divergence; a supplier UPDATE also committed without waiting on the case. Confirmed extraction fields and allocation lineage likewise had no DB terminal guard.
+- Alembic `20260801_0004` now makes every supplier/internal/sample I/U/D trigger resolve old/new case identities, lock the distinct parent cases in UUID order, and only then check `final_decision`. Approval already holds the same case row `FOR UPDATE`, so the allowed histories are evidence-before-approval (included on re-read) or approval-before-evidence (stable immutable rejection).
+- Four extraction-lineage trigger families cover extraction runs, field reviews, document sections, and allocation links. They resolve both old/new run or document identities, lock authoritative extraction runs in deterministic order, and reject every mutation once any relevant run is `CONFIRMED`. A partial unique index enforces one confirmed extraction run per document; downgrade removes all four new triggers/functions and both P3 partial indexes are checked through runtime migration contracts.
+- `confirm_review` locks all extraction runs for its document in UUID order, performs and flushes field/section/link work while the authoritative run is still pending, then performs the single legitimate `REVIEW_REQUIRED → CONFIRMED` update. Exact unique-constraint allowlisting now includes the confirmed-run index, preserving stable API 409 behavior for competing confirmations without masking unrelated integrity errors.
+- `backend/tests/integration/api/test_db_serialization.py` passes 27 tests. Nine evidence I/U/D families run two fresh cycles each (18 approval races); 16 extraction run/field/section/link I/U/D/reparent families run two fresh cycles each (32 confirmation races). PostgreSQL `pg_blocking_pids` is the deterministic barrier: each forced-after-terminal app-role writer is proven blocked on the authoritative parent, then rejected by `finalized inspection evidence is immutable` or `confirmed extraction lineage is immutable` after the terminal transaction commits. No race returns 500 or leaves residue.
+- Positive/rollback controls prove pending direct I/U/D remains legal, legitimate confirmation remains atomic, a missing-allocation confirmation rolls back all field/status/link changes, and a direct app-role confirmed allocation-link rebind to another LOT is rejected without changing lineage. Existing five-cycle first-confirmation and API rewrite/rebind regressions remain green under parent-run serialization.
+- Verified commands on the final candidate: `make bootstrap && make check`; `make p2-postgres-check`; `make p3-postgres-check`; `make p3-e2e`; focused 27-test serialization suite; PostgreSQL migration upgrade→downgrade→upgrade/runtime-object/empty-drift check; `git diff --check`; generated OpenAPI/client drift; secret and sensitive-document scans. Results: backend `346 passed, 77 PostgreSQL deselected`, strict mypy 39 files, frontend Vitest 32 plus lint/typecheck/build, migration contract 4, P2 PostgreSQL 10, P3 PostgreSQL 67, Playwright 3/3, and exact disposable cleanup 0 containers/0 networks/0 volumes/0 storage trees.
+- Gate remains `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. This is uncommitted and awaiting Hermes independent QA/review/integration; it is not accepted, integrated, pushed, deployed, released, or production-ready. Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5 session eviction remain explicit non-production debt; accepted P2 N-M3 remains a separate pre-production DB-role follow-up.
+
+## 2026-08-01 — P3 final independent source acceptance and documentation truth sync
+
+- Final independent backend review returned `PASS` with blocker 0, major 0, and medium 0. It passed P3 PostgreSQL 67, a mutation-first reverse-order probe for 6 cycles, the terminal-first focused 27-test suite, P2 PostgreSQL regression 10, and substantive gates with backend 346 passed/77 PostgreSQL deselected, strict mypy 39 files, frontend Vitest 32, and migration contract 4.
+- Final independent UI/API review returned `PASS`. Real `make p3-e2e` passed Playwright 3/3; a separate real live-stack HTTP/browser smoke passed on desktop and 375×812. Concurrent status pairs were exactly 201+409 for intake, 201+409 for inspection, and 200+409 for approval; completed sequential replay was byte-identical; empty/over-limit uploads returned 422/413 with no residue; P3 API 67, repository fingerprint, and cleanup 0/0/0/0 remained green.
+- Hermes controller independently passed `make bootstrap && make check` (Ruff; strict mypy 39; backend 346/77 deselected; frontend Vitest 32; Next build; migration 4; scans and Compose), P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3, and `test_db_serialization.py` 27 tests across three fresh cycles (81 total). The candidate hash remained frozen during this QA; final HYC Docker containers/networks/volumes were 0/0/0 and only user-owned n8n remained running and untouched.
+- All historical blocker/major findings are fixed: cross-LOT lineage; repeated internal-result replace/clear; finalized evidence I/U/D; reconfirm and confirmed-review DB immutability; genuine first-confirm race; no-row idempotency races; invalid-upload mapping/residue; approval/evidence serialization; confirmed extraction run/field/section/link serialization; and confirmed cross-LOT rebind denial.
+- The pre-doc-final freeze was base HEAD `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`, 50 changed/untracked files, and source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`. This documentation sync changes the tree, so that value is deliberately recorded only as the frozen pre-doc source hash, not a post-doc hash.
+- P3 is now source complete/accepted and ready for an exact-candidate commit followed by fresh-main fast-forward integration. At this documentation point it remains uncommitted, unintegrated, and unpushed; no deployment, release, public service, real-data import/apply, external OCR/AI, production migration, or production DB-role activation is authorized or performed.
+- Accepted non-production debt remains fixture-only N-1 validation/auth ordering, N-2 GET seeding, N-5 in-memory session eviction, and the separate P2 N-M3 broad direct-role history-bypass warning. P4/P5 remain unstarted and all real data remains prohibited.
+- Created `docs/HANDOFF.md` with the exact worktree/branch/base, delivered scope, architecture/synthetic boundary, canonical commands, verified counts, invariant enforcement/tests, accepted debt, Git state, safe next steps, and forbidden operations.
+- Documentation validation commands actually run: `git diff --check`; `python3 scripts/scan_secrets.py`; `python3 scripts/check_sensitive_documents.py`; README local-link existence check; and a current-state truth scan over README, PRD, KANBAN, traceability, integrated plan, and handoff. All returned exit 0; the secret scan and tracked-sensitive-document scan printed their explicit pass messages.

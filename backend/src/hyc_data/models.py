@@ -291,6 +291,7 @@ class ReceiptLotAllocation(Base, Versioned):
 class Document(Base):
     __tablename__ = "documents"
     __table_args__ = (
+        UniqueConstraint("storage_key", name="uq_documents_storage_key"),
         CheckConstraint(
             "length(checksum_sha256) = 64",
             name="ck_documents_sha256_length",
@@ -305,6 +306,9 @@ class Document(Base):
     checksum_sha256: Mapped[str] = mapped_column(String(64), unique=True, nullable=False)
     document_type: Mapped[str] = mapped_column(String(32), nullable=False)
     original_filename: Mapped[str] = mapped_column(String(512), nullable=False)
+    storage_key: Mapped[str | None] = mapped_column(String(512))
+    media_type: Mapped[str | None] = mapped_column(String(128))
+    size_bytes: Mapped[int | None] = mapped_column(Integer)
     immutable: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
@@ -354,6 +358,51 @@ class DocumentAllocationLink(Base, Versioned):
     match_status: Mapped[str] = mapped_column(String(32), nullable=False)
 
 
+class ExtractionRun(Base, Versioned):
+    __tablename__ = "extraction_runs"
+    __table_args__ = (
+        CheckConstraint(
+            "status IN ('REVIEW_REQUIRED','CONFIRMED')",
+            name="ck_extraction_runs_status",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    document_id: Mapped[UUID] = mapped_column(ForeignKey("documents.id"), nullable=False)
+    provider_name: Mapped[str] = mapped_column(String(64), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="REVIEW_REQUIRED")
+    candidate_payload: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    conflicts: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False, default=list)
+
+
+class ExtractionFieldReview(Base, Versioned):
+    __tablename__ = "extraction_field_reviews"
+    __table_args__ = (
+        UniqueConstraint("extraction_run_id", "field_key", name="uq_extraction_review_field"),
+        CheckConstraint(
+            "status IN ('REVIEW_REQUIRED','CONFIRMED')",
+            name="ck_extraction_field_reviews_status",
+        ),
+        CheckConstraint("page_number >= 1", name="ck_extraction_review_page"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    extraction_run_id: Mapped[UUID] = mapped_column(
+        ForeignKey("extraction_runs.id"), nullable=False
+    )
+    field_key: Mapped[str] = mapped_column(String(64), nullable=False)
+    original_text: Mapped[str] = mapped_column(Text, nullable=False)
+    ocr_text: Mapped[str] = mapped_column(Text, nullable=False)
+    manual_text: Mapped[str | None] = mapped_column(Text)
+    final_text: Mapped[str | None] = mapped_column(Text)
+    source: Mapped[str | None] = mapped_column(String(32))
+    reason: Mapped[str | None] = mapped_column(Text)
+    confidence: Mapped[Decimal] = mapped_column(StrictNumeric(), nullable=False)
+    page_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    bbox: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
+    required: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    logic_conflict: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="REVIEW_REQUIRED")
+
+
 class InspectionCase(Base, Versioned):
     __tablename__ = "inspection_cases"
     __table_args__ = (
@@ -383,6 +432,13 @@ class InspectionCase(Base, Versioned):
             "revision_no",
             name="uq_inspection_correction_revision",
         ),
+        UniqueConstraint(
+            "lineage_root_id",
+            "round_no",
+            "revision_no",
+            name="uq_inspection_lineage_round_revision",
+        ),
+        CheckConstraint("round_no > 0", name="ck_inspection_round_positive"),
     )
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
     receipt_lot_allocation_id: Mapped[UUID] = mapped_column(
@@ -394,7 +450,12 @@ class InspectionCase(Base, Versioned):
     final_decision: Mapped[str | None] = mapped_column(String(16))
     submitted_by_id: Mapped[UUID | None] = mapped_column(Uuid)
     correction_of_case_id: Mapped[UUID | None] = mapped_column(ForeignKey("inspection_cases.id"))
+    retest_of_case_id: Mapped[UUID | None] = mapped_column(ForeignKey("inspection_cases.id"))
+    lineage_root_id: Mapped[UUID | None] = mapped_column(ForeignKey("inspection_cases.id"))
+    round_no: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     revision_no: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    lineage_reason: Mapped[str | None] = mapped_column(Text)
+    spec_snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
 
 
 class SupplierResult(Base, Versioned):
@@ -436,6 +497,11 @@ class SupplierResult(Base, Versioned):
 class InternalResult(Base, Versioned):
     __tablename__ = "internal_results"
     __table_args__ = (
+        UniqueConstraint(
+            "inspection_case_id",
+            "spec_item_id",
+            name="uq_internal_result_case_spec_item",
+        ),
         CheckConstraint(
             "decision IS NULL OR decision IN ('ACCEPTED','REJECTED','ON_HOLD')",
             name="ck_internal_result_decision",
@@ -454,6 +520,16 @@ class InternalResult(Base, Versioned):
 class SampleMeasurement(Base, Versioned):
     __tablename__ = "sample_measurements"
     __table_args__ = (
+        UniqueConstraint(
+            "supplier_result_id",
+            "sample_index",
+            name="uq_sample_supplier_result_index",
+        ),
+        UniqueConstraint(
+            "internal_result_id",
+            "sample_index",
+            name="uq_sample_internal_result_index",
+        ),
         CheckConstraint(
             "(supplier_result_id IS NOT NULL AND internal_result_id IS NULL) OR "
             "(supplier_result_id IS NULL AND internal_result_id IS NOT NULL)",
@@ -586,3 +662,17 @@ class IdempotencyKey(Base):
 
 Index("ix_documents_checksum_sha256", Document.checksum_sha256)
 Index("ix_decision_snapshots_content_hash", DecisionSnapshotRow.content_hash)
+Index(
+    "uq_document_section_one_confirmed_allocation",
+    DocumentAllocationLink.document_section_id,
+    unique=True,
+    postgresql_where=DocumentAllocationLink.match_status == "CONFIRMED",
+    sqlite_where=DocumentAllocationLink.match_status == "CONFIRMED",
+)
+Index(
+    "uq_document_one_confirmed_extraction_run",
+    ExtractionRun.document_id,
+    unique=True,
+    postgresql_where=ExtractionRun.status == "CONFIRMED",
+    sqlite_where=ExtractionRun.status == "CONFIRMED",
+)

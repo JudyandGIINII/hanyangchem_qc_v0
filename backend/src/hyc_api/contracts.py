@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import re
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from typing import Annotated, Literal
 from uuid import UUID
@@ -24,6 +24,10 @@ CANONICAL_DECIMAL_STRING_PATTERN = r"^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$"
 
 class ContractModel(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
+
+
+class APIRequestModel(ContractModel):
+    model_config = ConfigDict(extra="forbid", strict=False)
 
 
 def reject_binary_float(value: object) -> object:
@@ -84,6 +88,7 @@ class ExtractionValue(ContractModel):
             raise ValueError("confidence below 1 requires review")
         return self
 
+
 class ExtractionCandidate(ContractModel):
     schema_version: Literal["1.0"]
     candidate_id: UUID
@@ -120,6 +125,148 @@ class ErrorEnvelope(ContractModel):
 
 class HealthEnvelope(ContractModel):
     status: Literal["live", "ready"]
+
+
+Role = Literal["INSPECTOR", "LEAD", "ADMIN"]
+
+
+class LocalSessionRequest(APIRequestModel):
+    fixture_principal: Literal["p3-inspector", "p3-lead", "p3-admin"]
+
+
+class LocalSessionResponse(APIRequestModel):
+    session_handle: str
+    token_type: Literal["bearer"] = "bearer"
+    actor_id: UUID
+    role: Role
+    auth_label: Literal["P3 fixture local identity/session — not production authentication"]
+
+
+class FixtureContextResponse(APIRequestModel):
+    supplier_id: UUID
+    material_id: UUID
+    model_id: UUID
+    spec_version_id: UUID
+    supplier_name: str
+    material_name: str
+    fixture_only: Literal[True] = True
+
+
+class IntakeRequest(APIRequestModel):
+    supplier_id: UUID
+    material_id: UUID
+    model_id: UUID | None = None
+    inbound_no: Annotated[str, Field(min_length=1, max_length=64)]
+    receipt_date: date
+    supplier_lot_no: Annotated[str, Field(min_length=1, max_length=512)]
+    quantity: DecimalString
+    quantity_unit: Annotated[str, Field(min_length=1, max_length=32)]
+
+
+class IntakeResponse(APIRequestModel):
+    material_lot_id: UUID
+    inbound_receipt_id: UUID
+    allocation_id: UUID
+    version: int
+
+
+class DocumentResponse(APIRequestModel):
+    document_id: UUID
+    checksum_sha256: Annotated[str, Field(pattern=r"^[0-9a-f]{64}$")]
+    storage_key: str
+    deduplicated: bool
+
+
+class ExtractionFieldResponse(APIRequestModel):
+    field_key: str
+    original_text: str
+    ocr_text: str
+    confidence: DecimalString
+    page_number: int
+    bbox: BoundingBox
+    required: bool
+    status: Literal["REVIEW_REQUIRED", "CONFIRMED"]
+
+
+class ExtractionRunResponse(APIRequestModel):
+    run_id: UUID
+    document_id: UUID
+    status: Literal["REVIEW_REQUIRED", "CONFIRMED"]
+    version: int
+    fields: list[ExtractionFieldResponse]
+    conflicts: list[dict[str, object]]
+
+
+class FieldReviewInput(APIRequestModel):
+    field_key: str
+    manual_text: str | None = None
+    final_text: Annotated[str, Field(min_length=1, max_length=4_000)]
+    source: Literal["ORIGINAL", "OCR", "MANUAL"]
+    reason: Annotated[str, Field(min_length=1, max_length=1_000)]
+    logic_conflict: bool = False
+
+
+class ReviewRequest(APIRequestModel):
+    fields: Annotated[list[FieldReviewInput], Field(min_length=1)]
+    allocation_id: UUID
+
+
+class InspectionCreateRequest(APIRequestModel):
+    allocation_id: UUID
+    extraction_run_id: UUID
+
+
+class JudgmentView(APIRequestModel):
+    spec_item_id: UUID
+    item_code: str
+    supplier_decision: str | None
+    hyc_reference_decision: str | None
+    internal_decision: str | None
+    effective_decision: str
+
+
+class InspectionResponse(APIRequestModel):
+    inspection_id: UUID
+    material_lot_id: UUID
+    allocation_id: UUID
+    spec_version_id: UUID
+    spec_snapshot: dict[str, object]
+    status: str
+    candidate_decision: str
+    final_decision: str | None
+    version: int
+    round_no: int
+    revision_no: int
+    blockers: list[str]
+    judgments: list[JudgmentView]
+
+
+class InternalResultItem(APIRequestModel):
+    spec_item_id: UUID
+    values: Annotated[list[DecimalString], Field(min_length=1)]
+
+
+class InternalResultsRequest(APIRequestModel):
+    results: list[InternalResultItem]
+
+
+class ApprovalRequest(APIRequestModel):
+    action: Literal["APPROVE", "RETURN"]
+    reason: str | None = None
+
+
+class LineageRequest(APIRequestModel):
+    reason: Annotated[str, Field(min_length=1, max_length=1_000)]
+
+
+class LotTraceResponse(APIRequestModel):
+    material_lot_id: UUID
+    identity_key: str
+    receipts: list[dict[str, object]]
+    allocations: list[dict[str, object]]
+    documents: list[dict[str, object]]
+    inspections: list[dict[str, object]]
+    audits: list[dict[str, object]]
 
 
 def to_seoul_display(value: datetime) -> datetime:

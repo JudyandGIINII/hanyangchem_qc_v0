@@ -14,6 +14,7 @@ services:
       start_period: 5s
     tmpfs:
       - /var/lib/postgresql/data
+    ports: ["127.0.0.1:${HYC_POSTGRES_HOST_PORT:-15432}:5432"]
   redis:
     image: redis:7-alpine
     healthcheck:
@@ -25,12 +26,18 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
-    command: ["uv", "run", "--project", "/app/backend", "uvicorn", "hyc_api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["sh", "-c", "uv run --project /app/backend alembic -c /app/backend/alembic.ini upgrade head && uv run --project /app/backend uvicorn hyc_api.main:app --host 0.0.0.0 --port 8000"]
     environment:
       DATABASE_URL: postgresql+psycopg://local_user:local-placeholder-only@postgres:5432/hyc
       REDIS_URL: redis://redis:6379/0
       CHECK_DATABASE_ON_READY: "true"
       CHECK_REDIS_ON_READY: "true"
+      P3_FIXTURE_MODE: "true"
+      P3_STORAGE_ROOT: /tmp/hyc-p3-documents
+      P3_FAULT_INJECTION_ENABLED: "false"
+      HYC_APP_ROLE: local_user
+    tmpfs:
+      - /tmp/hyc-p3-documents
     depends_on:
       postgres: { condition: service_healthy }
       redis: { condition: service_healthy }

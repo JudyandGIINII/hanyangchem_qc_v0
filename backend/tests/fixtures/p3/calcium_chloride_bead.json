@@ -1,0 +1,10 @@
+{
+  "fixture": "P3_SYNTHETIC_CALCIUM_CHLORIDE_BEAD",
+  "supplier_lot_no": "P3-SYNTH-LOT-20260801",
+  "fields": {
+    "LOT_NO": "P3-SYNTH-LOT-20260801",
+    "CACL2_PURITY": "96.50",
+    "MOISTURE": "0.10"
+  },
+  "notice": "Synthetic fixture only. Contains no real document content."
+}

@@ -35,8 +35,8 @@ class SyntheticFixtureExtractionProvider:
                     normalized_value=Decimal("1.00"),
                     provenance=reference,
                     confidence=1.0,
-                    review_required=False,
+                    review_required=True,
                 )
             ],
-            review_required=False,
+            review_required=True,
         )
