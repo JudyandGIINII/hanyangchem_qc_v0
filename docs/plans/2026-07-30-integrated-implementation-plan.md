@@ -6,7 +6,7 @@
 **요구사항 추적 정본:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md) — 52개 FR, UI/매칭/데이터/API/보고서, 보안/감사/NFR/OCR, AT/DoD를 Phase·owner·planned test·gate에 연결  
 **독립 QA:** [`../reviews/2026-07-30-integrated-plan-alfred-qa.md`](../reviews/2026-07-30-integrated-plan-alfred-qa.md) — Alfred R1 formal/substantive **PASS**, 이전 HIGH/MEDIUM 5건 모두 `RESOLVED`, 신규 HIGH/MEDIUM blocker 0  
 **작성 원칙:** 두 계획의 공통 결론과 상호 보완되는 장점만 채택했다. 충돌 사항은 PRD의 fail-closed 원칙, 데이터 무결성, 실행 가능성 순으로 판정했다.  
-**권한 경계:** AP-01~05는 승인됐다. P0A/P0B/P1/P2는 complete·accepted이고 P2는 독립 Hermes QA와 final Claude source-diff gate를 통과했다. 이 source-gate acceptance는 commit, main integration, push, deployment, release 또는 운영 활성화를 뜻하지 않는다. P3, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 blocked/미승인이다.
+**권한 경계:** AP-01~05는 승인됐다. P0A/P0B/P1/P2는 complete·accepted이고 P2는 독립 Hermes QA와 final Claude source-diff gate를 통과했다. Source-gate acceptance 자체와 별도로 사용자가 Git 작업을 승인해 source commit `996056b`가 fresh `origin/main` baseline `1e96836`에서 clean integration branch로 fast-forward 통합되었다. 원격 publication은 승인되었으나 이 문서 조정 시점에는 pending이며, deployment, release 또는 운영 활성화를 뜻하지 않는다. P3, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포 및 서비스 공개는 blocked/미승인이다.
 
 ---
 
@@ -220,7 +220,7 @@ Create: docs/{TRACEABILITY_MATRIX.md,OCR_BENCHMARK.md,SECURITY.md,USER_GUIDE.md,
 
 ### P2 — Pure domain + DB invariants
 
-**선행:** independently accepted P1 contract gate (충족). **실행 상태:** P2.1–P2.8은 독립 Hermes QA와 final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1) 후 source-complete·accepted다. P3는 별도 승인을 받지 않아 blocked다.
+**선행:** independently accepted P1 contract gate (충족). **실행 상태:** P2.1–P2.8은 독립 Hermes QA와 final Claude source-diff `PASS` (BLOCKER 0, MAJOR 0, MINOR 1) 후 source-complete·accepted다. 별도 사용자 승인으로 source commit `996056b`는 fresh-main clean integration branch에 fast-forward 통합되었고, 원격 publication은 pending이다. P3는 별도 승인을 받지 않아 blocked다.
 **목표:** UI/OCR 전에 정본 모델과 fail-closed 규칙을 증명한다.
 
 |Task|의존|구현/테스트|
@@ -525,5 +525,6 @@ CI/golden에서는 실제 OCR 외부 호출을 금지한다. 기대 결과는 ex
 - [x] P0A/P0B complete·accepted 및 P1 진행 권한 확인
 - [x] P2는 P1 contract gate 후 진행 권한 확인
 - [x] P2 source gate: independent Hermes QA + final Claude `PASS` 후 complete·accepted
+- [x] P2 source commit `996056b`의 fresh-main clean integration branch fast-forward 통합 및 fresh QA
 
-**현재 상태 (2026-08-01 P2 final acceptance):** `P0A_P0B_P1_P2_COMPLETE_ACCEPTED_P3_BLOCKED_NOT_AUTHORIZED`. Independent Hermes evidence reproduced `make check` exit 0, backend 346 passed/10 PostgreSQL deselected, strict mypy 29 files, migration contract 4, unchanged FE8 frontend 32 plus lint/typecheck/build, scans/Compose, the disposable PostgreSQL runner's 10 passed plus upgrade→downgrade→upgrade and empty drift, and cleanup 0/0/0. Final Claude source-diff report `/tmp/hyc-p2-absolute-final-claude-review.md` returned `PASS` with BLOCKER 0, MAJOR 0, MINOR 1 and closed B1–B5, M1–M9, m1–m7, H1, N1–N3, N-M1, and N-M2. Alembic head is `20260801_0003`; frozen `20260731_0002` remains SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`. N-M3 remains an accepted, unfixed defense-in-depth follow-up with the broad DB-direct writer precondition described above and must be revisited before production DB-role activation. P3 remains blocked/unapproved, and this plan still stops before commit/main integration/push, real-data apply/import, external OCR/AI, non-disposable migration, deployment, release, or service exposure.
+**현재 상태 (2026-08-01 post-integration closure):** `P0A_P0B_P1_P2_COMPLETE_ACCEPTED_P3_BLOCKED_NOT_AUTHORIZED`. Independent Hermes evidence reproduced `make check` exit 0, backend 346 passed/10 PostgreSQL deselected, strict mypy 29 files, migration contract 4, unchanged FE8 frontend 32 plus lint/typecheck/build, scans/Compose, the disposable PostgreSQL runner's 10 passed plus upgrade→downgrade→upgrade and empty drift, and cleanup 0/0/0. Final Claude source-diff report `/tmp/hyc-p2-absolute-final-claude-review.md` returned `PASS` with BLOCKER 0, MAJOR 0, MINOR 1 and closed B1–B5, M1–M9, m1–m7, H1, N1–N3, N-M1, and N-M2. Separately user-authorized source commit `996056b` is fast-forward integrated from fresh `origin/main` baseline `1e96836` in the clean integration branch; fresh `make bootstrap` and `make check` passed with the same evidence. Remote publication is authorized and pending. Alembic head is `20260801_0003`; frozen `20260731_0002` remains SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`. N-M3 remains an accepted, unfixed defense-in-depth follow-up with the broad DB-direct writer precondition described above and must be revisited before production DB-role activation. P3 remains blocked/unapproved; real-data apply/import, external OCR/AI, non-disposable migration, deployment, release, and service exposure remain unauthorized.

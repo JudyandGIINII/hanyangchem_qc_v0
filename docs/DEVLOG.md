@@ -468,7 +468,19 @@ required append-only evidence tables. Such a writer can insert an unfinalized ca
 history; N1 decision integrity, mandatory evidence, and finalized-row immutability still hold.
 Revisit this defense-in-depth gap before any production DB-role activation.
 
-P2 is source-complete and accepted. This does not claim commit, main integration, push,
-deployment, release, or operationalization. P3 and every production/operations gate remain
-blocked and unapproved; no real-data apply/import, external OCR/AI, non-disposable migration,
-deployment, or service exposure was performed.
+At this dated source-gate checkpoint, P2 was source-complete and accepted; that acceptance alone
+did not authorize Git integration or remote publication. P3 and every production/operations gate
+remained blocked and unapproved; no real-data apply/import, external OCR/AI, non-disposable
+migration, deployment, or service exposure was performed.
+
+## 2026-08-01 — P2 post-integration documentation closure
+
+Under separate explicit user authorization, source commit `996056b` (`feat: implement P2 domain
+and database invariants`) was fast-forward integrated from fresh `origin/main` baseline `1e96836`
+into the clean fresh-main integration branch. Fresh integration QA passed: `make bootstrap` and
+`make check` both exited 0, with backend `346 passed, 10 PostgreSQL deselected`, strict mypy 29,
+migration contract 4, frontend 32 plus lint/typecheck/build, scans/Compose, disposable PostgreSQL
+10 passed, and controller-verified cleanup. Remote publication is authorized but pending at this
+documentation edit. P3 remains blocked/not authorized; real-data apply/import, external OCR/AI,
+non-disposable migration, deployment, release, and service exposure remain unauthorized. N-M3
+remains accepted and unfixed for review before production DB-role activation.

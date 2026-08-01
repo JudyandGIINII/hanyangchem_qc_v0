@@ -1,6 +1,6 @@
 # 한양화학 v0 — 수입검사 디지털화 및 LOT 추적
 
-현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2는 source gate에서 complete/accepted다. P2는 독립 Hermes QA와 final Claude source-diff `PASS` 후 accepted 되었고, P3는 blocked/not authorized다.
+현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2는 source gate에서 complete/accepted다. P2 source commit `996056b`는 clean fresh-main integration branch에 fast-forward 통합되었으며, 이 문서 조정 시점에 원격 publication은 사용자 승인 후 pending이다. P3는 blocked/not authorized다.
 
 ## 현재 상태
 
@@ -14,6 +14,7 @@
 - P0B final independent review: `APPROVE` — 67 in-memory probes, HIGH 0, MEDIUM 0; one accepted LOW generic scheme-specific URI-semantics note is defense-in-depth because consumed relationship roles use exact allowlists
 - 구현 상태: `P0A_P0B_P1_P2_COMPLETE_ACCEPTED; P3_BLOCKED_NOT_AUTHORIZED`
 - P2 final evidence: Hermes QA green; final Claude `PASS` (BLOCKER 0, MAJOR 0, MINOR 1); backend `346 passed, 10 PostgreSQL deselected`; strict mypy 29 files; migration contract 4; frontend 32 plus lint/typecheck/build; PostgreSQL 10 plus upgrade→downgrade→upgrade and empty drift
+- P2 closure state: source commit `996056b` is fast-forward integrated from fresh `origin/main` baseline `1e96836` in the clean integration branch; fresh `make bootstrap` and `make check` exited 0 with the same 346/10, mypy 29, migration 4, frontend 32, scan/Compose, PostgreSQL 10, and cleanup evidence. Remote publication is authorized and pending.
 - P2 migration state: Alembic head `20260801_0003`; frozen `20260731_0002` SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`
 - Accepted follow-up N-M3 is not fixed: an app-role DB-direct writer needs broad direct case-table INSERT/UPDATE and all required evidence-table INSERT privileges to create an unfinalized case already at `LEAD_REVIEW` and finalize it with complete valid evidence, bypassing intermediate status history. Decision integrity, mandatory evidence, and finalized-row immutability still hold; revisit this defense-in-depth gap before production DB-role activation
 
@@ -28,7 +29,7 @@
 
 ## 다음 단계와 계속되는 경계
 
-P1 contract gate는 2026-07-31 Hermes 직접 QA로 통과했고, P2도 독립 Hermes+Claude source gate를 통과해 complete/accepted다. P3는 blocked/not authorized며, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포·release·서비스 공개는 계속 미승인이다. 이 README 문서 조정은 P2 source increment의 commit, main integration, push, deployment 또는 운영 활성화를 주장하지 않는다.
+P1 contract gate는 2026-07-31 Hermes 직접 QA로 통과했고, P2도 독립 Hermes+Claude source gate를 통과해 complete/accepted다. P2 acceptance 자체가 Git 작업을 승인한 것은 아니지만, 별도 사용자 승인으로 source commit `996056b`가 fresh-main integration branch에 fast-forward 통합되었다. 원격 publication은 승인되었으나 이 문서 조정 시점에는 pending이다. P3는 blocked/not authorized며, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성 migration, 배포·release·서비스 공개는 계속 미승인이다.
 
 ## P1 accepted verification
 
