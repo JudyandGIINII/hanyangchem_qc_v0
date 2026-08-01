@@ -1,6 +1,6 @@
 # 요구사항 추적 매트릭스 — 한양화학 수입검사 디지털화 및 LOT 추적
 
-**상태:** P0A/P0B/P1/P2/P3 source complete and accepted. P2 and P3 are committed, fresh-main integrated, and delivered to `origin/main` under separate authorization. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` was fast-forwarded from clean baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`; post-fetch local main, `origin/main`, and remote main agree, ancestry is verified, and Git history is authoritative. Delivery does not authorize deployment, release, production readiness, real data, external services, production migration, production DB roles, or P4/P5 start.
+**상태:** P0A/P0B/P1/P2/P3 source complete and accepted. P2 and P3 are committed, fresh-main integrated, and delivered to `origin/main` under separate authorization. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` was fast-forwarded from clean baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`; post-fetch local main, `origin/main`, and remote main agreed at P3 closure, ancestry was verified, and Git history is authoritative. P4 kickoff preparation is ready but P4 implementation is unstarted: P4-A is `READY_TO_START_IN_NEW_SESSION`, P4-B is `BLOCKED_QUALITY_CORPUS_APPROVAL`, and P4-C is `BLOCKED_AP02_PROVIDER_OPT_IN`. Documentation capture-time baseline `f3020e2fe90996de9b5b0e502da4360976db0a9f` is not a continuing live tip/final commit. No deployment, release, production readiness, real data, external services, production migration, or production DB roles are authorized.
 **정본:** `Prd.md`  
 **계획:** `docs/plans/2026-07-30-integrated-implementation-plan.md`  
 **규칙:** 아래 경로는 모두 구현 시 `Create` 대상이다. `Planned`는 통과를 의미하지 않는다. 각 행은 해당 Phase의 테스트가 실제 exit 0이고 Hermes 독립 QA가 증빙을 확인해야 `Verified`로 바뀐다.
@@ -72,6 +72,28 @@ The reviewed source-only 10-file manifest before these documentation edits was `
 |Hermes controller QA|`make bootstrap && make check` passed Ruff, strict mypy 39, backend 346/77 deselected, frontend Vitest 32 plus Next build, migration 4, scans, and Compose. P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3, and targeted `test_db_serialization.py` 27 tests across three fresh cycles (81 total) passed. The frozen pre-doc candidate hash remained unchanged; Docker HYC containers/networks/volumes were 0/0/0 and only user-owned n8n remained running and untouched.|Accepted at P3 source gate|
 |Candidate/Git evidence|Historical pre-integration freeze: base HEAD `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`; 50 changed/untracked files; source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`, which was not a post-doc hash. Final source commit `91465f0413d0c0ca2633577078ec1300a6096442` (`feat: complete P3 vertical slice`) contains exactly 52 files, 8911 insertions, and 119 deletions. Clean local main and `origin/main` both began at the baseline; `git merge --ff-only 91465f0...` advanced main without merge commit/rebase. Fresh integrated bootstrap/check, Ruff, mypy 39, backend 346/77, frontend 32/build, migration 4, scans/Compose, P2/P3 PostgreSQL 10/67, and Playwright 3/3 passed; HYC cleanup was 0/0/0 and n8n untouched. Push `b7bc4a8..91465f0 main -> main` succeeded. Post-fetch local main, `origin/main`, and remote main all equal the full source commit; base/source are ancestors of `origin/main`; main/candidate worktrees were clean immediately before this docs-only reconciliation.|Committed, fresh-main fast-forward integrated, delivered to `origin/main`; Git history authoritative|
 |Boundary|Only synthetic fixtures were used. No real PDF/XLS/XLSX, external OCR/AI/NAS/Drive/ERP, production DB-role activation, non-disposable DB, public exposure, deployment, release, or prohibited Git operation occurred. P4/P5 are unstarted. P2 N-M3 remains accepted and unfixed.|Preserved; not production-ready|
+
+## P4 kickoff readiness and planned verification trace
+
+Authoritative plan: [`docs/plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md). 아래 행은 readiness/planned mapping이며 P4 requirement가 구현 또는 검증됐다는 뜻이 아니다.
+
+|Requirement/control|P4 lane / owner|Planned verification|Current gate|
+|---|---|---|---|
+|AT-001 COA parsing|P4-A WORKER/QUALITY; P4-B QUALITY|Synthetic COA golden에서 supplier/product/LOT/row/spec/result/page/polygon, stamp-overlap low-confidence, handwriting reference-only; approved real corpus 결과는 별도|P4-A ready; P4-B blocked|
+|AT-004 variable samples|P4-A WORKER/QUALITY|Sample identity/value/raw/order 보존과 5/3 등 variable-count fixture; fixed-column truncation denial|Planned, not verified|
+|FR-OCR-001 accuracy-first pipeline|P4-A WORKER|text-layer→render→rotation/deskew/contrast→table→fixture extraction→parse→schema/logic staged artifact regression; CI real OCR 불필요|Planned, not verified|
+|FR-OCR-002 Provider abstraction|P4-A WORKER/API; P4-C|Existing port/fixture seam regression, scorer-before-adapter; `provider_name` synthetic literal 변경 시 backward-compatible contract/schema/OpenAPI/client drift|P4-A contract planning ready; external use blocked|
+|FR-OCR-003 structured output/provenance|P4-A WORKER/API|Strict versioned golden schema with source hash, document/row/sample identity, raw/normalized, page/bbox polygon and immutable versions|Planned, not verified|
+|FR-OCR-004 handwriting|P4-A WORKER/QUALITY|`test_handwriting_never_business_field.py` 또는 동등 test로 reference-only와 business-field 승격 금지|Planned, not verified|
+|FR-OCR-005 confidence/Human Review|P4-A WORKER/QUALITY|confidence/reason/review-required scoring; low-confidence/missing KPI는 review/manual fallback|Planned; QUALITY threshold unapproved|
+|FR-OCR-006 logic validation|P4-A DOMAIN/WORKER|decimal/unit/date/LOT/O↔0/I↔l/missing/duplicate/merged-cell warning; value 자동수정 금지|Planned, not verified|
+|Human Review / fail closed|P4-A API/WORKER/QUALITY|Missing, unmapped, low-confidence, invalid/duplicate schema, unapproved normalization, logic conflict가 review 상태이며 auto-finalization 없음|Binding invariant; planned regression|
+|AP-02 external-provider gate|P4-C OPS/QUALITY/HERMES-QA|Provider/model/endpoint/region/retention/training/subprocessors/credential/cost/redacted payload/audit/rollback/destination별 opt-in evidence|`BLOCKED_AP02_PROVIDER_OPT_IN`|
+|QUALITY corpus representativeness|P4-B QUALITY|Manifest/version, source hash/classification, de-identification reviewer/date, document type/supplier/difficulty matrix, storage/Git/retention/destination/exclusions/approval evidence|`BLOCKED_QUALITY_CORPUS_APPROVAL`|
+|Metric contract|P4-A WORKER/QUALITY|Separate exact/normalized, row precision/recall, numeric/unit/LOT/required-missing, page/polygon IoU; denominator/ignored/duplicate/normalization rules; report digest|Planned, no acceptance threshold|
+|P4-A commands|P4-A WORKER/HERMES-QA|Focused tests; planned/absent `make p4-golden-check`, `make p4-benchmark-fixture`; `make check`; P2/P3 PostgreSQL; conditional P3 E2E; scans/network proof/cleanup|Planned; exit 0 뒤에만 Verified|
+
+P4-A CI는 generated non-sensitive synthetic fixture, fixture provider, stable clock/ordering만 사용하며 network/external credential이 없다. P4-B/P4-C의 `PENDING` packet field는 approval로 계산하지 않는다. QUALITY가 geometry/KPI threshold를 승인하기 전에는 임의 acceptance threshold를 만들지 않는다. KPI 미달/부재는 Human Review와 manual fallback을 늘리며 auto-finalization을 허용하지 않는다.
 
 ## 1. 기능 요구사항 전수 추적
 
@@ -169,7 +191,7 @@ The reviewed source-only 10-file manifest before these documentation edits was `
 |NFR-AVAIL|§19.3 OCR 장애 시 수기 흐름, retry/manual, DLQ, status|P3/P6|API/WORKER/OPS|OCR-off vertical slice; worker kill/retry/DLQ/status tests|P3/P6|
 |NFR-EXT|§19.4 no-code config, provider/ERP adapters, unlimited item/sample, site/warehouse IDs|P1/P2/P5|DOMAIN/API/WORKER|config-driven alias/schema tests, large variable-sample property tests, feature-off ERP contract|P5|
 |NFR-UX|§19.5 한국어, 색+텍스트, 숫자 즉시 오류, 상태 구분, 유실 방지|P3/P5|WEB|Playwright accessibility/keyboard/autosave/conflict tests|P5|
-|OCR-BENCH-001|§20.1 provider 고정 전 representative golden와 10개 지표|P4|WORKER/QUALITY|versioned runner/metrics report; 표본 대표성 QUALITY 승인|AP-02, P4|
+|OCR-BENCH-001|§20.1 provider 고정 전 representative golden와 10개 지표|P4|WORKER/QUALITY|versioned runner/metrics report; P4-A synthetic foundation, P4-B 표본 대표성 QUALITY 승인, P4-C Provider별 AP-02|P4-A ready; P4-B/P4-C blocked|
 |OCR-EDGE-001|§20.2 20개 edge case|P2~P5|DOMAIN/WORKER/API|`backend/tests/golden/test_required_edge_cases.py` + AT tests; 각 edge ID별 parameterized case|P5|
 
 ## 4. API Idempotency 계약 정본
@@ -235,4 +257,4 @@ Planned tests:
 
 ## 8. 승인 상태
 
-현재 매트릭스는 계획상 추적을 완결했으며 P0A/P0B/P1/P2/P3 source increments는 complete·accepted다. P2와 P3는 각각 독립 source gate 후 별도 승인으로 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 post-fetch local main, `origin/main`, remote main은 이 commit과 같으며 ancestry와 이 docs-only reconciliation 직전 clean worktree가 검증됐다. Fixture-only N-1 validation/auth ordering, N-2 GET seeding, N-5 in-memory session eviction과 P2 N-M3 broad direct-role history bypass는 accepted debt이며 production 활성화 전에 재검토한다. P4/P5는 unstarted다. 실데이터 apply·import, 외부 OCR·AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 blocked/미승인이다.
+현재 매트릭스는 계획상 추적을 완결했으며 P0A/P0B/P1/P2/P3 source increments는 complete·accepted다. P2와 P3는 각각 독립 source gate 후 별도 승인으로 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 P3 closure의 post-fetch local main, `origin/main`, remote main equality와 ancestry가 검증됐다. Git history가 live tip의 정본이며 P4 documentation capture-time baseline `f3020e2fe90996de9b5b0e502da4360976db0a9f`는 continuing live tip/최종 commit이 아니다. P4 kickoff preparation은 ready지만 implementation은 unstarted다. P4-A만 `READY_TO_START_IN_NEW_SESSION`이고 P4-B/P4-C는 각각 QUALITY corpus approval과 Provider-specific AP-02 opt-in이 없어 blocked다. 이 readiness/planned mapping은 P4 요구를 Verified로 바꾸지 않는다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt이며 production 활성화 전에 재검토한다. 실데이터 apply·import, 외부 OCR·AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 blocked/미승인이다.

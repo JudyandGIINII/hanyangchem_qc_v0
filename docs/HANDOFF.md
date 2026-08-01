@@ -1,4 +1,36 @@
-# P3 delivery handoff and post-push closure
+# P4 kickoff handoff — offline/synthetic lane only
+
+## 현재 handoff
+
+- Authoritative kickoff plan: [`plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md).
+- P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` remains accepted, fresh-main fast-forward integrated, and delivered to `origin/main`.
+- `f3020e2fe90996de9b5b0e502da4360976db0a9f` is only this documentation worktree's capture-time baseline before a new documentation commit. It is not a continuing live tip or final commit; Git history is authoritative.
+- P4 implementation is unstarted. No P4 application code, real representative corpus approval, external Provider opt-in, `make p4-golden-check`, or `make p4-benchmark-fixture` exists at this handoff.
+- The user's current request authorizes Hermes/controller to QA and deliver this documentation-only handoff with a normal commit and non-force push. This writer has no Git mutation authority and performs only the six allowed documentation edits and local writer checks.
+
+## Lane decisions
+
+|Lane|Status|What the next session may do|
+|---|---|---|
+|P4-A — Offline/Synthetic foundation|`READY_TO_START_IN_NEW_SESSION`|Use generated non-sensitive synthetic fixtures and the existing fixture-provider seam to implement strict golden schema, deterministic scorer/runner, staged artifact contract, synthetic edge matrix, and the two planned Make targets. No new product gate is required for this lane.|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Do not begin until QUALITY evidence approves document-type/supplier/difficulty representativeness and de-identification policy with a complete decision packet.|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Do not call or select a Provider until provider-specific model/endpoint/region/retention/training/subprocessor/credential/cost/payload/audit/rollback decisions and the corpus destination are approved.|
+
+P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
+
+## Safe next action in the new session
+
+Use the copy/paste prompt and exact first-slice/verification order in the kickoff plan. Begin by fetching and freezing the then-current `origin/main` in a clean isolated Orca worktree, then inspect:
+
+- `backend/src/hyc_api/extraction.py`
+- `backend/src/hyc_api/contracts.py`
+- `backend/tests/contract/test_extraction_contract.py`
+
+`ExtractionCandidate.provider_name` is currently the synthetic-only literal `"synthetic-fixture"`. Any provider identity/version evolution requires deliberate backward-compatible contract and generated schema/OpenAPI/client drift tests; do not casually broaden it.
+
+This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
+
+# P3 delivery handoff and post-push closure (historical)
 
 ## 0. 현재 post-push closure
 

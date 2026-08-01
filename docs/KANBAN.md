@@ -12,6 +12,10 @@
 |FE8-frontend-fixture|Completed / independently verified / delivered to `origin/main`|Deterministic synthetic eight-flow frontend workflow|Source/UI approvals, post-doc and fresh integration full gates, standalone/desktop/390px QA, active probe, remote-race, push and post-push verification passed; not P2/P3 backend/domain completion|
 |P2-domain-db-candidate|Completed / accepted / committed / fresh-main integrated / delivered to `origin/main`|P2.1–P2.8 pure domain and DB invariants|Under separate explicit user authorization, source commit `996056b` and first integration-documentation commit `58e963c` were delivered from fresh `origin/main` baseline `1e96836`. Git history is authoritative for the live tip. N-M3 remains an accepted follow-up before production DB-role activation.|
 |P3-vertical-slice-candidate|Completed / accepted / committed / fresh-main fast-forward integrated / delivered to `origin/main`|Synthetic calcium-chloride-bead PostgreSQL/FastAPI/Next.js vertical slice|Source commit `91465f0413d0c0ca2633577078ec1300a6096442` (52 files, +8911/−119) was fast-forwarded without merge commit/rebase from clean baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. Fresh integrated bootstrap/check, Ruff, mypy 39, backend 346/77, frontend 32/build, migration 4, scans/Compose, P2/P3 PostgreSQL 10/67, and Playwright 3/3 passed. Push and post-fetch equality/ancestry checks passed; both worktrees were clean before this docs-only reconciliation, and cleanup is 0/0/0 with n8n untouched. N-1/N-2/N-5 and P2 N-M3 remain accepted non-production debt; no deployment/release/production-readiness claim.|
+|P4-kickoff-preparation|Ready|Documentation-only lane split, metric contract, approval packets, ownership/path plan, verification and stop/rollback plan|Kickoff plan and handoff/traceability mirror synchronized; P4 implementation remains unstarted; Hermes/controller owns the already-authorized QA and docs-only normal commit/non-force push while the writer performs no Git mutation|
+|P4-A-offline-synthetic|`READY_TO_START_IN_NEW_SESSION`|Generated non-sensitive synthetic golden schema/scorer/fixture runner/staged artifacts|New session freezes current `origin/main` in an isolated Orca worktree; no real source, network, credential, external Provider, or application auto-finalization|
+|P4-B-approved-corpus|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Representative approved-corpus benchmark|Complete QUALITY evidence for corpus manifest, classification, de-identification, representativeness, storage/Git/retention/destination/exclusions/approver|
+|P4-C-external-provider|`BLOCKED_AP02_PROVIDER_OPT_IN`|Provider-specific benchmark and selection|Provider/model/endpoint/region, retention/training/subprocessors, credentials, cost, redacted payload, audit/rollback and approved corpus destination all approved for that Provider|
 
 ## 검증 결과
 
@@ -48,6 +52,9 @@
 |AP-04|Local Auth/RBAC 및 ADMIN 비승인권|승인|
 |AP-05|실 PDF/XLSX Git 커밋 금지·마스킹 fixture 정책|승인|
 |Implementation|P0A/P0B/P1/P2/P3 source increments|P0A/P0B/P1/P2/P3 source complete·accepted; P2 and P3 committed, fresh-main integrated, and delivered to `origin/main`. Product/operations gates remain unauthorized.|
+|P4-A kickoff|Offline/synthetic foundation only|`READY_TO_START_IN_NEW_SESSION`; implementation unstarted|
+|P4-B corpus|QUALITY representativeness/de-identification evidence|`BLOCKED_QUALITY_CORPUS_APPROVAL`|
+|P4-C Provider|Provider-specific AP-02 opt-in|`BLOCKED_AP02_PROVIDER_OPT_IN`|
 |Still prohibited|실데이터 apply/import, 외부 OCR/AI, 비일회성 migration, 배포/서비스 공개|미승인|
 
 ## 실행 Backlog
@@ -57,8 +64,8 @@
 3. P1 Repository/Contract foundation — Completed/accepted through user-authorized Hermes direct QA
 4. P2 Pure domain + DB invariants — Completed/accepted, committed, fresh-main integrated, and delivered to `origin/main` (`996056b`, verified first-push/integration-evidence commit `58e963c`); `58e963c` remains a durable ancestor and Git history is authoritative for the live tip; N-M3 retained as pre-production-privilege follow-up
 5. P3 Fixture 기반 첫 수직 Slice — Completed/accepted, committed as `91465f0413d0c0ca2633577078ec1300a6096442`, fresh-main fast-forward integrated, and delivered to `origin/main`
-6. P4 OCR Golden/Provider benchmark — Unstarted
+6. P4 OCR Golden/Provider benchmark — Preparation ready; implementation unstarted. P4-A `READY_TO_START_IN_NEW_SESSION`, P4-B `BLOCKED_QUALITY_CORPUS_APPROVAL`, P4-C `BLOCKED_AP02_PROVIDER_OPT_IN`. Authoritative kickoff: [`docs/plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md)
 7. P5 Core MVP — Unstarted
 8. P6 수집/운영/Pilot
 
-P1/P2/P3 source gate는 통과했고 P2와 P3는 각각 별도 Git 승인에 따라 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 Git history가 live tip의 정본이다. 이는 deployment, release, production readiness 또는 운영 활성화를 뜻하지 않으며 P4/P5는 시작하지 않았다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 유지한다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public service exposure, deployment/release는 계속 시작하지 않는다.
+P1/P2/P3 source gate는 통과했고 P2와 P3는 각각 별도 Git 승인에 따라 committed, fresh-main integrated, `origin/main`에 delivered 됐다. P3 source commit은 `91465f0413d0c0ca2633577078ec1300a6096442`이고 Git history가 live tip의 정본이다. P4 kickoff preparation만 ready이며 P4 implementation은 시작하지 않았다. P4-A만 새 세션에서 offline/synthetic 범위로 시작할 수 있고 P4-B/P4-C는 각 독립 gate가 blocked다. Documentation capture-time baseline `f3020e2fe90996de9b5b0e502da4360976db0a9f`는 continuing live tip/최종 commit이 아니다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 유지한다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP, 비일회성/production DB, production DB-role activation, public service exposure, deployment/release/production readiness는 계속 시작하지 않는다.
