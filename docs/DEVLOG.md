@@ -480,7 +480,21 @@ and database invariants`) was fast-forward integrated from fresh `origin/main` b
 into the clean fresh-main integration branch. Fresh integration QA passed: `make bootstrap` and
 `make check` both exited 0, with backend `346 passed, 10 PostgreSQL deselected`, strict mypy 29,
 migration contract 4, frontend 32 plus lint/typecheck/build, scans/Compose, disposable PostgreSQL
-10 passed, and controller-verified cleanup. Remote publication is authorized but pending at this
-documentation edit. P3 remains blocked/not authorized; real-data apply/import, external OCR/AI,
+10 passed, and controller-verified cleanup. At this pre-push documentation edit, remote delivery
+had not yet occurred. P3 remains blocked/not authorized; real-data apply/import, external OCR/AI,
 non-disposable migration, deployment, release, and service exposure remain unauthorized. N-M3
 remains accepted and unfixed for review before production DB-role activation.
+
+## 2026-08-01 — P2 first-push verification and post-push documentation reconciliation
+
+The first authorized push delivered range `1e96836..58e963c` to `origin/main`. Fetch/readback
+equality verified `origin/main` at `58e963c`, and ancestry verification proved source commit
+`996056b` is an ancestor of that delivered remote state. Therefore `58e963c` is the verified
+first-push/integration-evidence commit and a durable ancestor, not a continuing/current/live final
+tip. This uncommitted post-push documentation reconciliation, when later controller-committed and
+pushed, will become a later descendant and final remote tip; Git history is authoritative for the
+current live tip. P2 remains complete, accepted, committed, fresh-main integrated, and delivered
+to `origin/main` under separate explicit user authorization. P3 remains blocked/not authorized;
+N-M3 remains accepted and unfixed before production DB-role activation; real-data apply/import,
+external OCR/AI, non-disposable migration, deployment, release, operations, and service exposure
+remain unauthorized and unperformed.
