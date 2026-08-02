@@ -1,4 +1,4 @@
-.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture secret-scan sensitive-documents-check check
+.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture p4-preflight-check secret-scan sensitive-documents-check check
 
 bootstrap:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv sync --project backend --extra dev
@@ -78,6 +78,19 @@ p4-benchmark-fixture:
 	(cd "$$temp_root/two" && TZ=Pacific/Honolulu LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_golden.py" --fixture "$$fixture" --output report.json); \
 	cmp "$$temp_root/one/report.json" "$$temp_root/two/report.json"; \
 	python3 -c 'import hashlib,json,pathlib,sys; output=pathlib.Path(sys.argv[1]); fixture=pathlib.Path(sys.argv[2]); payload=json.loads(output.read_text()); print("p4-benchmark-fixture: repeatable output=" + hashlib.sha256(output.read_bytes()).hexdigest() + " report=" + payload["report_sha256"] + " fixture=" + hashlib.sha256(fixture.read_bytes()).hexdigest())' "$$temp_root/one/report.json" "$$fixture"
+
+p4-preflight-check:
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q backend/tests/preflight
+	@set -eu; \
+	root="$(PWD)"; \
+	temp_root=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-p4-preflight.XXXXXX"); \
+	cleanup() { if [ -d "$$temp_root" ]; then find "$$temp_root" -depth -delete; fi; test ! -e "$$temp_root"; }; \
+	trap cleanup EXIT INT TERM; \
+	mkdir "$$temp_root/one" "$$temp_root/two"; \
+	(cd "$$temp_root/one" && TZ=UTC LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_preflight.py" > result.json); \
+	(cd "$$temp_root/two" && TZ=Pacific/Honolulu LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_preflight.py" > result.json); \
+	cmp "$$temp_root/one/result.json" "$$temp_root/two/result.json"; \
+	python3 -c 'import hashlib,json,pathlib,sys; output=pathlib.Path(sys.argv[1]); payload=json.loads(output.read_text()); print("p4-preflight-check: repeatable output=" + hashlib.sha256(output.read_bytes()).hexdigest() + " aggregate=" + payload["local_pilot"]["aggregate_sha256"] + " default=" + payload["ap02"]["default_status"] + " complete=" + payload["ap02"]["complete_status"] + " side_effects=" + payload["ap02"]["side_effects"])' "$$temp_root/one/result.json"
 
 secret-scan:
 	python3 scripts/scan_secrets.py
