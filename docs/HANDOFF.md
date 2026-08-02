@@ -1,4 +1,4 @@
-# P4-A post-maintenance handoff — offline/synthetic lane only
+# P4 preflight and post-maintenance handoff — no P4-B/P4-C approval
 
 ## 현재 handoff
 
@@ -12,6 +12,10 @@
 - The pre-P4-B four-path maintenance increment was independently accepted with final `VERDICT: ACCEPT` (blocker 0, major 0, minor 0). Its exact review-freeze digest remained `7ed91a678ba1dd72c30f7e9b58d5e5066fdcf41f8cde2b9da8239447345a85ce` before and after review.
 - Maintenance source/delivery commit `cad1ab48b7ab1923638fe8600f23ef640efdab73` (`fix: stabilize P4-A geometry validation`) is the direct child of `afe58a0…`. A fresh `origin/main` fast-forward and non-force delivery succeeded. At capture time local integration HEAD, `origin/main`, and `git ls-remote` main all equaled `cad1ab4…`; ancestry and clean integration status passed. Git history is authoritative for the exact SHA and remote-tip state of any later documentation-only descendant.
 - The maintenance closes the former schema Decimal-context and dead internal polygon-counter notes. Polygon validation arithmetic is pinned to precision 28 / `ROUND_HALF_EVEN`; public `missing_polygon_count` and `invalid_polygon_count` remain Literal-zero compatible. Strict required geometry and fail-closed invalid-geometry behavior remain unchanged.
+- Fail-closed P4 preflight source/delivery commit `fce19681f75cac8f95bb6cde95ad50351cf9e309` (`feat: add fail-closed P4 preflight contracts`) directly descends from fresh `origin/main` baseline `4866f7a992cd8e40dc95b43b1b2adaa13d989752`. Independent Agy/Gemini reviews returned `ACCEPT` with blocker/major/minor 0/0/0. Final evidence was preflight 97 passed, golden 192, Ruff, strict mypy 52/0, backend 607 passed/77 deselected, frontend Vitest 32/build, migration contract 4, scans, and Compose.
+- Fresh `origin/main` ff-only integration and non-force push of `fce19681…` succeeded. At capture time integration HEAD, `origin/main`, and remote main were equal to `fce19681…`. This is accepted/delivered offline/local preflight contract evidence only; it is not P4-B/P4-C/full-P4 completion.
+- The [P4-C public-source due-diligence note](research/2026-08-02-p4c-ocr-provider-due-diligence.md) recommends Azure AI Document Intelligence `prebuilt-layout` / REST `2024-11-30` / Korea Central as the first research candidate only. It is `NOT SELECTED / NOT APPROVED`; no account, endpoint, credential, Provider call, legal approval, or AP-02 approval exists in this record.
+- Private local inventory is aggregate-only: 4 candidate documents and 0 eligible because neither human-label evidence nor independent-review evidence is present. The set is non-representative and is not a QUALITY corpus.
 - No real representative corpus, external Provider/OCR/AI, credential, network call, real PDF/XLS/XLSX, deployment, migration, DB/API/frontend/service change, or production activation was used.
 
 ## Lane decisions
@@ -23,6 +27,8 @@
 |P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per Provider, currently `PENDING / NOT APPROVED`; do not implement an adapter or call/select a Provider before complete approval.|
 
 P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
+
+The delivered preflight contracts do not change these lane decisions. P4-B remains blocked because the aggregate local inventory has 0 eligible documents, and the research-only Azure candidate does not satisfy any formal field in the P4-C decision packet.
 
 ## P4-A final maintenance evidence
 
@@ -39,7 +45,7 @@ P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus 
 ## Safe next action
 
 1. Complete the [`P4-B QUALITY corpus decision/evidence packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md): representative/de-identified manifest, classification, source hashes, retention/storage/destination/exclusions, and named approval evidence. It remains `PENDING / NOT APPROVED` until every required field is complete.
-2. Independently complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per proposed Provider: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, P4-B reference, and named opt-in. It remains `PENDING / NOT APPROVED` until every required field is complete.
+2. Use the [public-source due-diligence note](research/2026-08-02-p4c-ocr-provider-due-diligence.md) only as research input, then independently complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per proposed Provider: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, P4-B reference, and named opt-in. It remains `PENDING / NOT APPROVED` until every required field is complete.
 3. Do not run a real-corpus benchmark until P4-B approval is complete, and do not invoke an external Provider until the provider-specific P4-C opt-in is complete. P4-A unlocks neither lane.
 4. Preserve `aeedceb…` as the original P4-A source/integration baseline and `cad1ab4…` as the maintenance source/delivery commit. Obtain any later documentation-only commit SHA and remote-tip status from Git history.
 

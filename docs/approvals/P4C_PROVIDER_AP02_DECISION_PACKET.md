@@ -4,6 +4,21 @@
 
 Use one separately completed packet for exactly one proposed Provider/model/endpoint combination. This template neither suggests nor selects a Provider and contains no credential value, person name, endpoint, or approval.
 
+## 0. Research prefill — non-approval only
+
+The [2026-08-02 public-source due-diligence note](../research/2026-08-02-p4c-ocr-provider-due-diligence.md) recommends the following **first research candidate**, not a selected or approved Provider:
+
+|Research-only field|Non-approval prefill|
+|---|---|
+|Candidate Provider|Azure AI Document Intelligence|
+|Candidate model|`prebuilt-layout`|
+|Candidate API semantics|REST API `2024-11-30` / Document Intelligence 4.0 GA|
+|Candidate region|Korea Central|
+|Proposed call shape if later approved|Synchronous/online bounded calls only|
+|Research status|`CANDIDATE ONLY / NOT SELECTED / NOT APPROVED`|
+
+This prefill does not assert that an account, tenant, subscription, resource, endpoint, or credential exists. Every formal decision field below remains `PENDING`, including all account, contract, payload, retention, credential, pricing/budget, P4-B intersection, and approver fields. Public research cannot satisfy Provider-specific AP-02.
+
 ## 1. Provider decision identity
 
 |Field|Required value|
