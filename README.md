@@ -1,6 +1,6 @@
 # 한양화학 v0 — 수입검사 디지털화 및 LOT 추적
 
-현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2·P3는 source gate에서 complete/accepted다. P2는 별도 명시적 사용자 승인으로 committed, clean fresh-main integrated, 그리고 `origin/main`에 delivered 됐다: source commit `996056b`와 first integration-documentation commit `58e963c`가 fresh baseline `1e96836`에서 전달됐다. P3도 source commit `91465f0413d0c0ca2633577078ec1300a6096442`로 커밋된 뒤 fresh baseline `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`에서 fast-forward 통합되어 `origin/main`에 delivered 됐다. Git history가 live tip의 정본이며, 이 전달은 배포·release·production authorization과 분리된다.
+현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2·P3는 source gate에서 complete/accepted다. P2와 P3는 별도 명시적 사용자 승인에 따라 committed, fresh-main integrated, 그리고 `origin/main`에 delivered 됐다. P4-A Offline/Synthetic remediation은 source complete/worker-verified지만, source/doc mutation 뒤 controller QA와 fresh independent read-only review를 기다리며 아직 uncommitted/unintegrated/unpushed다. Git history가 delivered live tip의 정본이며, source acceptance와 Git delivery는 배포·release·production authorization과 분리된다.
 
 ## 현재 상태
 
@@ -9,11 +9,14 @@
 - Hermes 독립 계획: [`docs/plans/2026-07-30-hermes-independent-plan.md`](./docs/plans/2026-07-30-hermes-independent-plan.md)
 - Claude Code Opus 5 독립 계획: [`docs/plans/2026-07-30-claude-opus5-independent-plan.md`](./docs/plans/2026-07-30-claude-opus5-independent-plan.md)
 - 요구사항 추적 정본: [`docs/TRACEABILITY_MATRIX.md`](./docs/TRACEABILITY_MATRIX.md)
-- P3 handoff and post-push closure: [`docs/HANDOFF.md`](./docs/HANDOFF.md)
+- P4-A delivery handoff and historical P3 closure: [`docs/HANDOFF.md`](./docs/HANDOFF.md)
 - 독립 계획 QA: [`docs/reviews/2026-07-30-integrated-plan-alfred-qa.md`](./docs/reviews/2026-07-30-integrated-plan-alfred-qa.md) — formal/substantive PASS
 - P0A original read-only freeze and controller reverification: [`docs/evidence/2026-07-30-p0a-evidence-freeze.md`](./docs/evidence/2026-07-30-p0a-evidence-freeze.md), [`docs/evidence/2026-07-31-p0a-controller-reverification.json`](./docs/evidence/2026-07-31-p0a-controller-reverification.json)
 - P0B final independent review: `APPROVE` — 67 in-memory probes, HIGH 0, MEDIUM 0; one accepted LOW generic scheme-specific URI-semantics note is defense-in-depth because consumed relationship roles use exact allowlists
-- 구현 상태: `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED; P3_DELIVERED_TO_ORIGIN_MAIN`
+- 구현 상태: `P0A_P0B_P1_P2_P3_SOURCE_COMPLETE_ACCEPTED; P3_DELIVERED_TO_ORIGIN_MAIN; P4A_OFFLINE_SYNTHETIC_REMEDIATION_SOURCE_COMPLETE_WORKER_VERIFIED_AWAITING_CONTROLLER_QA_AND_FRESH_INDEPENDENT_REVIEW`
+- P4-A remediation evidence: strict/versioned golden/fixture/stage/candidate/report/output schemas; canonical JSON + Decimal/SHA-256 exact bindings; deterministic eight-stage fail-closed runner; non-success warning-evidence rejection; precision-28 `ROUND_HALF_EVEN` geometry/ratio arithmetic; independent candidate payloads; executable disjoint 20-edge disposition matrix; exact/normalized/row/missing/by-kind/page/polygon metrics; adversarial geometry/digest/ordering/ambient-Decimal regressions. `make p4-golden-check` passed 183 tests and `make p4-benchmark-fixture` was byte-identical across two target invocations with unchanged output/report/fixture digests `354d7c10…fd23` / `7b0601d2…8933` / `05f77739…18d0`.
+- P4-A candidate boundary: base HEAD `2d5c02dbc612f9b612f27a36263b95e842c24e75`; pre-documentation source freeze exactly 16 paths, SHA-256 `cf30f5c1cfad535143a0ed7fe8002e44e84ec0a67aaa9dcf15d06e32edfd5541`. Documentation changes make that a source-only historical freeze, not the full post-doc candidate hash. Final fresh independent review and Git delivery remain controller actions.
+- P4-B is independently `BLOCKED_QUALITY_CORPUS_APPROVAL`; P4-C is independently `BLOCKED_AP02_PROVIDER_OPT_IN`. P4-A satisfies neither gate and makes no real OCR/Provider quality claim.
 - P2 final evidence: Hermes QA green; final Claude `PASS` (BLOCKER 0, MAJOR 0, MINOR 1); backend `346 passed, 10 PostgreSQL deselected`; strict mypy 29 files; migration contract 4; frontend 32 plus lint/typecheck/build; PostgreSQL 10 plus upgrade→downgrade→upgrade and empty drift
 - P2 closure state: complete, accepted, committed, fresh-main integrated, and delivered to `origin/main` under separate explicit user authorization. Source commit `996056b` and verified first-push/integration-evidence commit `58e963c` were delivered from fresh baseline `1e96836`; `58e963c` is a durable ancestor, this post-push docs reconciliation is its later descendant, and Git history is authoritative for the live tip. Fresh `make bootstrap` and `make check` exited 0 with the same 346/10, mypy 29, migration 4, frontend 32, scan/Compose, PostgreSQL 10, and cleanup evidence.
 - P2 migration state: Alembic head `20260801_0003`; frozen `20260731_0002` SHA-256 `546acd12aff2778c9ee6b6a11f8d24f87417dc8a792945f468971011a43c6f82`
@@ -36,7 +39,7 @@
 
 ## 다음 단계와 계속되는 경계
 
-P1 contract gate는 2026-07-31 Hermes 직접 QA로 통과했고, P2도 독립 Hermes+Claude source gate를 통과해 complete/accepted 후 `origin/main`에 delivered 됐다. P3도 final independent review와 Hermes controller QA를 통과한 source commit `91465f0413d0c0ca2633577078ec1300a6096442`가 fresh-main fast-forward 통합과 fresh integrated gate를 통과한 뒤 `origin/main`에 delivered 됐다. P4/P5는 시작하지 않았다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 남아 있으며, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성/production migration, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 미승인이다.
+P1/P2/P3 source gate는 통과했고 P2/P3는 `origin/main`에 delivered 됐다. P4-A Offline/Synthetic remediation은 worker verification까지 통과했으며, 안전한 다음 작업은 controller QA와 fresh independent read-only review로 source acceptance를 다시 확정하고 docs-inclusive exact candidate를 동결한 뒤에만 이미 승인된 정상 commit, fresh-main fast-forward integration/push, post-fetch equality/ancestry 검증을 수행하는 것이다. 그 다음에는 P4-B QUALITY corpus decision packet과 P4-C Provider-specific AP-02 packet을 각각 독립적으로 준비한다. P4-B/P4-C/P5, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성/production migration, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 blocked/미승인이다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 남는다.
 
 ## P1 accepted verification
 

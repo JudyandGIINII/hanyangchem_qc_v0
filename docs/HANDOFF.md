@@ -1,32 +1,44 @@
-# P4 kickoff handoff — offline/synthetic lane only
+# P4-A remediation handoff — offline/synthetic lane only
 
 ## 현재 handoff
 
-- Authoritative kickoff plan: [`plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md).
+- Authoritative P4 plan and acceptance record: [`plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md).
 - P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` remains accepted, fresh-main fast-forward integrated, and delivered to `origin/main`.
-- `f3020e2fe90996de9b5b0e502da4360976db0a9f` is only this documentation worktree's capture-time baseline before a new documentation commit. It is not a continuing live tip or final commit; Git history is authoritative.
-- P4 implementation is unstarted. No P4 application code, real representative corpus approval, external Provider opt-in, `make p4-golden-check`, or `make p4-benchmark-fixture` exists at this handoff.
-- The user's current request authorizes Hermes/controller to QA and deliver this documentation-only handoff with a normal commit and non-force push. This writer has no Git mutation authority and performs only the six allowed documentation edits and local writer checks.
+- Worktree `/tmp/hyc_p4a` (`JudyandGIINII/hanyang-p4a-offline-synthetic-20260802`) remains based at HEAD `2d5c02dbc612f9b612f27a36263b95e842c24e75`.
+- P4-A Offline/Synthetic remediation is source complete and worker-verified. The source/doc mutations invalidate the prior review, so controller QA and a fresh independent read-only review must pass before Git delivery; the candidate remains uncommitted, unintegrated, and unpushed.
+- The strict pre-documentation source freeze contains exactly 16 paths; its sorted-path+NUL+bytes+NUL SHA-256 is `cf30f5c1cfad535143a0ed7fe8002e44e84ec0a67aaa9dcf15d06e32edfd5541`. Documentation edits change the full candidate hash; do not label this value docs-inclusive.
+- The user authorized automatic completion through final Git delivery. This documentation writer performs no Git mutation; Hermes/controller owns docs-inclusive freeze, final fresh independent review, exact staging/commit, fresh-main integration/push, and post-fetch ancestry verification.
+- No real representative corpus, external Provider/OCR/AI, credential, network call, real PDF/XLS/XLSX, deployment, migration, DB/API/frontend/service change, or production activation was used.
 
 ## Lane decisions
 
 |Lane|Status|What the next session may do|
 |---|---|---|
-|P4-A — Offline/Synthetic foundation|`READY_TO_START_IN_NEW_SESSION`|Use generated non-sensitive synthetic fixtures and the existing fixture-provider seam to implement strict golden schema, deterministic scorer/runner, staged artifact contract, synthetic edge matrix, and the two planned Make targets. No new product gate is required for this lane.|
+|P4-A — Offline/Synthetic foundation|`REMEDIATION_SOURCE_COMPLETE_WORKER_VERIFIED_AWAITING_CONTROLLER_QA_AND_FRESH_INDEPENDENT_REVIEW`|Preserve the remediated candidate, complete controller QA and fresh independent read-only review, then proceed with the already-authorized Git delivery only if accepted.|
 |P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Do not begin until QUALITY evidence approves document-type/supplier/difficulty representativeness and de-identification policy with a complete decision packet.|
 |P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Do not call or select a Provider until provider-specific model/endpoint/region/retention/training/subprocessor/credential/cost/payload/audit/rollback decisions and the corpus destination are approved.|
 
 P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
 
-## Safe next action in the new session
+## P4-A remediation evidence
 
-Use the copy/paste prompt and exact first-slice/verification order in the kickoff plan. Begin by fetching and freezing the then-current `origin/main` in a clean isolated Orca worktree, then inspect:
+- Strict/versioned golden, fixture, stage, candidate, report, and benchmark-output schemas with canonical JSON and Decimal/SHA-256 dataset→stage→candidate→report→output binding, exact cardinality, and order.
+- Deterministic eight-stage runner with fail-closed upstream propagation, compatible stage/error states, independent stored candidate payloads, canonical warning/error ordering, rejection of every non-empty observed-warning subset when extraction is non-successful, and no warnings on failed/skipped stages.
+- Nontrivial report evidence: exact fields 35/44, one page mismatch, one non-unit IoU, plus duplicate, unmapped, unapproved-normalization, value-mismatch, concave, self-intersecting, degenerate, and malformed fail-closed paths.
+- Executable disjoint 20-edge matrix with exact reason binding across `CANDIDATE_ONLY`, `REVIEW_REQUIRED`, `MANUAL_FALLBACK`, and `STABLE_FAILURE`; no invented IoU threshold.
+- Exact focused selector `uv run --project backend pytest -q backend/tests/golden/test_runner_stages_metrics_edges.py -k 'non_successful_extraction_rejects_every_non_empty_observed_warning_subset or scorer_output_is_identical_under_ambient_decimal_precision_and_rounding or strict_candidate_geometry_fails_closed_when_missing_invalid_or_zero_area or polygon_iou_is_decimal_evidence_without_an_invented_threshold or metrics_include_classification_page_geometry_and_not_applicable_operations or observed_warning_order_is_canonical_unique_and_never_emitted_on_failure_or_skip or staged_artifacts_are_exact_ordered_lineage_bound_and_fail_closed'` passed `20 passed, 42 deselected`. `make p4-golden-check`: 183 passed. `make backend-check`: Ruff, strict mypy 49, pytest 501 passed/77 deselected, compileall passed. `make check`: exit 0, frontend Vitest 32/Next build, migration 4, scans/Compose passed.
+- `make p4-benchmark-fixture` was repeatable and byte-identical: output `354d7c10d7c6380c855876ef72d11148523ea12f1b346b8c5f3552ec416bfd23`, report `7b0601d2f57547db32a1c9897efa30211a14fd9ff645b2a9a4fcabf57da28933`, fixture `05f777392052c3b29be32abe1d7852312baff966fd5ac1fdc88cc6479ae918d0`.
+- Controller probes rejected truncated, swapped, foreign, and digest-tampered benchmark outputs; ambient precisions 12/28/50 and `ROUND_UP`, `ROUND_DOWN`, `ROUND_CEILING`, `ROUND_FLOOR`, and `ROUND_HALF_EVEN` produced identical canonical output/report bytes and digests; all 20 dispositions were bound.
+- Independent review history: initial `REJECT` exposed integrity gaps; earlier remediation closed B-1..B-4, M-1..M-6, m-1..m-5, N-1, and N-3. A later unchanged-candidate review returned `ACCEPT_WITH_MINOR` with actionable warning-evidence and Decimal-rounding findings; this remediation closes both in source/tests. Controller QA and a new fresh independent read-only review remain pending and no verdict is pre-claimed.
+- `make p3-e2e` was not run for this remediation because it changes no runtime, API, UI, or workflow path; P3 browser E2E is not applicable to this candidate.
 
-- `backend/src/hyc_api/extraction.py`
-- `backend/src/hyc_api/contracts.py`
-- `backend/tests/contract/test_extraction_contract.py`
+## Safe next action
 
-`ExtractionCandidate.provider_name` is currently the synthetic-only literal `"synthetic-fixture"`. Any provider identity/version evolution requires deliberate backward-compatible contract and generated schema/OpenAPI/client drift tests; do not casually broaden it.
+1. Controller freezes the docs-inclusive exact manifest/status and distinguishes it from the 16-path pre-doc source hash.
+2. Run the final fresh independent final-candidate review; record its actual verdict only after completion.
+3. If accepted, stage only the intended source/docs candidate, make the authorized normal commit, verify fresh `origin/main` base and fast-forward ancestry, run the required fresh integration gates, push without force, fetch, and verify equality/ancestry.
+4. Synchronize the post-delivery commit/remote evidence only after Git history proves it.
+5. Prepare the P4-B QUALITY corpus and P4-C Provider-specific AP-02 decision packets independently; do not begin either blocked lane without its own approval.
 
 This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
 
@@ -171,7 +183,7 @@ N-1/N-2/N-5는 synthetic P3 source acceptance를 막지 않는다. N-M3도 P2에
 6. 명시적 push 권한이 있을 때만 remote-base/ancestry를 확인하고 push한다.
 7. 통합 결과를 DEVLOG/KANBAN/traceability와 Hermes Kanban에 동기화한다.
 
-P4/P5는 현재 unstarted다. P3 source acceptance나 Git integration만으로 P4/P5, pilot, production 단계를 자동 시작하지 않는다.
+Historical P3 checkpoint에서는 P4/P5가 unstarted였다. 이 과거 문구는 현재 P4-A remediation 상태를 설명하는 문서 상단을 override하지 않으며, P3 source acceptance나 Git integration만으로 pilot/production 단계를 자동 시작하지 않는다는 경계는 계속 유효하다.
 
 ## 8. 금지 작업
 

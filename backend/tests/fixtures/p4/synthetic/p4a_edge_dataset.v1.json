@@ -1,0 +1,5941 @@
+{
+  "candidate_cases": [
+    {
+      "case_id": "edge-001",
+      "observed_stage_warning_codes": [
+        "HANDWRITING_REFERENCE_ONLY",
+        "LOW_CONFIDENCE",
+        "STAMP_OVERLAP"
+      ],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "SUPPLIER_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "60",
+                "y": "60"
+              },
+              {
+                "x": "320",
+                "y": "60"
+              },
+              {
+                "x": "320",
+                "y": "76"
+              },
+              {
+                "x": "60",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "header",
+            "normalized": "Synthetic Supplier",
+            "raw": "Synthetic Supplier",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "PRODUCT_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "header",
+            "normalized": "Calcium Chloride",
+            "raw": "Calcium Chloride",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "lot.trim-upper",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 3,
+          "confidence": "1",
+          "field_key": "LOT_NUMBER",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "lot",
+            "normalized": "SYN-LOT-001",
+            "raw": "SYN-LOT-001",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 4,
+          "confidence": "1",
+          "field_key": "CALCIUM_CHLORIDE_CONTENT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "136"
+              },
+              {
+                "x": "40",
+                "y": "136"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "content-row",
+            "row_order": 4,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "75.50",
+            "raw": "75.50",
+            "unit": "%"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 5,
+          "confidence": "1",
+          "field_key": "SUPPLIER_SPECIFICATION",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "140"
+              },
+              {
+                "x": "300",
+                "y": "140"
+              },
+              {
+                "x": "300",
+                "y": "156"
+              },
+              {
+                "x": "40",
+                "y": "156"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "content-row",
+            "row_order": 4,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": ">= 74.0%",
+            "raw": ">= 74.0%",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 6,
+          "confidence": "1",
+          "field_key": "SUPPLIER_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "160"
+              },
+              {
+                "x": "300",
+                "y": "160"
+              },
+              {
+                "x": "300",
+                "y": "176"
+              },
+              {
+                "x": "40",
+                "y": "176"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "content-row",
+            "row_order": 4,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "75.50%",
+            "raw": "75.50%",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 7,
+          "confidence": "0.55",
+          "field_key": "STAMP_OVERLAP_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "180"
+              },
+              {
+                "x": "300",
+                "y": "180"
+              },
+              {
+                "x": "300",
+                "y": "196"
+              },
+              {
+                "x": "40",
+                "y": "196"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "stamp-row",
+            "row_order": 5,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOW_CONFIDENCE"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "decimal",
+            "normalized": "0.001",
+            "raw": "0.001",
+            "unit": "%"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "date.iso8601",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 8,
+          "confidence": "1",
+          "field_key": "HANDWRITING_DATE_REFERENCE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "200"
+              },
+              {
+                "x": "300",
+                "y": "200"
+              },
+              {
+                "x": "300",
+                "y": "216"
+              },
+              {
+                "x": "40",
+                "y": "216"
+              }
+            ]
+          },
+          "handwriting_reference_only": true,
+          "identity": {
+            "document_id": "synthetic-document-001",
+            "row_id": "handwriting-row",
+            "row_order": 6,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "HANDWRITING_REFERENCE_ONLY"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "date",
+            "normalized": "2026-08-02",
+            "raw": "2026-08-02",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-002",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "DECIMAL_AMBIGUITY_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-002",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "decimal",
+            "normalized": "75.4",
+            "raw": "75.4",
+            "unit": "%"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-003",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "PERCENT_UNIT_MISSING_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-003",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "decimal",
+            "normalized": "0.5",
+            "raw": "0.5",
+            "unit": "%"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-004",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "lot.trim-upper",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "O_ZERO_AMBIGUITY",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-004",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "lot",
+            "normalized": "LOT-01",
+            "raw": "LOT-01",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "I_L_AMBIGUITY",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-004",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "llI",
+            "raw": "llI",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-005",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "CHEMICAL_FORMULA",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-005",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "CaCl2",
+            "raw": "CaCl2",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-006",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "text.upper",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "ALIASED_ITEM_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-006",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "WATER_INSOLUBLE",
+            "raw": "불용분",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-007",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "SUPPLIER_SPECIFICATION",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-007",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "<= 0.5%",
+            "raw": "<= 0.5%",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "HYC_SPECIFICATION",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-007",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "<= 0.15%",
+            "raw": "<= 0.15%",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-008",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "HYC_REQUIRED_FIELD",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-008",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "MISSING_REQUIRED"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": null,
+            "raw": null,
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-009",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "PRODUCT_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-009",
+            "row_id": "product-a",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "DUPLICATE_FIELD"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "header",
+            "normalized": "Synthetic Product A",
+            "raw": "Synthetic Product A",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "lot.trim-upper",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "LOT_NUMBER",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-009",
+            "row_id": "product-a",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "lot",
+            "normalized": "SYN-A-001",
+            "raw": "SYN-A-001",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 3,
+          "confidence": "1",
+          "field_key": "PRODUCT_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-009",
+            "row_id": "product-b",
+            "row_order": 2,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "header",
+            "normalized": "Synthetic Product B",
+            "raw": "Synthetic Product B",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "lot.trim-upper",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 4,
+          "confidence": "1",
+          "field_key": "LOT_NUMBER",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "136"
+              },
+              {
+                "x": "40",
+                "y": "136"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-009",
+            "row_id": "product-b",
+            "row_order": 2,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "lot",
+            "normalized": "SYN-B-001",
+            "raw": "SYN-B-001",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 5,
+          "confidence": "1",
+          "field_key": "PRODUCT_NAME",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-009",
+            "row_id": "product-a",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "DUPLICATE_FIELD"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "header",
+            "normalized": "Synthetic Product A",
+            "raw": "Synthetic Product A",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-010",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "DUPLICATE_DOCUMENT_IDENTITY",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-010",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-duplicate-group-001",
+            "raw": "synthetic-duplicate-group-001",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-011",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "CANONICAL_LOT_ID",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-011",
+            "row_id": "lot",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-lot-011",
+            "raw": "synthetic-lot-011",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "INBOUND_ALLOCATION_ID",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-011",
+            "row_id": "allocation-a",
+            "row_order": 2,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-allocation-011-a",
+            "raw": "synthetic-allocation-011-a",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 3,
+          "confidence": "1",
+          "field_key": "INBOUND_ALLOCATION_ID",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-011",
+            "row_id": "allocation-b",
+            "row_order": 3,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-allocation-011-b",
+            "raw": "synthetic-allocation-011-b",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 4,
+          "confidence": "1",
+          "field_key": "UNMAPPED_ALLOCATION_NOTE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-011",
+            "row_id": "unmapped-note",
+            "row_order": 4,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic candidate-only note",
+            "raw": "synthetic candidate-only note",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-012",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "SUPPLIER_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-012",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "0.01",
+            "raw": "0.01",
+            "unit": "%"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "HYC_INTERNAL_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-012",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "0.14",
+            "raw": "0.14",
+            "unit": "%"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 3,
+          "confidence": "1",
+          "field_key": "DEVIATION_SIGNAL",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-012",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "decimal",
+            "normalized": "0.13",
+            "raw": "0.13",
+            "unit": "%"
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-013",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "DIMENSION_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "dimension-row",
+            "row_order": 1,
+            "sample_id": "dimension-1",
+            "sample_order": 1,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "10.1",
+            "raw": "10.1",
+            "unit": "mm"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "DIMENSION_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "dimension-row",
+            "row_order": 1,
+            "sample_id": "dimension-2",
+            "sample_order": 2,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "10.2",
+            "raw": "10.2",
+            "unit": "mm"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 3,
+          "confidence": "1",
+          "field_key": "DIMENSION_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "100"
+              },
+              {
+                "x": "300",
+                "y": "116"
+              },
+              {
+                "x": "40",
+                "y": "116"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "dimension-row",
+            "row_order": 1,
+            "sample_id": "dimension-3",
+            "sample_order": 3,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "10.3",
+            "raw": "10.3",
+            "unit": "mm"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 4,
+          "confidence": "1",
+          "field_key": "DIMENSION_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "120"
+              },
+              {
+                "x": "300",
+                "y": "136"
+              },
+              {
+                "x": "40",
+                "y": "136"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "dimension-row",
+            "row_order": 1,
+            "sample_id": "dimension-4",
+            "sample_order": 4,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "10.4",
+            "raw": "10.4",
+            "unit": "mm"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "decimal.canonical",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 5,
+          "confidence": "1",
+          "field_key": "DIMENSION_VALUE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "140"
+              },
+              {
+                "x": "300",
+                "y": "140"
+              },
+              {
+                "x": "300",
+                "y": "156"
+              },
+              {
+                "x": "40",
+                "y": "156"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "dimension-row",
+            "row_order": 1,
+            "sample_id": "dimension-5",
+            "sample_order": 5,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "decimal",
+            "normalized": "10.5",
+            "raw": "10.5",
+            "unit": "mm"
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 6,
+          "confidence": "1",
+          "field_key": "MATERIAL_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "160"
+              },
+              {
+                "x": "300",
+                "y": "160"
+              },
+              {
+                "x": "300",
+                "y": "176"
+              },
+              {
+                "x": "40",
+                "y": "176"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "material-row",
+            "row_order": 2,
+            "sample_id": "material-1",
+            "sample_order": 1,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "PASS",
+            "raw": "PASS",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 7,
+          "confidence": "1",
+          "field_key": "MATERIAL_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "180"
+              },
+              {
+                "x": "300",
+                "y": "180"
+              },
+              {
+                "x": "300",
+                "y": "196"
+              },
+              {
+                "x": "40",
+                "y": "196"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "material-row",
+            "row_order": 2,
+            "sample_id": "material-2",
+            "sample_order": 2,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "PASS",
+            "raw": "PASS",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 8,
+          "confidence": "1",
+          "field_key": "MATERIAL_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "200"
+              },
+              {
+                "x": "300",
+                "y": "200"
+              },
+              {
+                "x": "300",
+                "y": "216"
+              },
+              {
+                "x": "40",
+                "y": "216"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-013",
+            "row_id": "material-row",
+            "row_order": 2,
+            "sample_id": "material-3",
+            "sample_order": 3,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "PASS",
+            "raw": "PASS",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-014",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "QUALITATIVE_SENTENCE_RESULT",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-014",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "No foreign material was observed.",
+            "raw": "No foreign material was observed.",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-015",
+      "observed_stage_warning_codes": [
+        "HANDWRITING_REFERENCE_ONLY"
+      ],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "date.iso8601",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "HANDWRITING_DATE_REFERENCE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": true,
+          "identity": {
+            "document_id": "synthetic-document-015",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "HANDWRITING_REFERENCE_ONLY"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "date",
+            "normalized": "2026-08-02",
+            "raw": "2026-08-02",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-016",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "SYNTHETIC_SIGNAL",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-016",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "EDGE-016",
+            "raw": "EDGE-016",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-017",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "SYNTHETIC_SIGNAL",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-017",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "EDGE-017",
+            "raw": "EDGE-017",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-018",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "date.iso8601",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "RECEIPT_DATE",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-018",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "date",
+            "normalized": "2026-08-01",
+            "raw": "2026-08-01",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "EFFECTIVE_SPEC_VERSION",
+          "geometry": {
+            "page_number": 2,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-018",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [],
+          "review_required": false,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-spec-v2",
+            "raw": "synthetic-spec-v2",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-019",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "FROZEN_SPEC_VERSION",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-019",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-spec-v2",
+            "raw": "synthetic-spec-v2",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "CURRENT_SPEC_VERSION",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-019",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-spec-v3",
+            "raw": "synthetic-spec-v3",
+            "unit": null
+          }
+        }
+      ]
+    },
+    {
+      "case_id": "edge-020",
+      "observed_stage_warning_codes": [],
+      "values": [
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 1,
+          "confidence": "1",
+          "field_key": "ORIGINAL_DOCUMENT_LINK",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "60"
+              },
+              {
+                "x": "300",
+                "y": "76"
+              },
+              {
+                "x": "40",
+                "y": "76"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-020",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-document-link-020-a",
+            "raw": "synthetic-document-link-020-a",
+            "unit": null
+          }
+        },
+        {
+          "applied_normalizations": [
+            {
+              "normalization_id": "identity",
+              "normalization_version": "1.0"
+            }
+          ],
+          "candidate_order": 2,
+          "confidence": "1",
+          "field_key": "CORRECTED_DOCUMENT_LINK",
+          "geometry": {
+            "page_number": 1,
+            "polygon": [
+              {
+                "x": "40",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "80"
+              },
+              {
+                "x": "300",
+                "y": "96"
+              },
+              {
+                "x": "40",
+                "y": "96"
+              }
+            ]
+          },
+          "handwriting_reference_only": false,
+          "identity": {
+            "document_id": "synthetic-document-020",
+            "row_id": "row-1",
+            "row_order": 1,
+            "sample_id": null,
+            "sample_order": null,
+            "section_id": "main"
+          },
+          "reason_codes": [
+            "LOGIC_CONFLICT"
+          ],
+          "review_required": true,
+          "value": {
+            "kind": "text",
+            "normalized": "synthetic-document-link-020-b",
+            "raw": "synthetic-document-link-020-b",
+            "unit": null
+          }
+        }
+      ]
+    }
+  ],
+  "dataset": {
+    "bindings": {
+      "fixture_name": "p4a-edge-dataset",
+      "fixture_version": "1.0.0",
+      "model_version": "not-applicable",
+      "parser_version": "1.0.0",
+      "pipeline_version": "1.0.0",
+      "prompt_schema_version": "not-applicable",
+      "provider_name": "synthetic-fixture",
+      "provider_version": "1.0.0",
+      "report_version": "1.0.0",
+      "runner_version": "1.0.0",
+      "scorer_version": "1.0.0",
+      "stage_contract_version": "1.0.0"
+    },
+    "cases": [
+      {
+        "case_id": "edge-001",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SUPPLIER_NAME",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "header",
+              "normalized": "Synthetic Supplier",
+              "raw": "Synthetic Supplier",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "PRODUCT_NAME",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "header",
+              "normalized": "Calcium Chloride",
+              "raw": "Calcium Chloride",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "lot.trim-upper",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "LOT_NUMBER",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "116"
+                },
+                {
+                  "x": "40",
+                  "y": "116"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "lot",
+              "normalized": "SYN-LOT-001",
+              "raw": "SYN-LOT-001",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "CALCIUM_CHLORIDE_CONTENT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "136"
+                },
+                {
+                  "x": "40",
+                  "y": "136"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "content-row",
+              "row_order": 4,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "75.50",
+              "raw": "75.50",
+              "unit": "%"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SUPPLIER_SPECIFICATION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "140"
+                },
+                {
+                  "x": "300",
+                  "y": "140"
+                },
+                {
+                  "x": "300",
+                  "y": "156"
+                },
+                {
+                  "x": "40",
+                  "y": "156"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "content-row",
+              "row_order": 4,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": ">= 74.0%",
+              "raw": ">= 74.0%",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SUPPLIER_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "160"
+                },
+                {
+                  "x": "300",
+                  "y": "160"
+                },
+                {
+                  "x": "300",
+                  "y": "176"
+                },
+                {
+                  "x": "40",
+                  "y": "176"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "content-row",
+              "row_order": 4,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "75.50%",
+              "raw": "75.50%",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "STAMP_OVERLAP_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "180"
+                },
+                {
+                  "x": "300",
+                  "y": "180"
+                },
+                {
+                  "x": "300",
+                  "y": "196"
+                },
+                {
+                  "x": "40",
+                  "y": "196"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "stamp-row",
+              "row_order": 5,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOW_CONFIDENCE"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "0.001",
+              "raw": "0.001",
+              "unit": "%"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "date.iso8601",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "HANDWRITING_DATE_REFERENCE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "200"
+                },
+                {
+                  "x": "300",
+                  "y": "200"
+                },
+                {
+                  "x": "300",
+                  "y": "216"
+                },
+                {
+                  "x": "40",
+                  "y": "216"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-001",
+              "row_id": "handwriting-row",
+              "row_order": 6,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": true,
+              "reason_codes": [
+                "HANDWRITING_REFERENCE_ONLY"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "date",
+              "normalized": "2026-08-02",
+              "raw": "2026-08-02",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "12cacae7b016bc6f8c9d6254f4213a735f803e6184a9cafda1e56d8fd6d593fd",
+          "synthetic": true
+        },
+        "ordering_key": "0001",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-001-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-002",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DECIMAL_AMBIGUITY_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-002",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "75.50",
+              "raw": "7550",
+              "unit": "%"
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "1f8b016dc274c15ec766e5cdc2c878b50ad26e23660ed3396def9fa74a3e6470",
+          "synthetic": true
+        },
+        "ordering_key": "0002",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-002-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-003",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "PERCENT_UNIT_MISSING_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-003",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "0.5",
+              "raw": "0.5",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "2645180733ee788d4d23807ab06a6cdb650b3774c014cb7c5c5b5795448f0cf6",
+          "synthetic": true
+        },
+        "ordering_key": "0003",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-003-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-004",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "lot.trim-upper",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "O_ZERO_AMBIGUITY",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-004",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "lot",
+              "normalized": "L0T-O1",
+              "raw": "L0T-O1",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "I_L_AMBIGUITY",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-004",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "Il1",
+              "raw": "Il1",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "30bf22226ae2bbddad6691efb594e9fadbd4f9bd42d70e555bb452a84c0abb54",
+          "synthetic": true
+        },
+        "ordering_key": "0004",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-004-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-005",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "CHEMICAL_FORMULA",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-005",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "CaCl2",
+              "raw": "CaCl2",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "0f98d453a4f75a52126d668c7b0f534aa83564f8ee81616631f899016d5cef20",
+          "synthetic": true
+        },
+        "ordering_key": "0005",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-005-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-006",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "ALIASED_ITEM_NAME",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-006",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "WATER_INSOLUBLE",
+              "raw": "불용분",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "54fedf10dcad87e97782c209cadf0f77d9d15745d9dd5eb3b012641fd9328e33",
+          "synthetic": true
+        },
+        "ordering_key": "0006",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-006-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-007",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SUPPLIER_SPECIFICATION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-007",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "<= 0.5%",
+              "raw": "<= 0.5%",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "HYC_SPECIFICATION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-007",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "<= 0.15%",
+              "raw": "<= 0.15%",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "984477703096c693697a96f30e732b9067f7a487ed438a4311747acf1639b802",
+          "synthetic": true
+        },
+        "ordering_key": "0007",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-007-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-008",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "HYC_REQUIRED_FIELD",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-008",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "MISSING_REQUIRED"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": null,
+              "raw": null,
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "f301ed4c09ceca4d288a55f0b8b396e76fb9cbbc034bef5afedc6ab04a373432",
+          "synthetic": true
+        },
+        "ordering_key": "0008",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-008-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-009",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "PRODUCT_NAME",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-009",
+              "row_id": "product-a",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "header",
+              "normalized": "Synthetic Product A",
+              "raw": "Synthetic Product A",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "lot.trim-upper",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "LOT_NUMBER",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-009",
+              "row_id": "product-a",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "lot",
+              "normalized": "SYN-A-001",
+              "raw": "SYN-A-001",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "PRODUCT_NAME",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "116"
+                },
+                {
+                  "x": "40",
+                  "y": "116"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-009",
+              "row_id": "product-b",
+              "row_order": 2,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "header",
+              "normalized": "Synthetic Product B",
+              "raw": "Synthetic Product B",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "lot.trim-upper",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "LOT_NUMBER",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "136"
+                },
+                {
+                  "x": "40",
+                  "y": "136"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-009",
+              "row_id": "product-b",
+              "row_order": 2,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "lot",
+              "normalized": "SYN-B-001",
+              "raw": "SYN-B-001",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "8b0983e17e2c5b3f02accf404503a8771739a5d0d18fea5ff63c4fc50902a43d",
+          "synthetic": true
+        },
+        "ordering_key": "0009",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-009-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-010",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DUPLICATE_DOCUMENT_IDENTITY",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-010",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-duplicate-group-001",
+              "raw": "synthetic-duplicate-group-001",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "db451553b1ea686b0e5301adff57a62100930126a0a5643dc9505efa40c4c1f3",
+          "synthetic": true
+        },
+        "ordering_key": "0010",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-010-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-011",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "CANONICAL_LOT_ID",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-011",
+              "row_id": "lot",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-lot-011",
+              "raw": "synthetic-lot-011",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "INBOUND_ALLOCATION_ID",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-011",
+              "row_id": "allocation-a",
+              "row_order": 2,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-allocation-011-a",
+              "raw": "synthetic-allocation-011-a",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "INBOUND_ALLOCATION_ID",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "116"
+                },
+                {
+                  "x": "40",
+                  "y": "116"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-011",
+              "row_id": "allocation-b",
+              "row_order": 3,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-allocation-011-b",
+              "raw": "synthetic-allocation-011-b",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "d00055296ad408edea2f2873fb39bac482de86fd50ad13fbb66021994a7338d4",
+          "synthetic": true
+        },
+        "ordering_key": "0011",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-011-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-012",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SUPPLIER_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-012",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "0.01",
+              "raw": "0.01",
+              "unit": "%"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "HYC_INTERNAL_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-012",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "0.14",
+              "raw": "0.14",
+              "unit": "%"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DEVIATION_SIGNAL",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "116"
+                },
+                {
+                  "x": "40",
+                  "y": "116"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-012",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "0.13",
+              "raw": "0.13",
+              "unit": "%"
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "96c2775cccb4f2a5c16626065f13e01b071e45c172801cf671e75712629ec798",
+          "synthetic": true
+        },
+        "ordering_key": "0012",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-012-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-013",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DIMENSION_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "dimension-row",
+              "row_order": 1,
+              "sample_id": "dimension-1",
+              "sample_order": 1,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "10.1",
+              "raw": "10.1",
+              "unit": "mm"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DIMENSION_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "dimension-row",
+              "row_order": 1,
+              "sample_id": "dimension-2",
+              "sample_order": 2,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "10.2",
+              "raw": "10.2",
+              "unit": "mm"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DIMENSION_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "100"
+                },
+                {
+                  "x": "300",
+                  "y": "116"
+                },
+                {
+                  "x": "40",
+                  "y": "116"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "dimension-row",
+              "row_order": 1,
+              "sample_id": "dimension-3",
+              "sample_order": 3,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "10.3",
+              "raw": "10.3",
+              "unit": "mm"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DIMENSION_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "120"
+                },
+                {
+                  "x": "300",
+                  "y": "136"
+                },
+                {
+                  "x": "40",
+                  "y": "136"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "dimension-row",
+              "row_order": 1,
+              "sample_id": "dimension-4",
+              "sample_order": 4,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "10.4",
+              "raw": "10.4",
+              "unit": "mm"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "decimal.canonical",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "DIMENSION_VALUE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "140"
+                },
+                {
+                  "x": "300",
+                  "y": "140"
+                },
+                {
+                  "x": "300",
+                  "y": "156"
+                },
+                {
+                  "x": "40",
+                  "y": "156"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "dimension-row",
+              "row_order": 1,
+              "sample_id": "dimension-5",
+              "sample_order": 5,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "decimal",
+              "normalized": "10.5",
+              "raw": "10.5",
+              "unit": "mm"
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "MATERIAL_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "160"
+                },
+                {
+                  "x": "300",
+                  "y": "160"
+                },
+                {
+                  "x": "300",
+                  "y": "176"
+                },
+                {
+                  "x": "40",
+                  "y": "176"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "material-row",
+              "row_order": 2,
+              "sample_id": "material-1",
+              "sample_order": 1,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "PASS",
+              "raw": "PASS",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "MATERIAL_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "180"
+                },
+                {
+                  "x": "300",
+                  "y": "180"
+                },
+                {
+                  "x": "300",
+                  "y": "196"
+                },
+                {
+                  "x": "40",
+                  "y": "196"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "material-row",
+              "row_order": 2,
+              "sample_id": "material-2",
+              "sample_order": 2,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "PASS",
+              "raw": "PASS",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "MATERIAL_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "200"
+                },
+                {
+                  "x": "300",
+                  "y": "200"
+                },
+                {
+                  "x": "300",
+                  "y": "216"
+                },
+                {
+                  "x": "40",
+                  "y": "216"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-013",
+              "row_id": "material-row",
+              "row_order": 2,
+              "sample_id": "material-3",
+              "sample_order": 3,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "PASS",
+              "raw": "PASS",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-inspection-report",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "a71a408cd29d39bbf1f3dde76bc68bd3b9216b5402ee5fd3a3dbc3f3e4a4fb7a",
+          "synthetic": true
+        },
+        "ordering_key": "0013",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-013-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-014",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "QUALITATIVE_SENTENCE_RESULT",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-014",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "No foreign material was observed.",
+              "raw": "No foreign material was observed.",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "49ea9f442f5f03b1923b06962c9b6725d166c59238711c2ecf182c3b72583480",
+          "synthetic": true
+        },
+        "ordering_key": "0014",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-014-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-015",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "date.iso8601",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "HANDWRITING_DATE_REFERENCE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-015",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": true,
+              "reason_codes": [
+                "HANDWRITING_REFERENCE_ONLY"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "date",
+              "normalized": "2026-08-02",
+              "raw": "2026-08-02",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "cfac53c172c15665258f2c6374a1986abbf20a3e1f1f313dd3a8ee60d8205de0",
+          "synthetic": true
+        },
+        "ordering_key": "0015",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-015-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-016",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SYNTHETIC_SIGNAL",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-016",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "EDGE-016",
+              "raw": "EDGE-016",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "2052d5df1befca9fed7f3c341ade4d552fbd2ca8f68ff035ef68f4051e4cab22",
+          "synthetic": true
+        },
+        "ordering_key": "0016",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-016-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-017",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "SYNTHETIC_SIGNAL",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-017",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "EDGE-017",
+              "raw": "EDGE-017",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "5c06dd351186c8516b6a30fdd474fdea4e9f052b03ea6b458d7b79357d01a3f7",
+          "synthetic": true
+        },
+        "ordering_key": "0017",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-017-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-018",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "date.iso8601",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "RECEIPT_DATE",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-018",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "date",
+              "normalized": "2026-08-01",
+              "raw": "2026-08-01",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "EFFECTIVE_SPEC_VERSION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-018",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [],
+              "review_required": false
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-spec-v2",
+              "raw": "synthetic-spec-v2",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "713944c8115120e5426360358e4f853526febf180ea43eb07583b617580f01ef",
+          "synthetic": true
+        },
+        "ordering_key": "0018",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-018-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-019",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "FROZEN_SPEC_VERSION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-019",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-spec-v2",
+              "raw": "synthetic-spec-v2",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "CURRENT_SPEC_VERSION",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-019",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-spec-v3",
+              "raw": "synthetic-spec-v3",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "4b03f6004ba8b7d16e8d0638af84f2b5228897bc19a013ce0ca3d9ad5db5cb67",
+          "synthetic": true
+        },
+        "ordering_key": "0019",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-019-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      },
+      {
+        "case_id": "edge-020",
+        "expected_fields": [
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "ORIGINAL_DOCUMENT_LINK",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "60"
+                },
+                {
+                  "x": "300",
+                  "y": "76"
+                },
+                {
+                  "x": "40",
+                  "y": "76"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-020",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-document-link-020-a",
+              "raw": "synthetic-document-link-020-a",
+              "unit": null
+            }
+          },
+          {
+            "allowed_normalizations": [
+              {
+                "normalization_id": "identity",
+                "normalization_version": "1.0"
+              }
+            ],
+            "field_key": "CORRECTED_DOCUMENT_LINK",
+            "geometry": {
+              "page_number": 1,
+              "polygon": [
+                {
+                  "x": "40",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "80"
+                },
+                {
+                  "x": "300",
+                  "y": "96"
+                },
+                {
+                  "x": "40",
+                  "y": "96"
+                }
+              ]
+            },
+            "identity": {
+              "document_id": "synthetic-document-020",
+              "row_id": "row-1",
+              "row_order": 1,
+              "sample_id": null,
+              "sample_order": null,
+              "section_id": "main"
+            },
+            "ignored": false,
+            "required": true,
+            "review": {
+              "handwriting_reference_only": false,
+              "reason_codes": [
+                "LOGIC_CONFLICT"
+              ],
+              "review_required": true
+            },
+            "value": {
+              "kind": "text",
+              "normalized": "synthetic-document-link-020-b",
+              "raw": "synthetic-document-link-020-b",
+              "unit": null
+            }
+          }
+        ],
+        "input": {
+          "document_kind": "supplier-coa",
+          "generator": {
+            "name": "hyc-p4a-generator",
+            "seed": 20260802,
+            "version": "1.0.0"
+          },
+          "mime_type": "application/pdf",
+          "provenance_marker": "generated-non-sensitive-synthetic",
+          "source_sha256": "fb4b699a23596d1387957e01bb0fb30007ee18f826794ad76fc92daa71816889",
+          "synthetic": true
+        },
+        "ordering_key": "0020",
+        "pages": [
+          {
+            "coordinate_system": "pixels",
+            "coordinate_system_version": "1.0",
+            "declared_rotation": 0,
+            "detected_rotation": 0,
+            "height": "1400",
+            "page_id": "edge-020-page-1",
+            "page_number": 1,
+            "rendered_dpi": 300,
+            "width": "1000"
+          }
+        ]
+      }
+    ],
+    "dataset_id": "p4a-prd-edge-matrix",
+    "dataset_version": "1.0.0",
+    "golden_schema_version": "hyc.golden.v1",
+    "normalization_vocabulary_version": "hyc.normalization.v1"
+  },
+  "edge_matrix": [
+    {
+      "case_id": "edge-001",
+      "edge_id": "P4-EDGE-001",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "0.55",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "HANDWRITING_REFERENCE_ONLY",
+        "LOW_CONFIDENCE"
+      ],
+      "expected_stage_warning_codes": [
+        "HANDWRITING_REFERENCE_ONLY",
+        "LOW_CONFIDENCE",
+        "STAMP_OVERLAP"
+      ],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_001_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 1,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "stamp overlap obscures result"
+    },
+    {
+      "case_id": "edge-002",
+      "edge_id": "P4-EDGE-002",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT",
+        "VALUE_MISMATCH"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_002_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 2,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "missing decimal point"
+    },
+    {
+      "case_id": "edge-003",
+      "edge_id": "P4-EDGE-003",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT",
+        "VALUE_MISMATCH"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_003_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 3,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "missing percent sign"
+    },
+    {
+      "case_id": "edge-004",
+      "edge_id": "P4-EDGE-004",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT",
+        "VALUE_MISMATCH"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_004_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 4,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "O/0 and I/l ambiguity"
+    },
+    {
+      "case_id": "edge-005",
+      "edge_id": "P4-EDGE-005",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "CANDIDATE_ONLY",
+      "expected_reason_codes": [],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_005_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 5,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "CaCl2 formula recognition"
+    },
+    {
+      "case_id": "edge-006",
+      "edge_id": "P4-EDGE-006",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "UNAPPROVED_NORMALIZATION"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_006_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 6,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "multilingual alias"
+    },
+    {
+      "case_id": "edge-007",
+      "edge_id": "P4-EDGE-007",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_007_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 7,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "supplier versus HYC specification separation"
+    },
+    {
+      "case_id": "edge-008",
+      "edge_id": "P4-EDGE-008",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "MANUAL_FALLBACK",
+      "expected_reason_codes": [
+        "MISSING_REQUIRED"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_008_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 8,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "missing HYC required field"
+    },
+    {
+      "case_id": "edge-009",
+      "edge_id": "P4-EDGE-009",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "DUPLICATE_FIELD"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_009_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 9,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "multiple products and LOTs"
+    },
+    {
+      "case_id": "edge-010",
+      "edge_id": "P4-EDGE-010",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_010_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P3",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 10,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "duplicate document identity"
+    },
+    {
+      "case_id": "edge-011",
+      "edge_id": "P4-EDGE-011",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "UNMAPPED"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_011_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 11,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "split receipt identity"
+    },
+    {
+      "case_id": "edge-012",
+      "edge_id": "P4-EDGE-012",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_012_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 12,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "large supplier/internal deviation signal"
+    },
+    {
+      "case_id": "edge-013",
+      "edge_id": "P4-EDGE-013",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "CANDIDATE_ONLY",
+      "expected_reason_codes": [],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_013_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 13,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "variable 5 and 3 samples"
+    },
+    {
+      "case_id": "edge-014",
+      "edge_id": "P4-EDGE-014",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "CANDIDATE_ONLY",
+      "expected_reason_codes": [],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_014_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 14,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "sentence qualitative result"
+    },
+    {
+      "case_id": "edge-015",
+      "edge_id": "P4-EDGE-015",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "HANDWRITING_REFERENCE_ONLY"
+      ],
+      "expected_stage_warning_codes": [
+        "HANDWRITING_REFERENCE_ONLY"
+      ],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_015_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 15,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "handwriting date reference only"
+    },
+    {
+      "case_id": "edge-016",
+      "edge_id": "P4-EDGE-016",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "NOT_APPLICABLE",
+      "expected_disposition": "STABLE_FAILURE",
+      "expected_reason_codes": [
+        "MISSING_REQUIRED",
+        "UPSTREAM_FAILURE"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "STABLE_UPSTREAM_FAILURE",
+      "failure_code": "ENCRYPTED_SYNTHETIC_INPUT",
+      "failure_stage": "TEXT_LAYER_DETECTION",
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 16,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "encrypted or corrupt synthetic input"
+    },
+    {
+      "case_id": "edge-017",
+      "edge_id": "P4-EDGE-017",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "NOT_APPLICABLE",
+      "expected_disposition": "STABLE_FAILURE",
+      "expected_reason_codes": [
+        "MISSING_REQUIRED",
+        "UPSTREAM_FAILURE"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "STABLE_UPSTREAM_FAILURE",
+      "failure_code": "UPLOAD_READ_RACE",
+      "failure_stage": "PAGE_RENDER",
+      "owner_phase": "P4-A",
+      "p4a_limit": "OFFLINE_SYNTHETIC_ONLY_NO_REAL_CORPUS_OR_PROVIDER",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 17,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "upload/read race"
+    },
+    {
+      "case_id": "edge-018",
+      "edge_id": "P4-EDGE-018",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "PAGE_MISMATCH"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_018_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 18,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "effective-date boundary binding"
+    },
+    {
+      "case_id": "edge-019",
+      "edge_id": "P4-EDGE-019",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_019_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P2",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 19,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "spec revision before approval"
+    },
+    {
+      "case_id": "edge-020",
+      "edge_id": "P4-EDGE-020",
+      "executable_test_path": "backend/tests/golden/test_runner_stages_metrics_edges.py",
+      "expected_confidence": "1",
+      "expected_disposition": "REVIEW_REQUIRED",
+      "expected_reason_codes": [
+        "LOGIC_CONFLICT"
+      ],
+      "expected_stage_warning_codes": [],
+      "expected_value_or_failure": "SYNTHETIC_EDGE_020_CANDIDATE",
+      "failure_code": null,
+      "failure_stage": null,
+      "owner_phase": "P5",
+      "p4a_limit": "SIGNAL_ONLY_EXISTING_OR_FUTURE_OWNER_REMAINS_AUTHORITATIVE",
+      "p4a_signal": "Deterministic synthetic evaluator evidence only",
+      "prd_edge_number": 20,
+      "synthetic_fixture_ref": "p4a_edge_dataset.v1.json",
+      "title": "post-approval wrong-link discovery"
+    }
+  ],
+  "fixture_schema_version": "hyc.synthetic-fixture-bundle.v1"
+}

@@ -1,4 +1,4 @@
-.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e secret-scan sensitive-documents-check check
+.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture secret-scan sensitive-documents-check check
 
 bootstrap:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv sync --project backend --extra dev
@@ -62,6 +62,22 @@ p3-e2e:
 	set -e; \
 	if [ "$$status" -ne 0 ]; then docker compose -p "$$project" logs --no-color api web postgres redis; fi; \
 	cleanup; trap - EXIT INT TERM; exit "$$status"
+
+p4-golden-check:
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q backend/tests/golden backend/tests/contract/test_extraction_contract.py backend/tests/contract/test_extraction_port.py
+
+p4-benchmark-fixture:
+	@set -eu; \
+	root="$(PWD)"; \
+	fixture="$$root/backend/tests/fixtures/p4/synthetic/p4a_edge_dataset.v1.json"; \
+	temp_root=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-p4a-benchmark.XXXXXX"); \
+	cleanup() { if [ -d "$$temp_root" ]; then find "$$temp_root" -depth -delete; fi; test ! -e "$$temp_root"; }; \
+	trap cleanup EXIT INT TERM; \
+	mkdir "$$temp_root/one" "$$temp_root/two"; \
+	(cd "$$temp_root/one" && TZ=UTC LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_golden.py" --fixture "$$fixture" --output report.json); \
+	(cd "$$temp_root/two" && TZ=Pacific/Honolulu LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_golden.py" --fixture "$$fixture" --output report.json); \
+	cmp "$$temp_root/one/report.json" "$$temp_root/two/report.json"; \
+	python3 -c 'import hashlib,json,pathlib,sys; output=pathlib.Path(sys.argv[1]); fixture=pathlib.Path(sys.argv[2]); payload=json.loads(output.read_text()); print("p4-benchmark-fixture: repeatable output=" + hashlib.sha256(output.read_bytes()).hexdigest() + " report=" + payload["report_sha256"] + " fixture=" + hashlib.sha256(fixture.read_bytes()).hexdigest())' "$$temp_root/one/report.json" "$$fixture"
 
 secret-scan:
 	python3 scripts/scan_secrets.py
