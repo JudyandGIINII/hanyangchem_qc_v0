@@ -4,21 +4,21 @@
 **정본:** [`../../Prd.md`](../../Prd.md)
 **상위 delivery contract:** [`2026-07-30-integrated-implementation-plan.md`](2026-07-30-integrated-implementation-plan.md)
 **추적표:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md)
-**상태:** P4-A Offline/Synthetic remediation source complete/worker-verified; controller QA and fresh independent read-only review pending; P4-B/P4-C independently blocked
+**상태:** P4-A Offline/Synthetic complete/independently accepted/committed/fresh-main fast-forward integrated/delivered; P4-B/P4-C independently blocked
 
 ## 1. 목적과 현재 사실
 
-이 문서는 P4 lane의 범위, 계약, 검증 및 승인 경계를 고정하고 P4-A Offline/Synthetic의 실제 remediation evidence를 기록한다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 accepted, fresh-main fast-forward integrated, `origin/main` delivered 상태다. P4-A worktree `/tmp/hyc_p4a`, branch `JudyandGIINII/hanyang-p4a-offline-synthetic-20260802`의 base HEAD는 `2d5c02dbc612f9b612f27a36263b95e842c24e75`다. P4-A remediation은 source complete/worker-verified지만 source/doc mutation으로 이전 review가 무효이며, controller QA와 fresh independent read-only review 대기 상태로 uncommitted/unintegrated/unpushed다.
+이 문서는 P4 lane의 범위, 계약, 검증 및 승인 경계를 고정하고 P4-A Offline/Synthetic의 최종 acceptance/delivery evidence를 기록한다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 accepted/delivered 상태다. P4-A source/integration commit `aeedceb2c3b7008439a9c72e3984be77f6135e51` (`feat: complete P4-A offline synthetic evaluator`)은 baseline `2d5c02dbc612f9b612f27a36263b95e842c24e75`의 direct descendant이며 complete/independently accepted/committed/fresh-main fast-forward integrated/`origin/main` delivered 상태다.
 
-Pre-documentation P4-A source freeze는 정확히 16 paths이며 sorted-path+NUL+bytes+NUL SHA-256은 `cf30f5c1cfad535143a0ed7fe8002e44e84ec0a67aaa9dcf15d06e32edfd5541`이다. 이 문서 변경은 full candidate hash를 바꾸므로 해당 값은 pre-doc source freeze로만 사용한다. `make p4-golden-check`와 `make p4-benchmark-fixture`는 이제 존재하고 검증됐다. 실제 대표 코퍼스 승인 증거와 Provider별 AP-02 opt-in은 여전히 없다.
+Final 25-path candidate의 fresh independent read-only review는 `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 3)를 반환했다. Review 전후 recomputation에서 16-path source-only digest `0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632`와 25-path full candidate digest `ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23`가 모두 불변이었다. Full-candidate digest는 이 docs-only closure 전 accepted candidate의 capture-time evidence다. `make p4-golden-check`와 `make p4-benchmark-fixture`는 존재하고 검증됐다. 실제 대표 코퍼스 승인 증거와 Provider별 AP-02 opt-in은 여전히 없다.
 
-이 문서는 기존 P3 acceptance/test evidence를 변경하거나 P3의 historical handoff를 무효화하지 않는다. 사용자는 P4-A remediation, final review와 Git delivery까지 자동 완료하도록 승인했다. 문서 작성 agent에게는 Git mutation 권한이 없으며 Hermes/controller가 docs-inclusive freeze, final fresh independent review, exact staging/normal commit, fresh-main integration/non-force push와 post-fetch ancestry 검증을 수행한다. Git delivery는 아직 완료됐다고 주장하지 않는다.
+이 문서는 기존 P3 acceptance/test evidence를 변경하거나 P3의 historical handoff를 무효화하지 않는다. Fresh Orca integration worktree는 fetched `origin/main`의 baseline `2d5c02d…`에서 생성됐다. `git merge --ff-only aeedceb…`는 merge commit/rebase 없이 성공했고 non-force `git push origin HEAD:main`도 성공했다. Post-fetch capture time에 integration HEAD, `origin/main`, `git ls-remote origin refs/heads/main`은 모두 `aeedceb…`였고 baseline/source ancestry 및 implementation/integration worktree clean state가 확인됐다. 이 nine-file documentation closure를 포함하는 commit은 `aeedceb…`의 newer descendant이고, exact SHA와 remote-tip 상태는 Git history가 정본이다. `aeedceb…`는 continuing tip이 아니라 P4-A source/integration baseline으로 남는다.
 
 ## 2. 세 개의 독립 lane과 gate
 
 |Lane|현재 상태|허용 범위|해제 조건|
 |---|---|---|---|
-|P4-A — Offline/Synthetic foundation|`REMEDIATION_SOURCE_COMPLETE_WORKER_VERIFIED_AWAITING_CONTROLLER_QA_AND_FRESH_INDEPENDENT_REVIEW`|생성된 비민감 synthetic fixture, 기존 fixture-provider seam, 결정론적 golden/schema/scorer/runner, staged artifact contract|Controller QA와 fresh independent read-only review가 acceptance를 다시 확인한 뒤에만 controller가 exact candidate를 정상 commit하고 fresh-main fast-forward integration/push/ancestry를 검증|
+|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|생성된 비민감 synthetic fixture, 기존 fixture-provider seam, 결정론적 golden/schema/scorer/runner, staged artifact contract|Final controller QA/review와 source delivery 완료; 범위를 real corpus/Provider/full P4로 확대하지 않음|
 |P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|승인된 로컬 코퍼스에 동일 runner 적용|QUALITY가 문서 유형/공급사/난이도 대표성과 비식별 정책을 증거로 승인하고 decision packet의 모든 필수 필드가 채워짐|
 |P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|특정 Provider/model/endpoint에 대한 재현 가능한 benchmark와 선택|해당 Provider에 한정된 AP-02 opt-in 및 승인된 코퍼스 destination. Generic approval은 다른 Provider를 열지 않음|
 
@@ -183,8 +183,8 @@ Runner는 다음 stage를 순서대로 기록하되 실제 OCR 수행을 CI 요�
 |Human Review/fail closed|Invalid/missing/unsupported/geometry/logic paths fail closed; no auto-finalization|Verified in P4-A synthetic scope|
 |AP-02|CI network/provider call/credential absence proof; external Provider는 OFF|P4-C blocked|
 |QUALITY corpus representativeness|Synthetic provenance만 명시하고 real representative claim 금지|P4-B blocked|
-|Commands|Exact focused selector 20/42; golden 183; backend 501/77 + mypy 49; full `make check` exit 0; frontend 32/build; migration 4; scans/Compose|P4-A remediation worker-verified; controller QA/fresh review pending|
-|Reproducibility/tamper|Byte-identical benchmark; output/report/fixture digests `354d7c10…fd23`/`7b0601d2…8933`/`05f77739…18d0`; truncated/swapped/foreign/digest tamper rejected; Decimal precision 12/28/50 plus `ROUND_UP`/`ROUND_DOWN`/`ROUND_CEILING`/`ROUND_FLOOR`/`ROUND_HALF_EVEN` identical; all 20 dispositions bound|P4-A remediation worker-verified; controller QA/fresh review pending|
+|Commands|Final controller focused selector 15/47; golden 183; Ruff; backend 501/77 + strict mypy 49 files/0 errors + compileall; full `make check` exit 0; frontend lint/typegen/typecheck, Vitest 32/build; migration 4; scans/Compose; P2/P3 PostgreSQL 10/67; cleanup 0/0/0|P4-A final QA/acceptance passed; delivered|
+|Reproducibility/tamper|Byte-identical benchmark; output/report/fixture digests `354d7c10…fd23`/`7b0601d2…8933`/`05f77739…18d0`; truncated/swapped/foreign/digest tamper rejected; Decimal precision 12/28/50 plus `ROUND_UP`/`ROUND_DOWN`/`ROUND_CEILING`/`ROUND_FLOOR`/`ROUND_HALF_EVEN` identical; all 20 dispositions bound|P4-A final QA/acceptance passed; delivered|
 
 ## 10. P4-B QUALITY decision packet — 현재 `PENDING`
 
@@ -220,27 +220,33 @@ Real PDF/XLS/XLSX body는 계속 Git, mirror, prompt, transcript, 외부 전송�
 
 선정은 exact/normalized/row/numeric/unit/LOT/missing/geometry와 latency/cost/correction-time report가 동일 runner로 재현된 후 이루어진다. KPI 미달이나 KPI 부재는 review/manual fallback 확대 사유이며 auto-finalization 또는 임계값 완화 사유가 아니다.
 
-## 12. 완료된 source verification과 남은 delivery sequence
+## 12. 완료된 final acceptance와 delivery
 
-Latest remediation worker verification에서 실제 확인된 결과:
+Final controller QA와 fresh independent review에서 실제 확인된 결과:
 
-1. Exact focused selector `uv run --project backend pytest -q backend/tests/golden/test_runner_stages_metrics_edges.py -k 'non_successful_extraction_rejects_every_non_empty_observed_warning_subset or scorer_output_is_identical_under_ambient_decimal_precision_and_rounding or strict_candidate_geometry_fails_closed_when_missing_invalid_or_zero_area or polygon_iou_is_decimal_evidence_without_an_invented_threshold or metrics_include_classification_page_geometry_and_not_applicable_operations or observed_warning_order_is_canonical_unique_and_never_emitted_on_failure_or_skip or staged_artifacts_are_exact_ordered_lineage_bound_and_fail_closed'`: 20 passed, 42 deselected.
+1. Exact focused controller selector: 15 passed, 47 deselected. Earlier 20/42 worker-remediation evidence remains a historical checkpoint, not the final controller count.
 2. `make p4-golden-check`: 183 passed.
 3. `make p4-benchmark-fixture`: repeatable/byte-identical; output/report/fixture digests `354d7c10…fd23`, `7b0601d2…8933`, `05f77739…18d0`.
-4. `make backend-check`: Ruff, strict mypy 49, pytest 501 passed/77 deselected, compileall passed.
-5. `make check`: exit 0; contract/client drift, backend, frontend lint/typegen/typecheck, Vitest 32, Next build, migration 4, scans, Compose passed.
+4. `make backend-check`: Ruff passed, strict mypy 49 files/0 errors, pytest 501 passed/77 deselected, compileall passed.
+5. `make check`: exit 0; contract/client drift, backend, frontend lint/typegen/typecheck, Vitest 32, Next production build, migration contract 4, secret scan, sensitive-document scan, Compose config passed.
 6. The precision/rounding regression reran scoring and canonical revalidation at ambient precisions 12/28/50 with `ROUND_UP`, `ROUND_DOWN`, `ROUND_CEILING`, `ROUND_FLOOR`, and `ROUND_HALF_EVEN`; output/report bytes and digests were identical.
-7. `make p3-e2e` was not run because this candidate changes no runtime, API, UI, or workflow path, so P3 browser E2E was not applicable.
-8. The prior review is invalidated by this source/doc mutation; controller QA and a fresh independent read-only review remain required before acceptance/Git delivery.
+7. P2 PostgreSQL passed 10 and P3 PostgreSQL passed 67; disposable Docker containers/networks/volumes ended at 0/0/0.
+8. P3 browser E2E was not run because P4-A changes no runtime/API/UI/workflow path; this is an explicit non-run, not a pass claim.
+9. Fresh final independent review returned `ACCEPT_WITH_MINOR`, BLOCKER 0, MAJOR 0, MINOR 3. It recomputed source-only 16-path `0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632` and full 25-path `ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23` unchanged before and after review.
 
-남은 controller delivery sequence:
+Accepted minor notes, none of which is a blocker/major or claimed source-fixed here:
 
-1. 이 문서들을 포함한 exact candidate manifest/status를 새로 동결하고 pre-doc 16-path hash와 구분한다.
-2. Final fresh independent final-candidate review를 수행하고 실제 verdict만 기록한다.
-3. Review가 허용하면 정확한 source/docs candidate만 stage해 정상 commit한다.
-4. Fresh `origin/main` 기준, candidate identity와 fast-forward ancestry를 확인하고 fresh integration gates를 실행한다.
-5. Non-force push 후 fetch/equality/ancestry와 clean worktree를 검증한다.
-6. 실제 commit SHA/remote state를 문서와 Hermes Kanban에 사후 동기화한다.
+1. Strict geometry가 required이므로 dead `missing_polygons`/`invalid_polygons` counters는 현재 unrepresentable하다. Optional-geometry semantics 변경 전에 정리한다.
+2. Schema-level polygon validation arithmetic는 empirical stability를 보였지만 scorer의 explicit Decimal context 안에 있지 않다. P4-B real-corpus geometry expansion 전에 닫는다.
+3. 기존 DEVLOG의 “below” cross-reference는 이 docs closure에서 [`../HANDOFF.md`](../HANDOFF.md)와 이 P4 plan을 가리키도록 보정한다.
+
+Delivery evidence:
+
+1. Source/integration commit `aeedceb2c3b7008439a9c72e3984be77f6135e51` is a direct descendant of baseline `2d5c02dbc612f9b612f27a36263b95e842c24e75`.
+2. Fresh Orca integration worktree was created from fetched `origin/main` at that baseline.
+3. `git merge --ff-only aeedceb…` succeeded with no merge commit/rebase, and non-force `git push origin HEAD:main` succeeded.
+4. At capture time, post-fetch integration HEAD, `origin/main`, and remote main all equaled `aeedceb…`; baseline/source ancestry and both clean worktrees passed.
+5. The commit containing this nine-file documentation closure is a newer descendant of `aeedceb…`; Git history is authoritative for its exact SHA and remote-tip status, while `aeedceb…` remains the P4-A source/integration baseline rather than the continuing tip.
 
 ## 13. Stop 및 rollback
 
@@ -257,29 +263,23 @@ Latest remediation worker verification에서 실제 확인된 결과:
 
 Push 전 문제가 발견되면 main을 mutate하지 말고 candidate branch/worktree를 폐기한다. Push 뒤에는 correction/revert commit을 사용하며 force push/reset하지 않는다. Real artifact가 생성되었다면 승인된 retention/deletion 절차 없이는 임의 이동·전송하지 않고 즉시 접근을 제한해 escalation한다.
 
-## 14. 다음 Hermes/Orca/Codex delivery prompt
+## 14. 다음 Hermes/Orca/Codex decision/evidence prompt
 
 ```text
 Prd.md, AGENTS.md, docs/plans/2026-07-30-integrated-implementation-plan.md,
 docs/plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md,
 docs/TRACEABILITY_MATRIX.md를 정본/계약으로 읽어라.
 
-P4-A Offline/Synthetic remediation은 source complete/worker-verified이며 controller QA와 fresh independent read-only review를 기다린다.
-현재 candidate는 /tmp/hyc_p4a, branch JudyandGIINII/hanyang-p4a-offline-synthetic-20260802,
-base HEAD 2d5c02dbc612f9b612f27a36263b95e842c24e75 위에 있고 uncommitted/unintegrated/unpushed다.
-Pre-doc source freeze는 정확히 16 paths, sorted-path+NUL+bytes+NUL SHA-256
-cf30f5c1cfad535143a0ed7fe8002e44e84ec0a67aaa9dcf15d06e32edfd5541이다. 문서 변경 뒤
-full candidate hash로 사용하지 마라.
-
-먼저 docs-inclusive exact manifest/status를 동결하고 final fresh independent final-candidate review를
-수행하라. 실제 verdict가 허용할 때만 intended source/docs를 정확히 stage해 정상 commit하고,
-fresh origin/main 기준과 fast-forward ancestry/candidate identity를 검증한 뒤 fresh integration gates,
-non-force push, post-fetch equality/ancestry/clean-state 검증을 완료하라. 검증 전 commit SHA나 remote
-delivery를 문서에 미리 쓰지 마라.
+P4-A Offline/Synthetic은 complete/independently accepted/committed/fresh-main fast-forward
+integrated/delivered 상태다. Source/integration baseline aeedceb2c3b7008439a9c72e3984be77f6135e51은
+base 2d5c02dbc612f9b612f27a36263b95e842c24e75의 direct descendant다. 이 nine-file documentation
+closure를 포함하는 commit은 aeedceb…의 newer descendant이고 exact SHA/remote-tip 상태는 Git
+history가 정본이며, aeedceb…는 continuing tip이 아니라 P4-A source/integration baseline이다.
 
 P4-B는 QUALITY corpus approval이 없어 blocked이고 P4-C는 provider-specific AP-02 opt-in이 없어
 blocked다. Real PDF/XLS/XLSX, external OCR/AI, credential, provider call, deployment, production
 DB/migration/role, auto-finalization은 금지한다. 실제 명령과 결과만 DEVLOG/KANBAN/traceability에
-기록하라. P4-A delivery 후 P4-B QUALITY packet과 P4-C Provider-specific AP-02 packet을 각각
-준비하되 승인 전 구현/실행하지 마라.
+기록하라. 다음 gate로 P4-B QUALITY packet과 P4-C Provider-specific AP-02 packet을 각각
+준비하되, named approval 전 real-corpus benchmark 또는 external Provider invocation을 시작하지 마라.
+P4-A evidence는 어느 gate도 충족하지 않고 real OCR/Provider quality나 production readiness를 증명하지 않는다.
 ```

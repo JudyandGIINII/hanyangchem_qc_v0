@@ -1,20 +1,20 @@
-# P4-A remediation handoff — offline/synthetic lane only
+# P4-A post-integration handoff — offline/synthetic lane only
 
 ## 현재 handoff
 
 - Authoritative P4 plan and acceptance record: [`plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md`](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md).
 - P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442` remains accepted, fresh-main fast-forward integrated, and delivered to `origin/main`.
-- Worktree `/tmp/hyc_p4a` (`JudyandGIINII/hanyang-p4a-offline-synthetic-20260802`) remains based at HEAD `2d5c02dbc612f9b612f27a36263b95e842c24e75`.
-- P4-A Offline/Synthetic remediation is source complete and worker-verified. The source/doc mutations invalidate the prior review, so controller QA and a fresh independent read-only review must pass before Git delivery; the candidate remains uncommitted, unintegrated, and unpushed.
-- The strict pre-documentation source freeze contains exactly 16 paths; its sorted-path+NUL+bytes+NUL SHA-256 is `cf30f5c1cfad535143a0ed7fe8002e44e84ec0a67aaa9dcf15d06e32edfd5541`. Documentation edits change the full candidate hash; do not label this value docs-inclusive.
-- The user authorized automatic completion through final Git delivery. This documentation writer performs no Git mutation; Hermes/controller owns docs-inclusive freeze, final fresh independent review, exact staging/commit, fresh-main integration/push, and post-fetch ancestry verification.
+- P4-A Offline/Synthetic is complete, independently accepted, committed, fresh-main fast-forward integrated, and delivered to `origin/main` at source/integration baseline `aeedceb2c3b7008439a9c72e3984be77f6135e51` (`feat: complete P4-A offline synthetic evaluator`). That commit is a direct descendant of `2d5c02dbc612f9b612f27a36263b95e842c24e75`.
+- Final controller QA passed. The fresh independent read-only review of the final 25-path candidate returned `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 3); it recomputed unchanged before/after-review digests for the 16-path source-only set (`0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632`) and 25-path full candidate (`ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23`). The latter is capture-time accepted-candidate evidence, not the digest of this docs-only descendant.
+- A fresh Orca integration worktree was created from fetched `origin/main` at baseline `2d5c02d…`. `git merge --ff-only aeedceb…` succeeded without a merge commit or rebase; non-force `git push origin HEAD:main` succeeded. At capture time integration HEAD, `origin/main`, and `git ls-remote origin refs/heads/main` all equaled `aeedceb…`; baseline/source ancestry and clean implementation/integration worktrees were verified.
+- The commit containing this nine-file documentation closure is a newer descendant of `aeedceb…`; Git history is authoritative for its exact SHA and remote-tip status. `aeedceb…` remains the P4-A source/integration baseline, not the continuing tip.
 - No real representative corpus, external Provider/OCR/AI, credential, network call, real PDF/XLS/XLSX, deployment, migration, DB/API/frontend/service change, or production activation was used.
 
 ## Lane decisions
 
 |Lane|Status|What the next session may do|
 |---|---|---|
-|P4-A — Offline/Synthetic foundation|`REMEDIATION_SOURCE_COMPLETE_WORKER_VERIFIED_AWAITING_CONTROLLER_QA_AND_FRESH_INDEPENDENT_REVIEW`|Preserve the remediated candidate, complete controller QA and fresh independent read-only review, then proceed with the already-authorized Git delivery only if accepted.|
+|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Preserve source/integration baseline `aeedceb…` and its capture-time evidence; do not expand its synthetic-only scope.|
 |P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Do not begin until QUALITY evidence approves document-type/supplier/difficulty representativeness and de-identification policy with a complete decision packet.|
 |P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Do not call or select a Provider until provider-specific model/endpoint/region/retention/training/subprocessor/credential/cost/payload/audit/rollback decisions and the corpus destination are approved.|
 
@@ -26,19 +26,18 @@ P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus 
 - Deterministic eight-stage runner with fail-closed upstream propagation, compatible stage/error states, independent stored candidate payloads, canonical warning/error ordering, rejection of every non-empty observed-warning subset when extraction is non-successful, and no warnings on failed/skipped stages.
 - Nontrivial report evidence: exact fields 35/44, one page mismatch, one non-unit IoU, plus duplicate, unmapped, unapproved-normalization, value-mismatch, concave, self-intersecting, degenerate, and malformed fail-closed paths.
 - Executable disjoint 20-edge matrix with exact reason binding across `CANDIDATE_ONLY`, `REVIEW_REQUIRED`, `MANUAL_FALLBACK`, and `STABLE_FAILURE`; no invented IoU threshold.
-- Exact focused selector `uv run --project backend pytest -q backend/tests/golden/test_runner_stages_metrics_edges.py -k 'non_successful_extraction_rejects_every_non_empty_observed_warning_subset or scorer_output_is_identical_under_ambient_decimal_precision_and_rounding or strict_candidate_geometry_fails_closed_when_missing_invalid_or_zero_area or polygon_iou_is_decimal_evidence_without_an_invented_threshold or metrics_include_classification_page_geometry_and_not_applicable_operations or observed_warning_order_is_canonical_unique_and_never_emitted_on_failure_or_skip or staged_artifacts_are_exact_ordered_lineage_bound_and_fail_closed'` passed `20 passed, 42 deselected`. `make p4-golden-check`: 183 passed. `make backend-check`: Ruff, strict mypy 49, pytest 501 passed/77 deselected, compileall passed. `make check`: exit 0, frontend Vitest 32/Next build, migration 4, scans/Compose passed.
+- Final controller focused selector passed `15 passed, 47 deselected`. `make p4-golden-check`: 183 passed. `make backend-check`: Ruff, strict mypy 49 files/0 errors, pytest 501 passed/77 deselected, compileall passed. `make check`: exit 0, including frontend lint/typegen/typecheck, Vitest 32, Next production build, migration contract 4, secret scan, sensitive-document scan, and Compose config.
 - `make p4-benchmark-fixture` was repeatable and byte-identical: output `354d7c10d7c6380c855876ef72d11148523ea12f1b346b8c5f3552ec416bfd23`, report `7b0601d2f57547db32a1c9897efa30211a14fd9ff645b2a9a4fcabf57da28933`, fixture `05f777392052c3b29be32abe1d7852312baff966fd5ac1fdc88cc6479ae918d0`.
 - Controller probes rejected truncated, swapped, foreign, and digest-tampered benchmark outputs; ambient precisions 12/28/50 and `ROUND_UP`, `ROUND_DOWN`, `ROUND_CEILING`, `ROUND_FLOOR`, and `ROUND_HALF_EVEN` produced identical canonical output/report bytes and digests; all 20 dispositions were bound.
-- Independent review history: initial `REJECT` exposed integrity gaps; earlier remediation closed B-1..B-4, M-1..M-6, m-1..m-5, N-1, and N-3. A later unchanged-candidate review returned `ACCEPT_WITH_MINOR` with actionable warning-evidence and Decimal-rounding findings; this remediation closes both in source/tests. Controller QA and a new fresh independent read-only review remain pending and no verdict is pre-claimed.
-- `make p3-e2e` was not run for this remediation because it changes no runtime, API, UI, or workflow path; P3 browser E2E is not applicable to this candidate.
+- Final regression evidence also includes P2 PostgreSQL 10 and P3 PostgreSQL 67; disposable Docker containers/networks/volumes ended at 0/0/0. P3 browser E2E was not run because P4-A changes no runtime/API/UI/workflow path.
+- Independent review history: initial `REJECT` exposed integrity gaps; remediation closed earlier blocker/major/actionable findings. The final fresh review accepted the exact candidate with three minor notes that remain disclosed, not source-fixed claims: strict required geometry currently makes the dead `missing_polygons`/`invalid_polygons` counters unrepresentable; schema-level polygon validation arithmetic was empirically stable but is outside the scorer's explicit Decimal context and must close before P4-B real-corpus geometry expansion; and the DEVLOG cross-reference wording is corrected in this docs closure to point to this handoff/P4 plan.
 
 ## Safe next action
 
-1. Controller freezes the docs-inclusive exact manifest/status and distinguishes it from the 16-path pre-doc source hash.
-2. Run the final fresh independent final-candidate review; record its actual verdict only after completion.
-3. If accepted, stage only the intended source/docs candidate, make the authorized normal commit, verify fresh `origin/main` base and fast-forward ancestry, run the required fresh integration gates, push without force, fetch, and verify equality/ancestry.
-4. Synchronize the post-delivery commit/remote evidence only after Git history proves it.
-5. Prepare the P4-B QUALITY corpus and P4-C Provider-specific AP-02 decision packets independently; do not begin either blocked lane without its own approval.
+1. Prepare the P4-B QUALITY corpus decision/evidence packet: representative/de-identified manifest, classification, source hashes, retention/storage/destination/exclusions, and named approval evidence.
+2. Independently prepare the P4-C Provider-specific AP-02 packet: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, and named opt-in.
+3. Do not run a real-corpus benchmark until P4-B approval is complete, and do not invoke an external Provider until the provider-specific P4-C opt-in is complete. P4-A unlocks neither lane.
+4. Treat the commit containing this nine-file closure as a newer descendant of `aeedceb…`; obtain its exact SHA and remote-tip status from Git history, while preserving `aeedceb…` as the P4-A source/integration baseline.
 
 This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
 
