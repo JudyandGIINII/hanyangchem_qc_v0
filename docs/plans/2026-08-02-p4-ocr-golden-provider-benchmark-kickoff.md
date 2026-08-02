@@ -4,23 +4,25 @@
 **정본:** [`../../Prd.md`](../../Prd.md)
 **상위 delivery contract:** [`2026-07-30-integrated-implementation-plan.md`](2026-07-30-integrated-implementation-plan.md)
 **추적표:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md)
-**상태:** P4-A Offline/Synthetic complete/independently accepted/committed/fresh-main fast-forward integrated/delivered; P4-B/P4-C independently blocked
+**상태:** P4-A Offline/Synthetic and its pre-P4-B maintenance are complete/independently accepted/committed/fresh-main fast-forward integrated/delivered; P4-B/P4-C independently blocked
 
 ## 1. 목적과 현재 사실
 
-이 문서는 P4 lane의 범위, 계약, 검증 및 승인 경계를 고정하고 P4-A Offline/Synthetic의 최종 acceptance/delivery evidence를 기록한다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 accepted/delivered 상태다. P4-A source/integration commit `aeedceb2c3b7008439a9c72e3984be77f6135e51` (`feat: complete P4-A offline synthetic evaluator`)은 baseline `2d5c02dbc612f9b612f27a36263b95e842c24e75`의 direct descendant이며 complete/independently accepted/committed/fresh-main fast-forward integrated/`origin/main` delivered 상태다.
+이 문서는 P4 lane의 범위, 계약, 검증 및 승인 경계를 고정하고 P4-A Offline/Synthetic의 acceptance/delivery와 pre-P4-B maintenance evidence를 기록한다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 accepted/delivered 상태다. P4-A original source/integration commit `aeedceb2c3b7008439a9c72e3984be77f6135e51` (`feat: complete P4-A offline synthetic evaluator`)은 baseline `2d5c02dbc612f9b612f27a36263b95e842c24e75`의 direct descendant이며 complete/independently accepted/committed/fresh-main fast-forward integrated/`origin/main` delivered 상태다.
 
 Final 25-path candidate의 fresh independent read-only review는 `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 3)를 반환했다. Review 전후 recomputation에서 16-path source-only digest `0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632`와 25-path full candidate digest `ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23`가 모두 불변이었다. Full-candidate digest는 review된 candidate의 capture-time evidence이며 nine-file closure를 포함하는 commit의 digest가 아니다. `make p4-golden-check`와 `make p4-benchmark-fixture`는 존재하고 검증됐다. 실제 대표 코퍼스 승인 증거와 Provider별 AP-02 opt-in은 여전히 없다.
 
 이 문서는 기존 P3 acceptance/test evidence를 변경하거나 P3의 historical handoff를 무효화하지 않는다. Fresh Orca integration worktree는 fetched `origin/main`의 baseline `2d5c02d…`에서 생성됐다. `git merge --ff-only aeedceb…`는 merge commit/rebase 없이 성공했고 non-force `git push origin HEAD:main`도 성공했다. Post-fetch capture time에 integration HEAD, `origin/main`, `git ls-remote origin refs/heads/main`은 모두 `aeedceb…`였고 baseline/source ancestry 및 implementation/integration worktree clean state가 확인됐다. 이 nine-file documentation closure를 포함하는 commit은 `aeedceb…`의 newer descendant이고, exact SHA와 remote-tip 상태는 Git history가 정본이다. `aeedceb…`는 continuing tip이 아니라 P4-A source/integration baseline으로 남는다.
 
+그 뒤 post-integration documentation commits `1d98e4cf17b37e0ea95eadcbe69418778d1a614f`와 `afe58a0fe556e8ae94b11926dd572ef9b2e60ee5`가 ancestry를 보존했다. Exact four-path pre-P4-B maintenance candidate는 review 전후 digest `7ed91a678ba1dd72c30f7e9b58d5e5066fdcf41f8cde2b9da8239447345a85ce`를 유지했고 independent final `VERDICT: ACCEPT` (blocker 0, major 0, minor 0)를 받았다. Commit `cad1ab48b7ab1923638fe8600f23ef640efdab73` (`fix: stabilize P4-A geometry validation`)은 `afe58a0…`의 direct descendant이며 fresh `origin/main` fast-forward와 non-force push로 delivered 됐다. Capture time에 local integration HEAD, `origin/main`, remote main은 모두 `cad1ab4…`였고 ancestry/clean status가 통과했다. 이후 documentation-only closure의 exact SHA/remote-tip 상태는 Git history가 정본이다.
+
 ## 2. 세 개의 독립 lane과 gate
 
 |Lane|현재 상태|허용 범위|해제 조건|
 |---|---|---|---|
-|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|생성된 비민감 synthetic fixture, 기존 fixture-provider seam, 결정론적 golden/schema/scorer/runner, staged artifact contract|Final controller QA/review와 source delivery 완료; 범위를 real corpus/Provider/full P4로 확대하지 않음|
-|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|승인된 로컬 코퍼스에 동일 runner 적용|QUALITY가 문서 유형/공급사/난이도 대표성과 비식별 정책을 증거로 승인하고 decision packet의 모든 필수 필드가 채워짐|
-|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|특정 Provider/model/endpoint에 대한 재현 가능한 benchmark와 선택|해당 Provider에 한정된 AP-02 opt-in 및 승인된 코퍼스 destination. Generic approval은 다른 Provider를 열지 않음|
+|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|생성된 비민감 synthetic fixture, 기존 fixture-provider seam, 결정론적 golden/schema/scorer/runner, staged artifact contract, accepted geometry-validation hygiene|Original baseline `aeedceb…`와 maintenance `cad1ab4…` delivery 완료; 범위를 real corpus/Provider/full P4로 확대하지 않음|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|승인된 로컬 코퍼스에 동일 runner 적용|[`P4-B QUALITY packet`](../approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md)의 모든 필드와 named approval이 완성됨. 현재 `PENDING / NOT APPROVED`|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|특정 Provider/model/endpoint에 대한 재현 가능한 benchmark와 선택|Provider별 [`P4-C AP-02 packet`](../approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md)의 모든 필드와 named approval이 완성됨. 현재 `PENDING / NOT APPROVED`; generic approval 금지|
 
 P4-B와 P4-C는 서로 독립적으로 blocked다. 코퍼스 승인은 외부 전송 승인이 아니며, Provider opt-in은 코퍼스 대표성 승인도 아니다. 실제 Provider 선정은 두 gate가 모두 해당 실행에 대해 충족되고 재현 가능한 benchmark와 Human Review fallback이 증명된 뒤에만 가능하다.
 
@@ -146,7 +148,7 @@ Runner는 다음 stage를 순서대로 기록하되 실제 OCR 수행을 CI 요�
 
 - Page match는 matched field 중 expected page number와 predicted page number exact equality의 count/rate로 보고한다.
 - Bbox polygon은 같은 declared coordinate system으로 검증 후 intersection-over-union `IoU = area(E ∩ P) / area(E ∪ P)`를 field별 및 distribution으로 보고한다. Union area 0은 schema error다.
-- QUALITY 승인 없이 임의의 IoU acceptance threshold를 만들지 않는다. Page mismatch, missing polygon, invalid polygon count를 별도 출력하고 geometry를 text match에 합쳐 숨기지 않는다.
+- QUALITY 승인 없이 임의의 IoU acceptance threshold를 만들지 않는다. Page mismatch와 polygon validity를 geometry에서 별도 취급하고 text match에 합쳐 숨기지 않는다. Current strict required-geometry schema에서는 missing/invalid polygon이 report scoring 전 fail closed이므로 public `missing_polygon_count`/`invalid_polygon_count`는 Literal-zero compatible하다.
 
 ### 7.6 운영성 지표와 재현성
 
@@ -183,10 +185,12 @@ Runner는 다음 stage를 순서대로 기록하되 실제 OCR 수행을 CI 요�
 |Human Review/fail closed|Invalid/missing/unsupported/geometry/logic paths fail closed; no auto-finalization|Verified in P4-A synthetic scope|
 |AP-02|CI network/provider call/credential absence proof; external Provider는 OFF|P4-C blocked|
 |QUALITY corpus representativeness|Synthetic provenance만 명시하고 real representative claim 금지|P4-B blocked|
-|Commands|Final controller focused selector 15/47; golden 183; Ruff; backend 501/77 + strict mypy 49 files/0 errors + compileall; full `make check` exit 0; frontend lint/typegen/typecheck, Vitest 32/build; migration 4; scans/Compose; P2/P3 PostgreSQL 10/67; cleanup 0/0/0|P4-A final QA/acceptance passed; delivered|
-|Reproducibility/tamper|Byte-identical benchmark; output/report/fixture digests `354d7c10…fd23`/`7b0601d2…8933`/`05f77739…18d0`; truncated/swapped/foreign/digest tamper rejected; Decimal precision 12/28/50 plus `ROUND_UP`/`ROUND_DOWN`/`ROUND_CEILING`/`ROUND_FLOOR`/`ROUND_HALF_EVEN` identical; all 20 dispositions bound|P4-A final QA/acceptance passed; delivered|
+|Commands|Maintenance controller focused 9; golden 192; Ruff; backend 510/77 + strict mypy 49/0 + compileall; full `make check` exit 0; frontend Vitest 32/build; migration 4; scans/Compose|P4-A maintenance QA/acceptance passed; delivered|
+|Reproducibility/tamper|Benchmark repeated twice; output/report/fixture digests `354d7c10…bfd23`/`7b0601d2…8933`/`05f77739…18d0` unchanged; polygon validation/scoring precision 28 / `ROUND_HALF_EVEN`; strict geometry remains fail closed|P4-A maintenance QA/acceptance passed; delivered|
 
-## 10. P4-B QUALITY decision packet — 현재 `PENDING`
+## 10. P4-B QUALITY decision packet — `PENDING / NOT APPROVED`
+
+Canonical fillable template: [`../approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md`](../approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md).
 
 아래 필드 중 하나라도 빠지면 approval이 아니다.
 
@@ -203,7 +207,9 @@ Runner는 다음 stage를 순서대로 기록하되 실제 OCR 수행을 CI 요�
 
 Real PDF/XLS/XLSX body는 계속 Git, mirror, prompt, transcript, 외부 전송에서 금지된다. QUALITY 승인은 승인된 로컬 보관/benchmark 목적만 열며 AP-02를 대신하지 않는다.
 
-## 11. P4-C Provider-specific AP-02 decision packet — 현재 `PENDING`
+## 11. P4-C Provider-specific AP-02 decision packet — `PENDING / NOT APPROVED`
+
+Canonical per-Provider fillable template: [`../approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md`](../approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md).
 
 각 Provider별로 아래를 결정한다. 한 Provider의 승인은 다른 Provider를 자동 승인하지 않는다.
 
@@ -220,9 +226,9 @@ Real PDF/XLS/XLSX body는 계속 Git, mirror, prompt, transcript, 외부 전송�
 
 선정은 exact/normalized/row/numeric/unit/LOT/missing/geometry와 latency/cost/correction-time report가 동일 runner로 재현된 후 이루어진다. KPI 미달이나 KPI 부재는 review/manual fallback 확대 사유이며 auto-finalization 또는 임계값 완화 사유가 아니다.
 
-## 12. 완료된 final acceptance와 delivery
+## 12. 완료된 original acceptance, maintenance, and delivery
 
-Final controller QA와 fresh independent review에서 실제 확인된 결과:
+Original P4-A controller QA와 fresh independent review에서 실제 확인된 historical 결과:
 
 1. Exact focused controller selector: 15 passed, 47 deselected. Earlier 20/42 worker-remediation evidence remains a historical checkpoint, not the final controller count.
 2. `make p4-golden-check`: 183 passed.
@@ -234,11 +240,21 @@ Final controller QA와 fresh independent review에서 실제 확인된 결과:
 8. P3 browser E2E was not run because P4-A changes no runtime/API/UI/workflow path; this is an explicit non-run, not a pass claim.
 9. Fresh final independent review returned `ACCEPT_WITH_MINOR`, BLOCKER 0, MAJOR 0, MINOR 3. It recomputed source-only 16-path `0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632` and full 25-path `ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23` unchanged before and after review.
 
-Accepted minor notes, none of which is a blocker/major or claimed source-fixed here:
+Original review의 세 minor notes는 당시 capture-time evidence다:
 
-1. Strict geometry가 required이므로 dead `missing_polygons`/`invalid_polygons` counters는 현재 unrepresentable하다. Optional-geometry semantics 변경 전에 정리한다.
-2. Schema-level polygon validation arithmetic는 empirical stability를 보였지만 scorer의 explicit Decimal context 안에 있지 않다. P4-B real-corpus geometry expansion 전에 닫는다.
+1. 당시 strict required geometry 아래 dead `missing_polygons`/`invalid_polygons` internal counters가 unrepresentable했다. 이후 maintenance가 이를 제거했다.
+2. 당시 schema-level polygon validation arithmetic가 scorer의 explicit Decimal context 밖에 있었다. 이후 maintenance가 P4-B 전에 이를 precision 28 / `ROUND_HALF_EVEN`으로 고정했다.
 3. 기존 DEVLOG의 “below” cross-reference는 이 docs closure에서 [`../HANDOFF.md`](../HANDOFF.md)와 이 P4 plan을 가리키도록 보정한다.
+
+Pre-P4-B maintenance가 현재 source-quality 상태를 supersede한다:
+
+1. Exact maintenance candidate는 4 paths이고 freeze digest `7ed91a678ba1dd72c30f7e9b58d5e5066fdcf41f8cde2b9da8239447345a85ce`가 independent review 전후 동일했다.
+2. Final independent `VERDICT: ACCEPT`, blocker 0, major 0, minor 0.
+3. Schema polygon validation arithmetic을 precision 28 / `ROUND_HALF_EVEN`으로 고정했고 scorer와 동일한 deterministic Decimal boundary를 사용한다.
+4. Dead internal polygon counters를 제거했다. Public `missing_polygon_count`와 `invalid_polygon_count`는 strict required geometry contract에 맞게 Literal-zero compatible하게 남는다.
+5. Strict required geometry, invalid/missing geometry fail-closed behavior, Human Review/manual fallback 경계는 변경하지 않았다.
+6. Controller focused 9 passed; P4 golden 192 passed; Ruff; strict mypy 49/0; backend pytest 510 passed/77 deselected; compileall; full `make check` exit 0; frontend Vitest 32/build; migration contract 4; scans; Compose가 통과했다.
+7. Benchmark를 두 번 반복했고 output/report/fixture digests `354d7c10…bfd23`, `7b0601d2…8933`, `05f77739…18d0`가 그대로였다.
 
 Delivery evidence:
 
@@ -247,6 +263,15 @@ Delivery evidence:
 3. `git merge --ff-only aeedceb…` succeeded with no merge commit/rebase, and non-force `git push origin HEAD:main` succeeded.
 4. At capture time, post-fetch integration HEAD, `origin/main`, and remote main all equaled `aeedceb…`; baseline/source ancestry and both clean worktrees passed.
 5. The commit containing this nine-file documentation closure is a newer descendant of `aeedceb…`; Git history is authoritative for its exact SHA and remote-tip status, while `aeedceb…` remains the P4-A source/integration baseline rather than the continuing tip.
+
+Maintenance delivery evidence:
+
+1. Post-integration documentation commits `1d98e4cf17b37e0ea95eadcbe69418778d1a614f` and `afe58a0fe556e8ae94b11926dd572ef9b2e60ee5` are ancestors of the maintenance delivery.
+2. Maintenance commit `cad1ab48b7ab1923638fe8600f23ef640efdab73` (`fix: stabilize P4-A geometry validation`) is the direct descendant of `afe58a0…`.
+3. Fresh `origin/main` fast-forward and non-force delivery succeeded.
+4. At capture time local integration HEAD, `origin/main`, and `git ls-remote origin refs/heads/main` all equaled `cad1ab4…`; ancestry checks and clean integration status passed.
+5. Any later documentation-only commit is a newer descendant whose exact SHA and remote-tip status come from Git history; this plan does not hardcode that future SHA.
+6. No P4-B/P4-C code, real corpus/OCR, Provider/network/credential, DB/API/UI/service, deployment, migration, or production activation occurred. This is P4-A accepted/delivered hygiene, not full-P4 completion.
 
 ## 13. Stop 및 rollback
 
@@ -270,16 +295,16 @@ Prd.md, AGENTS.md, docs/plans/2026-07-30-integrated-implementation-plan.md,
 docs/plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md,
 docs/TRACEABILITY_MATRIX.md를 정본/계약으로 읽어라.
 
-P4-A Offline/Synthetic은 complete/independently accepted/committed/fresh-main fast-forward
-integrated/delivered 상태다. Source/integration baseline aeedceb2c3b7008439a9c72e3984be77f6135e51은
-base 2d5c02dbc612f9b612f27a36263b95e842c24e75의 direct descendant다. 이 nine-file documentation
-closure를 포함하는 commit은 aeedceb…의 newer descendant이고 exact SHA/remote-tip 상태는 Git
-history가 정본이며, aeedceb…는 continuing tip이 아니라 P4-A source/integration baseline이다.
+P4-A Offline/Synthetic과 pre-P4-B maintenance는 complete/independently accepted/committed/
+fresh-main fast-forward integrated/delivered 상태다. Original source/integration baseline은
+aeedceb2c3b7008439a9c72e3984be77f6135e51이고 maintenance delivery는
+cad1ab48b7ab1923638fe8600f23ef640efdab73이다. Later docs-only SHA/remote-tip은 Git history가 정본이다.
 
 P4-B는 QUALITY corpus approval이 없어 blocked이고 P4-C는 provider-specific AP-02 opt-in이 없어
 blocked다. Real PDF/XLS/XLSX, external OCR/AI, credential, provider call, deployment, production
 DB/migration/role, auto-finalization은 금지한다. 실제 명령과 결과만 DEVLOG/KANBAN/traceability에
-기록하라. 다음 gate로 P4-B QUALITY packet과 P4-C Provider-specific AP-02 packet을 각각
-준비하되, named approval 전 real-corpus benchmark 또는 external Provider invocation을 시작하지 마라.
+기록하라. docs/approvals의 P4-B QUALITY packet과 P4-C Provider-specific AP-02 packet은 모두
+PENDING / NOT APPROVED다. 모든 필드와 named approval을 완성하기 전 real-corpus benchmark,
+adapter implementation 또는 external Provider invocation을 시작하지 마라.
 P4-A evidence는 어느 gate도 충족하지 않고 real OCR/Provider quality나 production readiness를 증명하지 않는다.
 ```

@@ -1,4 +1,4 @@
-# P4-A post-integration handoff — offline/synthetic lane only
+# P4-A post-maintenance handoff — offline/synthetic lane only
 
 ## 현재 handoff
 
@@ -8,36 +8,40 @@
 - Final controller QA passed. The fresh independent read-only review of the final 25-path candidate returned `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 3); it recomputed unchanged before/after-review digests for the 16-path source-only set (`0d5c259f59293f35e4cf6b83ffff13820c3c07194f5db48e54d8c8b1d09db632`) and 25-path full candidate (`ba938518beca8f3718abdf4eb44430e26b3a775aea8f8b33dc5dc01937218f23`). The latter is capture-time accepted-candidate evidence, not the digest of the commit containing this nine-file closure.
 - A fresh Orca integration worktree was created from fetched `origin/main` at baseline `2d5c02d…`. `git merge --ff-only aeedceb…` succeeded without a merge commit or rebase; non-force `git push origin HEAD:main` succeeded. At capture time integration HEAD, `origin/main`, and `git ls-remote origin refs/heads/main` all equaled `aeedceb…`; baseline/source ancestry and clean implementation/integration worktrees were verified.
 - The commit containing this nine-file documentation closure is a newer descendant of `aeedceb…`; Git history is authoritative for its exact SHA and remote-tip status. `aeedceb…` remains the P4-A source/integration baseline, not the continuing tip.
+- Post-integration documentation commits `1d98e4cf17b37e0ea95eadcbe69418778d1a614f` and `afe58a0fe556e8ae94b11926dd572ef9b2e60ee5` are historical ancestors after `aeedceb…`.
+- The pre-P4-B four-path maintenance increment was independently accepted with final `VERDICT: ACCEPT` (blocker 0, major 0, minor 0). Its exact review-freeze digest remained `7ed91a678ba1dd72c30f7e9b58d5e5066fdcf41f8cde2b9da8239447345a85ce` before and after review.
+- Maintenance source/delivery commit `cad1ab48b7ab1923638fe8600f23ef640efdab73` (`fix: stabilize P4-A geometry validation`) is the direct child of `afe58a0…`. A fresh `origin/main` fast-forward and non-force delivery succeeded. At capture time local integration HEAD, `origin/main`, and `git ls-remote` main all equaled `cad1ab4…`; ancestry and clean integration status passed. Git history is authoritative for the exact SHA and remote-tip state of any later documentation-only descendant.
+- The maintenance closes the former schema Decimal-context and dead internal polygon-counter notes. Polygon validation arithmetic is pinned to precision 28 / `ROUND_HALF_EVEN`; public `missing_polygon_count` and `invalid_polygon_count` remain Literal-zero compatible. Strict required geometry and fail-closed invalid-geometry behavior remain unchanged.
 - No real representative corpus, external Provider/OCR/AI, credential, network call, real PDF/XLS/XLSX, deployment, migration, DB/API/frontend/service change, or production activation was used.
 
 ## Lane decisions
 
 |Lane|Status|What the next session may do|
 |---|---|---|
-|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Preserve source/integration baseline `aeedceb…` and its capture-time evidence; do not expand its synthetic-only scope.|
-|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Do not begin until QUALITY evidence approves document-type/supplier/difficulty representativeness and de-identification policy with a complete decision packet.|
-|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Do not call or select a Provider until provider-specific model/endpoint/region/retention/training/subprocessor/credential/cost/payload/audit/rollback decisions and the corpus destination are approved.|
+|P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Preserve original source/integration baseline `aeedceb…`, maintenance delivery `cad1ab4…`, and their capture-time evidence; do not expand the synthetic-only scope.|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Complete the [`P4-B QUALITY packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md), currently `PENDING / NOT APPROVED`; do not begin until named QUALITY approval is complete.|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per Provider, currently `PENDING / NOT APPROVED`; do not implement an adapter or call/select a Provider before complete approval.|
 
 P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
 
-## P4-A remediation evidence
+## P4-A final maintenance evidence
 
 - Strict/versioned golden, fixture, stage, candidate, report, and benchmark-output schemas with canonical JSON and Decimal/SHA-256 dataset→stage→candidate→report→output binding, exact cardinality, and order.
 - Deterministic eight-stage runner with fail-closed upstream propagation, compatible stage/error states, independent stored candidate payloads, canonical warning/error ordering, rejection of every non-empty observed-warning subset when extraction is non-successful, and no warnings on failed/skipped stages.
 - Nontrivial report evidence: exact fields 35/44, one page mismatch, one non-unit IoU, plus duplicate, unmapped, unapproved-normalization, value-mismatch, concave, self-intersecting, degenerate, and malformed fail-closed paths.
 - Executable disjoint 20-edge matrix with exact reason binding across `CANDIDATE_ONLY`, `REVIEW_REQUIRED`, `MANUAL_FALLBACK`, and `STABLE_FAILURE`; no invented IoU threshold.
-- Final controller focused selector passed `15 passed, 47 deselected`. `make p4-golden-check`: 183 passed. `make backend-check`: Ruff, strict mypy 49 files/0 errors, pytest 501 passed/77 deselected, compileall passed. `make check`: exit 0, including frontend lint/typegen/typecheck, Vitest 32, Next production build, migration contract 4, secret scan, sensitive-document scan, and Compose config.
-- `make p4-benchmark-fixture` was repeatable and byte-identical: output `354d7c10d7c6380c855876ef72d11148523ea12f1b346b8c5f3552ec416bfd23`, report `7b0601d2f57547db32a1c9897efa30211a14fd9ff645b2a9a4fcabf57da28933`, fixture `05f777392052c3b29be32abe1d7852312baff966fd5ac1fdc88cc6479ae918d0`.
+- Maintenance controller selector passed 9. `make p4-golden-check`: 192 passed. Backend gates passed Ruff, strict mypy 49 files/0 errors, pytest 510 passed/77 deselected, and compileall. Full `make check` exited 0, including frontend Vitest 32 and Next production build, migration contract 4, scans, and Compose.
+- `make p4-benchmark-fixture` was repeated twice and retained the accepted output `354d7c10d7c6380c855876ef72d11148523ea12f1b346b8c5f3552ec416bfd23`, report `7b0601d2f57547db32a1c9897efa30211a14fd9ff645b2a9a4fcabf57da28933`, and fixture `05f777392052c3b29be32abe1d7852312baff966fd5ac1fdc88cc6479ae918d0` digests.
 - Controller probes rejected truncated, swapped, foreign, and digest-tampered benchmark outputs; ambient precisions 12/28/50 and `ROUND_UP`, `ROUND_DOWN`, `ROUND_CEILING`, `ROUND_FLOOR`, and `ROUND_HALF_EVEN` produced identical canonical output/report bytes and digests; all 20 dispositions were bound.
 - Final regression evidence also includes P2 PostgreSQL 10 and P3 PostgreSQL 67; disposable Docker containers/networks/volumes ended at 0/0/0. P3 browser E2E was not run because P4-A changes no runtime/API/UI/workflow path.
-- Independent review history: initial `REJECT` exposed integrity gaps; remediation closed earlier blocker/major/actionable findings. The final fresh review accepted the exact candidate with three minor notes that remain disclosed, not source-fixed claims: strict required geometry currently makes the dead `missing_polygons`/`invalid_polygons` counters unrepresentable; schema-level polygon validation arithmetic was empirically stable but is outside the scorer's explicit Decimal context and must close before P4-B real-corpus geometry expansion; and the DEVLOG cross-reference wording is corrected in this docs closure to point to this handoff/P4 plan.
+- Independent review history: the original 25-path acceptance returned `ACCEPT_WITH_MINOR` (0/0/3). The later exact four-path maintenance candidate closed the two remaining source-quality notes and returned final `VERDICT: ACCEPT` (0/0/0) with its freeze digest unchanged before/after. The original verdict and notes remain historical evidence, not live open findings.
 
 ## Safe next action
 
-1. Prepare the P4-B QUALITY corpus decision/evidence packet: representative/de-identified manifest, classification, source hashes, retention/storage/destination/exclusions, and named approval evidence.
-2. Independently prepare the P4-C Provider-specific AP-02 packet: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, and named opt-in.
+1. Complete the [`P4-B QUALITY corpus decision/evidence packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md): representative/de-identified manifest, classification, source hashes, retention/storage/destination/exclusions, and named approval evidence. It remains `PENDING / NOT APPROVED` until every required field is complete.
+2. Independently complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per proposed Provider: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, P4-B reference, and named opt-in. It remains `PENDING / NOT APPROVED` until every required field is complete.
 3. Do not run a real-corpus benchmark until P4-B approval is complete, and do not invoke an external Provider until the provider-specific P4-C opt-in is complete. P4-A unlocks neither lane.
-4. Treat the commit containing this nine-file closure as a newer descendant of `aeedceb…`; obtain its exact SHA and remote-tip status from Git history, while preserving `aeedceb…` as the P4-A source/integration baseline.
+4. Preserve `aeedceb…` as the original P4-A source/integration baseline and `cad1ab4…` as the maintenance source/delivery commit. Obtain any later documentation-only commit SHA and remote-tip status from Git history.
 
 This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
 
