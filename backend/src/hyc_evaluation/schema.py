@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import re
 from datetime import date
-from decimal import Decimal
+from decimal import ROUND_HALF_EVEN, Context, Decimal, localcontext
 from typing import Annotated, Literal
 
 from pydantic import (
@@ -48,10 +48,14 @@ Identifier = Annotated[str, Field(pattern=IDENTIFIER_PATTERN)]
 SemanticVersion = Annotated[str, Field(pattern=SEMANTIC_VERSION_PATTERN)]
 type ApplicableVersion = SemanticVersion | Literal["not-applicable"]
 type PolygonVertex = tuple[Decimal, Decimal]
+GEOMETRY_DECIMAL_CONTEXT = Context(prec=28, rounding=ROUND_HALF_EVEN)
 
 
 def _orientation(start: PolygonVertex, end: PolygonVertex, point: PolygonVertex) -> Decimal:
-    return (end[0] - start[0]) * (point[1] - start[1]) - (end[1] - start[1]) * (point[0] - start[0])
+    with localcontext(GEOMETRY_DECIMAL_CONTEXT):
+        return (end[0] - start[0]) * (point[1] - start[1]) - (end[1] - start[1]) * (
+            point[0] - start[0]
+        )
 
 
 def _on_segment(start: PolygonVertex, point: PolygonVertex, end: PolygonVertex) -> bool:
@@ -171,14 +175,18 @@ class GoldenGeometry(GoldenModel):
                 other_end = vertices[(other_index + 1) % len(vertices)]
                 if _segments_intersect(edge_start, edge_end, other_start, other_end):
                     raise ValueError("polygon must not self-intersect")
-        twice_area = sum(
-            point.x * next_point.y - next_point.x * point.y
-            for point, next_point in zip(
-                self.polygon,
-                self.polygon[1:] + self.polygon[:1],
-                strict=True,
+        with localcontext(GEOMETRY_DECIMAL_CONTEXT):
+            twice_area = sum(
+                (
+                    point.x * next_point.y - next_point.x * point.y
+                    for point, next_point in zip(
+                        self.polygon,
+                        self.polygon[1:] + self.polygon[:1],
+                        strict=True,
+                    )
+                ),
+                Decimal("0"),
             )
-        )
         if twice_area == 0:
             raise ValueError("polygon must have non-zero area")
         turns = [

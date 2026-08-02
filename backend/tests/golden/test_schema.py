@@ -2,15 +2,36 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from copy import deepcopy
-from decimal import Decimal
+from decimal import (
+    ROUND_CEILING,
+    ROUND_DOWN,
+    ROUND_FLOOR,
+    ROUND_HALF_EVEN,
+    ROUND_UP,
+    Decimal,
+    localcontext,
+)
 from typing import Any
 
 import pytest
 from jsonschema import Draft202012Validator  # type: ignore[import-untyped]
 from pydantic import ValidationError
 
+from hyc_evaluation.artifacts import canonical_json_bytes
 from hyc_evaluation.normalization import VersionedNormalizationVocabulary
-from hyc_evaluation.schema import GoldenDataset
+from hyc_evaluation.schema import GEOMETRY_DECIMAL_CONTEXT, GoldenDataset, _orientation
+
+AMBIENT_GEOMETRY_CONTEXTS = tuple(
+    (precision, rounding)
+    for precision in (12, 28, 50)
+    for rounding in (
+        ROUND_UP,
+        ROUND_DOWN,
+        ROUND_CEILING,
+        ROUND_FLOOR,
+        ROUND_HALF_EVEN,
+    )
+)
 
 
 def golden_payload() -> dict[str, Any]:
@@ -347,6 +368,131 @@ def test_concave_polygon_is_rejected_for_deterministic_decimal_iou_contract() ->
 
     with pytest.raises(ValidationError):
         GoldenDataset.model_validate(payload)
+
+
+def test_orientation_uses_the_pinned_geometry_decimal_context() -> None:
+    start = (Decimal("10000000000000.0000"), Decimal("10000000000000.0000"))
+    end = (Decimal("20000000000000.0001"), Decimal("20000000000000.0000"))
+    point = (Decimal("20000000000001.0000"), Decimal("20000000000001.0001"))
+
+    # This large-extent, near-collinear cross product cancels at low precision.
+    with localcontext(GEOMETRY_DECIMAL_CONTEXT):
+        expected = _orientation(start, end, point)
+    assert expected == Decimal("2000000000.0")
+
+    for precision, rounding in AMBIENT_GEOMETRY_CONTEXTS:
+        with localcontext() as context:
+            context.prec = precision
+            context.rounding = rounding
+            assert _orientation(start, end, point) == expected
+
+
+def test_schema_geometry_validation_does_not_false_reject_under_ambient_decimal_context() -> None:
+    payload = golden_payload()
+    payload["cases"][0]["pages"][0]["width"] = "2000000000000"
+    payload["cases"][0]["pages"][0]["height"] = "2000000000000"
+    payload["cases"][0]["expected_fields"][0]["geometry"]["polygon"] = [
+        {"x": "1000000000000.0001", "y": "1000000000000.0001"},
+        {"x": "1000000000001.0001", "y": "1000000000000.0001"},
+        {"x": "1000000000001.0001", "y": "1000000000001.0001"},
+        {"x": "1000000000000.0001", "y": "1000000000001.0001"},
+    ]
+    for precision, rounding in AMBIENT_GEOMETRY_CONTEXTS:
+        with localcontext() as context:
+            context.prec = precision
+            context.rounding = rounding
+            dataset = GoldenDataset.model_validate(payload)
+            assert dataset.dataset_id == "p4a-synthetic-contract"
+
+
+def test_schema_geometry_public_canonical_serialization_is_stable() -> None:
+    payload = golden_payload()
+    payload["cases"][0]["pages"][0]["width"] = "2000000000000"
+    payload["cases"][0]["pages"][0]["height"] = "2000000000000"
+    payload["cases"][0]["expected_fields"][0]["geometry"]["polygon"] = [
+        {"x": "1000000000000.0001", "y": "1000000000000.0001"},
+        {"x": "1000000000001.0001", "y": "1000000000000.0001"},
+        {"x": "1000000000001.0001", "y": "1000000000001.0001"},
+        {"x": "1000000000000.0001", "y": "1000000000001.0001"},
+    ]
+    expected = canonical_json_bytes(GoldenDataset.model_validate(payload))
+
+    # Compatibility coverage only: validation intermediates are not serialized,
+    # so these bytes do not prove the arithmetic pin or benchmark digest stability.
+    for precision, rounding in AMBIENT_GEOMETRY_CONTEXTS:
+        with localcontext() as context:
+            context.prec = precision
+            context.rounding = rounding
+            dataset = GoldenDataset.model_validate(payload)
+            assert canonical_json_bytes(dataset) == expected
+
+
+@pytest.mark.parametrize(
+    ("mutation", "error_message"),
+    [
+        (
+            lambda payload: payload["cases"][0]["expected_fields"][0]["geometry"].update(
+                polygon=[
+                    {"x": "100", "y": "200"},
+                    {"x": "200", "y": "200"},
+                    {"x": "300", "y": "200"},
+                ]
+            ),
+            "polygon must have non-zero area",
+        ),
+        (
+            lambda payload: payload["cases"][0]["expected_fields"][0]["geometry"].update(
+                polygon=[
+                    {"x": "100", "y": "200"},
+                    {"x": "400", "y": "500"},
+                    {"x": "100", "y": "450"},
+                    {"x": "400", "y": "200"},
+                ]
+            ),
+            "polygon must not self-intersect",
+        ),
+        (
+            lambda payload: payload["cases"][0]["expected_fields"][0]["geometry"].update(
+                polygon=[
+                    {"x": "100", "y": "200"},
+                    {"x": "300", "y": "200"},
+                    {"x": "200", "y": "225"},
+                    {"x": "300", "y": "250"},
+                    {"x": "100", "y": "250"},
+                ]
+            ),
+            "polygon must be strictly convex for deterministic IoU",
+        ),
+        (
+            lambda payload: payload["cases"][0]["expected_fields"][0]["geometry"].update(
+                polygon=[
+                    {"x": "100", "y": "200"},
+                    {"x": "1001", "y": "200"},
+                    {"x": "1001", "y": "250"},
+                    {"x": "100", "y": "250"},
+                ]
+            ),
+            "polygon must remain within its declared page",
+        ),
+        (
+            lambda payload: payload["cases"][0]["expected_fields"][0]["geometry"].update(
+                page_number=2
+            ),
+            "geometry references an unknown page",
+        ),
+    ],
+)
+def test_invalid_schema_geometry_classification_ignores_ambient_decimal_context(
+    mutation: Callable[[dict[str, Any]], None], error_message: str
+) -> None:
+    for precision, rounding in AMBIENT_GEOMETRY_CONTEXTS:
+        payload = golden_payload()
+        mutation(payload)
+        with localcontext() as context:
+            context.prec = precision
+            context.rounding = rounding
+            with pytest.raises(ValidationError, match=error_message):
+                GoldenDataset.model_validate(payload)
 
 
 @pytest.mark.parametrize(

@@ -63,8 +63,6 @@ class _Counts:
     page_number_numerator: int = 0
     page_number_denominator: int = 0
     page_mismatches: int = 0
-    missing_polygons: int = 0
-    invalid_polygons: int = 0
     polygon_iou: list[PolygonIoUEvidence] = field(default_factory=list)
 
     def add(self, other: _Counts) -> None:

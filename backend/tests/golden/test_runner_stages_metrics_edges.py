@@ -175,6 +175,16 @@ def test_metrics_include_classification_page_geometry_and_not_applicable_operati
     assert result.report.operational_metrics.latency.reason == "P4A_SYNTHETIC_NO_MEASUREMENT"
 
 
+def test_public_report_polygon_counters_remain_present_and_zero() -> None:
+    report = run_synthetic_benchmark(load_fixture_bundle(FIXTURE)).report
+    report_payload = report.model_dump(mode="json")
+
+    assert report_payload["metrics"]["missing_polygon_count"] == 0
+    assert report_payload["metrics"]["invalid_polygon_count"] == 0
+    assert all(case["metrics"]["missing_polygon_count"] == 0 for case in report_payload["cases"])
+    assert all(case["metrics"]["invalid_polygon_count"] == 0 for case in report_payload["cases"])
+
+
 def test_tracked_twenty_edge_metric_numerators_and_denominators_are_exact() -> None:
     metrics = run_synthetic_benchmark(load_fixture_bundle(FIXTURE)).report.metrics
     assert (
