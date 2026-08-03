@@ -64,6 +64,12 @@ Frontend verification is deterministic: `typecheck` runs `tsc --noEmit --increme
 
 For the default local Compose endpoints, run `docker compose up --build -d`, then use `curl -fsS http://127.0.0.1:18000/health/ready` and `curl -fsS http://127.0.0.1:13000/api/health`. Set `HYC_API_HOST_PORT` and `HYC_WEB_HOST_PORT` in the local environment or `.env` before startup if those default host ports are occupied; container ports stay 8000 and 3000.
 
+## Vercel 공개 합성 데모 경계
+
+Vercel의 공개 피드백 데모 빌드에는 build-time 환경변수 `NEXT_PUBLIC_HYC_PUBLIC_DEMO=1`을 정확히 설정하고 다시 빌드한다. 이 모드에서는 여덟 화면과 역할 전환·제출·승인 흐름이 합성 fixture 및 브라우저 local reducer에서만 동작한다. 브라우저는 localhost나 다른 백엔드 API를 호출하지 않고, 실제 문서를 사용하지 않으며, 서버에 아무것도 저장하지 않는다.
+
+Vercel에는 프론트엔드 공개 데모 artifact만 배포한다. 백엔드, DB, worker, OCR, 모델 artifact 및 원본 문서는 Vercel에 배포·노출하지 않는다. 외부 API fallback도 구성하지 않는다. 이 flag가 없거나 `1`이 아니면 기존 localhost P3 API bootstrap과 E2E 동작이 기본값으로 유지된다.
+
 P1 is complete and accepted. At that 2026-07-31 checkpoint, this P1 verification did not itself claim P2 implementation; the later accepted P2 source gate is summarized in the current-state sections above. It did not relax the real-data, external OCR/AI, non-disposable migration, deployment, or public-exposure prohibitions.
 
 ## FE8 frontend fixture workflow closure
