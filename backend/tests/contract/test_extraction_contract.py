@@ -82,6 +82,62 @@ def test_unknown_provider_is_rejected() -> None:
         ExtractionCandidate.model_validate_json(json.dumps(payload))
 
 
+def test_local_provider_is_candidate_only_and_requires_review_metadata() -> None:
+    payload = candidate_payload()
+    payload["provider_name"] = "local-paddleocr"
+    payload["review_required"] = True
+    payload["values"][0].update(
+        review_required=True,
+        reading_order=1,
+        recipe_id="native-text",
+        variant_id="native-text",
+        rotation_degrees=0,
+        deskew_millidegrees=0,
+        deskew_status="NOT_NEEDED",
+        perspective_corrected=False,
+        reason_codes=["HUMAN_REVIEW_REQUIRED"],
+    )
+
+    candidate = ExtractionCandidate.model_validate_json(json.dumps(payload))
+
+    assert candidate.provider_name == "local-paddleocr"
+    assert candidate.review_required is True
+    assert candidate.values[0].reason_codes == ["HUMAN_REVIEW_REQUIRED"]
+
+
+def test_local_provider_can_never_bypass_human_review() -> None:
+    payload = candidate_payload()
+    payload["provider_name"] = "local-paddleocr"
+
+    with pytest.raises(ValidationError):
+        ExtractionCandidate.model_validate_json(json.dumps(payload))
+
+
+def test_reason_codes_preserve_pipeline_severity_order() -> None:
+    payload = candidate_payload()
+    payload["provider_name"] = "local-paddleocr"
+    payload["review_required"] = True
+    payload["values"][0].update(
+        review_required=True,
+        reading_order=1,
+        recipe_id="original",
+        variant_id="original-r0",
+        rotation_degrees=0,
+        deskew_millidegrees=0,
+        deskew_status="NOT_NEEDED",
+        perspective_corrected=False,
+        reason_codes=["TABLE_LAYOUT_REVIEW_REQUIRED", "LOW_CONFIDENCE", "HUMAN_REVIEW_REQUIRED"],
+    )
+
+    candidate = ExtractionCandidate.model_validate_json(json.dumps(payload))
+
+    assert candidate.values[0].reason_codes == [
+        "HUMAN_REVIEW_REQUIRED",
+        "LOW_CONFIDENCE",
+        "TABLE_LAYOUT_REVIEW_REQUIRED",
+    ]
+
+
 def test_generated_schema_accepts_canonical_decimal_strings() -> None:
     schema_path = (
         Path(__file__).resolve().parents[3] / "contracts/schemas/extraction-candidate.schema.json"

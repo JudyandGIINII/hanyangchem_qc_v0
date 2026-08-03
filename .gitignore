@@ -31,6 +31,7 @@ __pycache__/
 .ruff_cache/
 .uv-cache/
 .venv/
+.local-ocr-models/
 
 # Node / Next.js.
 node_modules/

@@ -1,5 +1,38 @@
 # DEVLOG
 
+## 2026-08-03 — local-only low-quality PDF OCR implementation candidate
+
+### Scope and implementation
+
+- Implemented a native-text-first, page-level PDF pipeline with exact local PaddleOCR models, deterministic bounded preprocessing, stable review reasons, candidate-only API adapter, rooted document resolver, worker readiness probe, setup-only bootstrap, fail-closed preflight, and a real generated-synthetic inference smoke target.
+- Exact model/package manifest verification includes archive/tree SHA-256 and prevents model-path escape. Normal runtime rejects endpoints, credentials, model-source overrides, missing/mismatched local models, downloads, and outbound DNS/socket use.
+- Added PDF/page/pixel/DPI/variant/timeout/process-wide concurrency-one caps, immutable source handling, 0/90/180/270 originals, CLAHE/adaptive/Otsu/denoise-sharpen, bounded deskew/perspective, normalized rectangular bbox plus selected-transform provenance, spatial reading order, and mandatory Human Review. Polygon retention is not implemented or claimed. PP-StructureV3 is deferred; table-like input receives `TABLE_LAYOUT_REVIEW_REQUIRED`.
+- No DB/provider persistence migration was needed. No real source file was opened or copied, and no external OCR/AI, credential, normal-runtime network, real-data operation, service, deployment, or Git mutation occurred.
+
+### Verification actually run
+
+- `make backend-check`: Ruff passed; strict mypy 67 files/0 errors; pytest `641 passed, 92 deselected`; compileall passed.
+- `make frontend-check`: lint, typegen/typecheck, Vitest `32 passed`, and Next production build passed.
+- `make contracts-check`, migration contract `4 passed`, secret scan, sensitive-document scan, and Compose configuration passed.
+- `make p4-golden-check`: `198 passed`; `make p4-preflight-check`: `97 passed`, default DENY, no side effects.
+- `make p4-local-ocr-preflight`: package/manifest/model/engine initialization passed with zero network, manifest binding `cf6721ea…aaeec9`, and focused local OCR tests `43 passed`.
+- `make p4-local-ocr-smoke` ran the actual PaddleOCR engine over five generated compound-degradation cases twice serially. Both runs produced output SHA-256 `581ed7dad0973c3a999ce6e1b48bc9368452e5f6f9aab3fdc3e8c1fbe72437c1`, aggregate digest `6545119c4a18c2e788024521a3e77fbdd38b4fc902a01900063d79327b1c6a9c`, field-associated header/numeric/provider-candidate review metrics `1.0000/1.0000/1.0000`, and initialization/prediction network counts `0/0`.
+
+Initial setup is separate evidence: the worktree initially lacked development dependencies and frontend `node_modules`; locked project installs supplied them. Exploratory overlapping OCR processes caused local memory pressure and only those exact worktree-local processes were terminated. Final smoke validation was serialized; n8n and unrelated processes were untouched.
+
+### State
+
+`SECOND_REQUEST_CHANGES_REMEDIATED_READY_FOR_INDEPENDENT_REREVIEW`. The tree is intentionally uncommitted/unpushed. Active Next is independent read-only re-review and controller acceptance. P4-B real-corpus and P4-C external Provider lanes remain future/deferred and their existing gate tokens remain binding if those scopes are later requested.
+
+### Independent review remediation
+
+- Claude returned initial `REQUEST_CHANGES` at blocker/major/minor `1/9/14`. The shared native predicate blocker and all nine majors were remediated and covered by focused/runtime/contract tests: OpenCV 4.10 deskew and white skew borders; physical-line field/value smoke scoring through public provider candidates; dominant-image DPI; selected variant/transform and normalized source-frame bboxes; cached/offloaded readiness; prefixed/legacy env compatibility; enforced concurrency one; and removal of false polygon claims.
+- Bounded minors closed: page-operation error taxonomy, in-load deadline checks, 300–400 DPI validation, stable structured manifest-path errors, dot/root binding rejection, nested bootstrap destinations, pre-follow redirect validation, reason severity order, fail-closed variant truncation, spatial reading order, and descriptor-bounded resolver reads.
+- Fresh re-review confirmed B1/M1-M9 closed and raised one new major for native-route reason evaluation. The native route now uses the same stable evaluator as local OCR, and a conservative native word-layout signal detects table-like geometry without rendering or OCR. Focused regressions cover native missing LOT, native low confidence, and real native table layout while preserving mandatory review and candidate-only behavior.
+- A deterministic positive perspective regression proves `perspective_corrected=true` with a finite invertible source transform; preprocessing code did not require a change. The expensive real smoke was therefore not rerun, and its already independently reproduced output/aggregate digests remain the recorded image-OCR evidence.
+- Readiness failure caching is explicitly fail closed and restart-required; model repair after the first failed probe requires worker restart. Ordinary CI intentionally excludes model-dependent `local_ocr_runtime` tests, while `make p4-local-ocr-preflight` remains the separate required local runtime/model gate.
+- Deferred with explicit candidate-stage rationale: exhaustive smoke controls for every review-reason code; elapsed-time-aware restoration of an outer SIGALRM; multi-worker/global concurrency coordination; unreachable defensive native off-crop bbox clamping and schema-level `0..1` enforcement; non-main-thread/C-level Paddle cancellation; process-wide socket patching pending process/container isolation; complete defense against hostile ancestor-directory swaps; Korean-only fast-path markers/per-line orientation; and cross-host font-byte identity. None is presented as production readiness, and contract/timing changes that would expand this reviewed candidate are reserved for a separate increment.
+
 ## 2026-07-30 — PRD 구현 계획 독립 수립·비교·통합
 
 ### 요청

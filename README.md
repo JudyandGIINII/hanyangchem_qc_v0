@@ -2,6 +2,8 @@
 
 현재 저장소는 수입검사 업무의 원본 보존, OCR 후보 검토, 한양화학 기준 판정, 검사자 제출·팀장 승인, LOT 추적을 디지털화하기 위한 신규 프로젝트다. AP-01~05와 P0A·P0B·P1·P2·P3는 source gate에서 complete/accepted다. P2/P3와 P4-A Offline/Synthetic은 committed, fresh-main fast-forward integrated, 그리고 `origin/main`에 delivered 됐다. P4-A original source/integration baseline은 `aeedceb2c3b7008439a9c72e3984be77f6135e51`이고, pre-P4-B maintenance delivery는 `cad1ab48b7ab1923638fe8600f23ef640efdab73`이다. Fail-closed P4 preflight source/delivery commit은 `fce19681f75cac8f95bb6cde95ad50351cf9e309`이다. 이후 documentation-only closure의 exact SHA와 remote-tip 상태는 Git history가 정본이다. Source acceptance와 Git delivery는 P4-B/P4-C, full P4, 배포·release·production authorization과 분리된다.
 
+2026-08-03 local-only low-quality PDF OCR is an uncommitted implementation candidate in this isolated worktree. It uses explicit local PaddleOCR model paths, blocks runtime network, prefers valid native text page-by-page, and keeps every OCR output in Human Review. Fresh Claude re-review confirmed the initial blocker and all nine majors closed, then raised one new native-route review-reason major; that finding is now remediated and controller-verified. The candidate is Ready for another independent review, but acceptance and delivery have not occurred. See the [implementation note](./docs/research/2026-08-03-local-only-low-quality-pdf-ocr.md).
+
 ## 현재 상태
 
 - 정본 요구사항: [`Prd.md`](./Prd.md)
@@ -13,6 +15,7 @@
 - P4-B QUALITY packet template (`PENDING / NOT APPROVED`): [`docs/approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md`](./docs/approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md)
 - P4-C Provider-specific AP-02 packet template (`PENDING / NOT APPROVED`): [`docs/approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md`](./docs/approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md)
 - P4-C Provider 공개자료 사전 실사 (`RESEARCH ONLY / NOT SELECTED / NOT APPROVED`): [`docs/research/2026-08-02-p4c-ocr-provider-due-diligence.md`](./docs/research/2026-08-02-p4c-ocr-provider-due-diligence.md)
+- Local-only OCR implementation candidate and reproducible evidence: [`docs/research/2026-08-03-local-only-low-quality-pdf-ocr.md`](./docs/research/2026-08-03-local-only-low-quality-pdf-ocr.md)
 - 독립 계획 QA: [`docs/reviews/2026-07-30-integrated-plan-alfred-qa.md`](./docs/reviews/2026-07-30-integrated-plan-alfred-qa.md) — formal/substantive PASS
 - P0A original read-only freeze and controller reverification: [`docs/evidence/2026-07-30-p0a-evidence-freeze.md`](./docs/evidence/2026-07-30-p0a-evidence-freeze.md), [`docs/evidence/2026-07-31-p0a-controller-reverification.json`](./docs/evidence/2026-07-31-p0a-controller-reverification.json)
 - P0B final independent review: `APPROVE` — 67 in-memory probes, HIGH 0, MEDIUM 0; one accepted LOW generic scheme-specific URI-semantics note is defense-in-depth because consumed relationship roles use exact allowlists
@@ -45,7 +48,11 @@
 
 ## 다음 단계와 계속되는 경계
 
-P1/P2/P3 source gate는 통과했고 P2/P3는 `origin/main`에 delivered 됐다. P4-A Offline/Synthetic도 original source baseline `aeedceb…`와 accepted/delivered maintenance `cad1ab4…`까지 complete이며, 이 maintenance는 hygiene일 뿐 P4-B/P4-C/full P4를 완료하지 않는다. 다음 gate는 [`P4-B QUALITY corpus decision/evidence packet`](./docs/approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md)과 [`P4-C Provider-specific AP-02 packet`](./docs/approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md)을 각각 완성하고 named approval을 받는 것이다. 두 template은 현재 `PENDING / NOT APPROVED`다. 승인된 대표/de-identified corpus manifest·retention·classification·hash·approval evidence 없이는 P4-B real-corpus benchmark를 시작할 수 없고, provider/model/version/region·DPA/retention/training/subprocessor·credential/budget/cost cap·disable/rollback 승인 없이는 P4-C external Provider를 호출할 수 없다. P5, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성/production migration, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 blocked/미승인이다. Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 남는다.
+P1/P2/P3 source gate는 통과했고 P2/P3는 `origin/main`에 delivered 됐다. P4-A Offline/Synthetic도 original source baseline `aeedceb…`와 accepted/delivered maintenance `cad1ab4…`까지 complete다. Active Next는 2026-08-03 remediated local-only OCR candidate의 독립 read-only re-review와 controller acceptance다. P4-B real-corpus와 P4-C external Provider packet은 삭제되지 않았지만 future/deferred gate이며 Azure 계정·승인은 active Next/Blocked 요청이 아니다. P4-B는 실제 대표 corpus를 쓰려는 경우 계속 `BLOCKED_QUALITY_CORPUS_APPROVAL`, P4-C는 외부 Provider를 쓰려는 경우 계속 `BLOCKED_AP02_PROVIDER_OPT_IN`이다. P5, 실데이터 apply/import, 외부 OCR/AI 호출, 비일회성/production migration, production DB-role activation, 배포·release·서비스 공개·production readiness는 계속 blocked/미승인이다.
+
+## Local-only OCR reproduction
+
+`make local-ocr-bootstrap` is the explicit setup-only model download/verification step. Normal execution never downloads: run `make p4-local-ocr-preflight`, then `make p4-local-ocr-smoke`. Readiness failures are cached fail-closed and require worker restart after model repair. Ordinary CI excludes model-dependent runtime tests; the local preflight is the required separate package/model/engine gate. The smoke uses generated synthetic PDFs only and requires header accuracy `>=95%`, numeric accuracy `>=98%`, review-trigger exposure `100%`, and zero runtime network attempts. Model binaries remain ignored and untracked.
 
 ## P1 accepted verification
 

@@ -1,0 +1,43 @@
+{
+  "artifacts": [
+    {
+      "archive_sha256": "50446e5d01ac2a73d5319c89513281f6578414c888c602f9af13f93feefffc58",
+      "archive_size": 4935680,
+      "license": "Apache-2.0",
+      "local_path": "PP-OCRv5_mobile_det_infer",
+      "model": "PP-OCRv5_mobile_det",
+      "required_files": [
+        "inference.json",
+        "inference.pdiparams",
+        "inference.yml"
+      ],
+      "role": "text-detection",
+      "source_url": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv5_mobile_det_infer.tar",
+      "tree_sha256": "c63254c56d5159e203fae5d752c4ef98e62e90bd6688a0e8277637c15e0cfd89",
+      "upstream": "PaddlePaddle/PaddleOCR",
+      "version": "PP-OCRv5"
+    },
+    {
+      "archive_sha256": "a6261f800ad335aa6ef77b6f7c4dcedfd5e11b95f4d70982d41ee31c2ace5e66",
+      "archive_size": 13680640,
+      "license": "Apache-2.0",
+      "local_path": "korean_PP-OCRv5_mobile_rec_infer",
+      "model": "korean_PP-OCRv5_mobile_rec",
+      "required_files": [
+        "inference.json",
+        "inference.pdiparams",
+        "inference.yml"
+      ],
+      "role": "text-recognition",
+      "source_url": "https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/korean_PP-OCRv5_mobile_rec_infer.tar",
+      "tree_sha256": "da016686e590761e72ce0bbe5716bed5ebd0b922d708c6f336114cd2d4177755",
+      "upstream": "PaddlePaddle/PaddleOCR",
+      "version": "PP-OCRv5"
+    }
+  ],
+  "engine": "paddleocr",
+  "engine_version": "3.7.0",
+  "language": "korean-english-numeric",
+  "runtime_version": "3.3.1",
+  "schema_version": "hyc.local-ocr-model-manifest.v1"
+}

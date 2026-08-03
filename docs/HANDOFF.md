@@ -1,4 +1,17 @@
-# P4 preflight and post-maintenance handoff — no P4-B/P4-C approval
+# P4 local-only OCR candidate handoff — pending independent acceptance
+
+## 2026-08-03 active handoff
+
+- The isolated-worktree candidate implements local-only low-quality PDF OCR with page-level native-text preference and exact locally installed PaddleOCR models. It is uncommitted, unpushed, not independently accepted, and not delivered.
+- All OCR output is a candidate with `review_required=true`; missing/low-confidence/conflicting/table-layout results fail closed. Runtime network, credentials, endpoints, model auto-download, external Provider fallback, and automatic final decisions are prohibited.
+- Real generated-synthetic PaddleOCR smoke passed twice serially with identical output digest `581ed7dad0973c3a999ce6e1b48bc9368452e5f6f9aab3fdc3e8c1fbe72437c1` and aggregate digest `6545119c4a18c2e788024521a3e77fbdd38b4fc902a01900063d79327b1c6a9c`; field/physical-line header and numeric metrics plus public-provider candidate review exposure were `1.0000/1.0000/1.0000`, and initialization/prediction network attempts were `0/0`.
+- Independent Claude review initially returned `REQUEST_CHANGES` at blocker/major/minor `1/9/14`; fresh re-review confirmed B1/M1-M9 closed but raised one new major for native-route reason evaluation. That major is now fixed with shared stable evaluation plus native missing-LOT, low-confidence, and real native-table regressions. The candidate is ready for another independent review but has not yet been accepted.
+- Final-tree evidence: backend `641 passed, 92 deselected`, strict mypy 67, frontend Vitest 32/build, P4 golden 198, P4 preflight 97, local preflight focused/runtime 43 plus real engine initialization, migration 4, contracts, scans, and Compose passed. Final `make check` exited 0 after documentation sync.
+- Readiness failure caching is fail-closed and restart-required. Ordinary CI deliberately does not require model binaries; exact local runtime/model validation remains a separate mandatory `make p4-local-ocr-preflight` gate.
+- Active Next is independent read-only re-review and controller acceptance of this exact remediated candidate. P4-B real-corpus and P4-C external Provider work remain future/deferred lanes; Azure account or approval is not an active request.
+- The complete design, evidence, limitations, setup distinction, and prohibitions are in [`research/2026-08-03-local-only-low-quality-pdf-ocr.md`](research/2026-08-03-local-only-low-quality-pdf-ocr.md).
+
+The historical accepted/delivered P4-A and preflight record below remains authoritative for those increments. Nothing in this candidate changes their Git evidence or grants P4-B/P4-C, deployment, or production approval.
 
 ## 현재 handoff
 
@@ -23,8 +36,9 @@
 |Lane|Status|What the next session may do|
 |---|---|---|
 |P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Preserve original source/integration baseline `aeedceb…`, maintenance delivery `cad1ab4…`, and their capture-time evidence; do not expand the synthetic-only scope.|
-|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|Complete the [`P4-B QUALITY packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md), currently `PENDING / NOT APPROVED`; do not begin until named QUALITY approval is complete.|
-|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|Complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per Provider, currently `PENDING / NOT APPROVED`; do not implement an adapter or call/select a Provider before complete approval.|
+|P4 local-only OCR candidate|`VERIFIED_PENDING_INDEPENDENT_ACCEPTANCE`|Independently review the exact worktree candidate and controller evidence; no commit/delivery claim yet.|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL` / deferred|Future real-corpus work only; complete the [`P4-B QUALITY packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md) before any such run.|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN` / deferred|Future external-Provider work only; complete a [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) before any call. No account request is active.|
 
 P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
 
@@ -44,10 +58,10 @@ The delivered preflight contracts do not change these lane decisions. P4-B remai
 
 ## Safe next action
 
-1. Complete the [`P4-B QUALITY corpus decision/evidence packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md): representative/de-identified manifest, classification, source hashes, retention/storage/destination/exclusions, and named approval evidence. It remains `PENDING / NOT APPROVED` until every required field is complete.
-2. Use the [public-source due-diligence note](research/2026-08-02-p4c-ocr-provider-due-diligence.md) only as research input, then independently complete one [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) per proposed Provider: provider/model/version/region, DPA/retention/training/subprocessors, credential/budget/cost cap, payload/audit, disable/rollback, approved destination, P4-B reference, and named opt-in. It remains `PENDING / NOT APPROVED` until every required field is complete.
-3. Do not run a real-corpus benchmark until P4-B approval is complete, and do not invoke an external Provider until the provider-specific P4-C opt-in is complete. P4-A unlocks neither lane.
-4. Preserve `aeedceb…` as the original P4-A source/integration baseline and `cad1ab4…` as the maintenance source/delivery commit. Obtain any later documentation-only commit SHA and remote-tip status from Git history.
+1. Perform independent read-only re-review of the exact remediated local-only OCR candidate and reproduce the documented preflight/smoke/full gates.
+2. If accepted, let the authorized controller record acceptance and documentation state separately; this builder must not commit or push.
+3. Keep P4-B and P4-C deferred. Do not run a real corpus until P4-B approval is complete, and do not request an account/credential or invoke an external Provider until provider-specific P4-C approval is complete.
+4. Preserve all historical P4-A source/integration evidence and obtain any future delivery SHA from Git history.
 
 This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
 

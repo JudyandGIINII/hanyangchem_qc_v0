@@ -2,6 +2,8 @@
 
 **Status:** `PENDING / NOT APPROVED`
 
+> **2026-08-03 lane note:** retained as a future gate for any representative real-corpus benchmark, but deferred from the active local-only synthetic OCR candidate and not an active Next request.
+
 This template records a bounded QUALITY decision for one proposed local P4-B corpus. It contains no corpus body, actual storage path, source hash, person name, or approval. Complete it only with evidence handled under the approved data-classification and access process.
 
 ## 1. Decision identity

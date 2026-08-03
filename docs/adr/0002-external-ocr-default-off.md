@@ -2,6 +2,8 @@
 
 **Status:** Accepted (AP-02, 2026-07-30)
 
+**2026-08-03 application:** the active OCR implementation is local-only and blocks runtime network. External Provider selection, account/credential requests, and P4-C execution are deferred; this does not waive the future provider-specific AP-02 gate.
+
 ## Decision
 
 External OCR and AI transmission is disabled by default. OCR or LLM output is a review candidate only and can never make a final quality decision.

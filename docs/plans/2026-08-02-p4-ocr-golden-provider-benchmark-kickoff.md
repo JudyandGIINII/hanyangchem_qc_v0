@@ -6,6 +6,8 @@
 **추적표:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md)
 **상태:** P4-A Offline/Synthetic and its pre-P4-B maintenance are complete/independently accepted/committed/fresh-main fast-forward integrated/delivered; P4-B/P4-C independently blocked
 
+> **2026-08-03 active-lane update:** 이 문서의 P4-B/P4-C kickoff 순서는 2026-08-03 [local-only OCR implementation candidate](../research/2026-08-03-local-only-low-quality-pdf-ocr.md)에 의해 active Next에서 superseded/deferred됐다. 기존 gate와 packet은 삭제·승인되지 않았고 future real-corpus/external-Provider scope에만 계속 적용된다. 현재 Next는 local-only candidate의 독립 review/controller acceptance이며 Azure 계정·승인 요청이 아니다.
+
 ## 1. 목적과 현재 사실
 
 이 문서는 P4 lane의 범위, 계약, 검증 및 승인 경계를 고정하고 P4-A Offline/Synthetic의 acceptance/delivery와 pre-P4-B maintenance evidence를 기록한다. P3 source commit `91465f0413d0c0ca2633577078ec1300a6096442`는 accepted/delivered 상태다. P4-A original source/integration commit `aeedceb2c3b7008439a9c72e3984be77f6135e51` (`feat: complete P4-A offline synthetic evaluator`)은 baseline `2d5c02dbc612f9b612f27a36263b95e842c24e75`의 direct descendant이며 complete/independently accepted/committed/fresh-main fast-forward integrated/`origin/main` delivered 상태다.

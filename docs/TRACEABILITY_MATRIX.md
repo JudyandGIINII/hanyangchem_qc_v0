@@ -16,6 +16,23 @@
 - **QUALITY:** 품질팀 정책·golden/UAT 승인
 - **HERMES-QA:** 독립 검증·gate 판정
 
+## 2026-08-03 local-only OCR candidate trace
+
+This table describes an uncommitted implementation candidate that has passed controller-side verification but is still pending independent acceptance. It does not change accepted/delivered historical gates.
+
+|Requirement/control|Owner|Implementation and test evidence|Current gate|
+|---|---|---|---|
+|FR-OCR-001 page parsing|WORKER/QUALITY|Native text is used per page when sufficient; only insufficient pages render at bounded 300/400 DPI. Generated mixed native/scanned, rotation, signed skew, positive perspective transform, illumination, contrast, noise, blur/JPEG, scaling, native/scanned table, blank/corrupt/oversized cases are covered by `backend/tests/local_ocr/` and the recorded real `make p4-local-ocr-smoke` evidence.|Verified synthetic candidate; independent acceptance pending|
+|FR-OCR-002 provider abstraction|WORKER/API|`LocalOcrExtractionProvider` implements the existing extraction port; rooted opaque document resolution is bounded/immutable; no DB migration was needed; no fallback exists.|Candidate only|
+|FR-OCR-003 provenance|WORKER/API|Candidates preserve page, normalized source-frame rectangular bbox, spatial reading order, confidence, selected variant/recipe, rotation/deskew/perspective provenance, and stable reason ordering. Polygons are not implemented or claimed by this local OCR candidate.|Contract drift passed|
+|FR-OCR-005 Human Review|WORKER/QUALITY|All local OCR candidates set `review_required=true`; native and local-OCR routes share one stable reason evaluator covering low/missing/native disagreement/variant disagreement/numeric/unit/LOT/table conditions. Native table suspicion uses bounded aligned native word geometry without rendering/OCR. Focused regressions cover native missing LOT, low confidence, and real native table layout; no auto-finalize/approve/decide path exists.|Fail closed; fresh re-review MA-1 remediated|
+|Runtime/model supply chain|WORKER/OPS|Exact locked packages and versioned model manifest validate URL, archive size/hash, tree hash, engine/language/license/local path. Setup-only bootstrap is separate; runtime rejects path escape, endpoint/credential/source overrides, missing/mismatched models, auto-download, and network.|Local preflight passed; model binaries ignored/untracked|
+|Resource and confidentiality limits|WORKER/OPS|PDF-only, 25 MiB, 10 pages, 120M pixels, 12 variants, 120 seconds, concurrency 1; source immutable; logs/reports omit path and text/full payload; socket/DNS guards surround engine initialization and prediction.|Focused/adversarial tests passed|
+|Synthetic engineering KPI|WORKER/QUALITY|Real local engine smoke repeated serially: physical-line field/value header `1.0000`, numeric `1.0000`, public-provider candidate review exposure `1.0000`, network `0/0`; output `581ed7da…437c1`, aggregate `6545119c…6a9c` unchanged.|Generated-synthetic gate only; no corpus/production claim|
+|Repository regression|HERMES-QA|Backend 641 passed/92 deselected, Ruff, strict mypy 67, compileall; frontend Vitest 32/build; golden 198; preflight 97; local focused/runtime 43; contracts, migration 4, scans, Compose passed.|Controller second-remediation verification passed; ready for independent re-review|
+|Independent review remediation|WORKER/API/OPS/HERMES-QA|Initial Claude verdict `REQUEST_CHANGES` 1 blocker/9 majors/14 minors. Shared routing predicate, OpenCV geometry, smoke evidence, dominant DPI, selected transform/bbox normalization, readiness cache/offload, env aliases, concurrency enforcement, and claims are remediated. Bounded minor closures/deferred rationale are detailed in the implementation note.|Blocker and majors controller-closed; independent re-review not yet performed|
+|Deferred gates|QUALITY/OPS|P4-B remains required only before future real-corpus work; P4-C remains required only before future external Provider work. Both packets remain pending and grant no approval.|Deferred from active Next|
+
 ## P0B delivery trace
 
 |P0B task|Delivered candidate|Verification / ADR binding|Current gate|

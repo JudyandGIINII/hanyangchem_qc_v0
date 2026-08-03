@@ -5,6 +5,8 @@
 - 적용 gate: P4-C `BLOCKED_AP02_PROVIDER_OPT_IN`
 - 목적: Provider-specific AP-02 의사결정에 필요한 공개 공식 근거와 미확인 항목을 분리한다.
 
+> **2026-08-03 status update:** 이 공개자료 조사는 보존된 historical/future input이며 [local-only OCR implementation lane](2026-08-03-local-only-low-quality-pdf-ocr.md)에 의해 active Next에서 superseded/deferred됐다. Azure 또는 다른 Provider의 account·credential·approval 요청은 현재 active work가 아니다. P4-C gate 자체는 future external-Provider scope에 계속 유효하다.
+
 이 문서는 Provider 선택, 계약·법무 승인, AP-02 승인, 계정·endpoint·credential 존재, 외부 호출 또는 benchmark 실행을 뜻하지 않는다. P4-B도 별도로 `BLOCKED_QUALITY_CORPUS_APPROVAL`이다. 공개 문서의 변경 가능성이 있으므로 실제 의사결정 시점에 공식 자료와 계정·계약 증빙을 다시 확인해야 한다.
 
 ## 결론과 권고

@@ -33,6 +33,30 @@
       "title": "BoundingBox",
       "type": "object"
     },
+    "ExtractionRecipe": {
+      "enum": [
+        "adaptive-threshold",
+        "grayscale-clahe",
+        "native-text",
+        "original",
+        "otsu-denoise-sharpen"
+      ],
+      "type": "string"
+    },
+    "ExtractionReviewReason": {
+      "enum": [
+        "HUMAN_REVIEW_REQUIRED",
+        "LOT_CONFLICT",
+        "LOW_CONFIDENCE",
+        "MISSING_REQUIRED",
+        "NATIVE_OCR_DISAGREEMENT",
+        "NUMERIC_CONFLICT",
+        "TABLE_LAYOUT_REVIEW_REQUIRED",
+        "UNIT_CONFLICT",
+        "VARIANT_DISAGREEMENT"
+      ],
+      "type": "string"
+    },
     "ExtractionValue": {
       "additionalProperties": false,
       "properties": {
@@ -41,6 +65,37 @@
           "minimum": 0,
           "title": "Confidence",
           "type": "number"
+        },
+        "deskew_millidegrees": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": -10000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deskew Millidegrees"
+        },
+        "deskew_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "NOT_NEEDED",
+                "APPLIED",
+                "OUT_OF_BOUNDS"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Deskew Status"
         },
         "item_key": {
           "pattern": "^[A-Z][A-Z0-9_]{0,63}$",
@@ -60,6 +115,18 @@
           "default": null,
           "title": "Normalized Value"
         },
+        "perspective_corrected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Perspective Corrected"
+        },
         "provenance": {
           "$ref": "#/$defs/SourceReference"
         },
@@ -69,9 +136,58 @@
           "title": "Raw Text",
           "type": "string"
         },
+        "reading_order": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reading Order"
+        },
+        "reason_codes": {
+          "items": {
+            "$ref": "#/$defs/ExtractionReviewReason"
+          },
+          "title": "Reason Codes",
+          "type": "array"
+        },
+        "recipe_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ExtractionRecipe"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
         "review_required": {
           "title": "Review Required",
           "type": "boolean"
+        },
+        "rotation_degrees": {
+          "anyOf": [
+            {
+              "enum": [
+                0,
+                90,
+                180,
+                270
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rotation Degrees"
         },
         "unit": {
           "anyOf": [
@@ -86,6 +202,19 @@
           ],
           "default": null,
           "title": "Unit"
+        },
+        "variant_id": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z0-9][a-z0-9-]{0,63}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Variant Id"
         }
       },
       "required": [
@@ -147,7 +276,10 @@
       "$ref": "#/$defs/SourceReference"
     },
     "provider_name": {
-      "const": "synthetic-fixture",
+      "enum": [
+        "local-paddleocr",
+        "synthetic-fixture"
+      ],
       "title": "Provider Name",
       "type": "string"
     },

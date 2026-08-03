@@ -1,4 +1,4 @@
-.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture p4-preflight-check secret-scan sensitive-documents-check check
+.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture p4-preflight-check local-ocr-bootstrap p4-local-ocr-preflight p4-local-ocr-smoke secret-scan sensitive-documents-check check
 
 bootstrap:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv sync --project backend --extra dev
@@ -15,7 +15,7 @@ contracts-check:
 backend-check:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/alembic backend/tests scripts
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts backend/alembic scripts
-	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q -m "not postgres"
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q -m "not postgres and not local_ocr_runtime"
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend python -m compileall -q backend/src backend/scripts backend/alembic backend/tests scripts
 
 frontend-check:
@@ -91,6 +91,25 @@ p4-preflight-check:
 	(cd "$$temp_root/two" && TZ=Pacific/Honolulu LC_ALL=C XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python "$$root/backend/scripts/run_p4_preflight.py" > result.json); \
 	cmp "$$temp_root/one/result.json" "$$temp_root/two/result.json"; \
 	python3 -c 'import hashlib,json,pathlib,sys; output=pathlib.Path(sys.argv[1]); payload=json.loads(output.read_text()); print("p4-preflight-check: repeatable output=" + hashlib.sha256(output.read_bytes()).hexdigest() + " aggregate=" + payload["local_pilot"]["aggregate_sha256"] + " default=" + payload["ap02"]["default_status"] + " complete=" + payload["ap02"]["complete_status"] + " side_effects=" + payload["ap02"]["side_effects"])' "$$temp_root/one/result.json"
+
+local-ocr-bootstrap:
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv sync --project backend --extra dev --extra local-ocr
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend --extra local-ocr python backend/scripts/bootstrap_local_ocr_models.py --models-root "$(PWD)/.local-ocr-models/models" --archives-root "$(PWD)/.local-ocr-models/archives"
+
+p4-local-ocr-preflight:
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --offline --frozen --project backend --extra local-ocr python backend/scripts/preflight_local_ocr.py --models-root "$(PWD)/.local-ocr-models/models" --initialize-engine
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --offline --frozen --project backend --extra local-ocr pytest -q backend/tests/local_ocr
+
+p4-local-ocr-smoke:
+	@set -eu; \
+	root="$(PWD)"; \
+	temp_root=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-local-ocr-smoke.XXXXXX"); \
+	cleanup() { if [ -d "$$temp_root" ]; then find "$$temp_root" -depth -delete; fi; test ! -e "$$temp_root"; }; \
+	trap cleanup EXIT INT TERM; \
+	XDG_CACHE_HOME="$$root/.local-ocr-models/cache" uv run --offline --frozen --project backend --extra local-ocr python backend/scripts/run_local_ocr_smoke.py --models-root "$$root/.local-ocr-models/models" --output "$$temp_root/one.json"; \
+	XDG_CACHE_HOME="$$root/.local-ocr-models/cache" uv run --offline --frozen --project backend --extra local-ocr python backend/scripts/run_local_ocr_smoke.py --models-root "$$root/.local-ocr-models/models" --output "$$temp_root/two.json"; \
+	cmp "$$temp_root/one.json" "$$temp_root/two.json"; \
+	python3 -c 'import hashlib,json,pathlib,sys; p=pathlib.Path(sys.argv[1]); data=json.loads(p.read_text()); print("p4-local-ocr-smoke: output=" + hashlib.sha256(p.read_bytes()).hexdigest() + " aggregate=" + data["aggregate_sha256"] + " headers=" + data["required_header_accuracy"] + " numeric=" + data["numeric_accuracy"] + " review=" + data["review_trigger_exposure"] + " init_network=" + str(data["initialization_network_attempt_count"]) + " predict_network=" + str(data["prediction_network_attempt_count"]))' "$$temp_root/one.json"
 
 secret-scan:
 	python3 scripts/scan_secrets.py

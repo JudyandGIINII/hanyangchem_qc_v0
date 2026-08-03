@@ -73,6 +73,37 @@ class SourceReference(ContractModel):
     bbox: BoundingBox
 
 
+type ExtractionReviewReason = Literal[
+    "HUMAN_REVIEW_REQUIRED",
+    "LOT_CONFLICT",
+    "LOW_CONFIDENCE",
+    "MISSING_REQUIRED",
+    "NATIVE_OCR_DISAGREEMENT",
+    "NUMERIC_CONFLICT",
+    "TABLE_LAYOUT_REVIEW_REQUIRED",
+    "UNIT_CONFLICT",
+    "VARIANT_DISAGREEMENT",
+]
+type ExtractionRecipe = Literal[
+    "adaptive-threshold",
+    "grayscale-clahe",
+    "native-text",
+    "original",
+    "otsu-denoise-sharpen",
+]
+EXTRACTION_REASON_ORDER: tuple[ExtractionReviewReason, ...] = (
+    "HUMAN_REVIEW_REQUIRED",
+    "LOW_CONFIDENCE",
+    "MISSING_REQUIRED",
+    "NATIVE_OCR_DISAGREEMENT",
+    "VARIANT_DISAGREEMENT",
+    "NUMERIC_CONFLICT",
+    "UNIT_CONFLICT",
+    "LOT_CONFLICT",
+    "TABLE_LAYOUT_REVIEW_REQUIRED",
+)
+
+
 class ExtractionValue(ContractModel):
     item_key: Annotated[str, Field(pattern=r"^[A-Z][A-Z0-9_]{0,63}$")]
     raw_text: Annotated[str, Field(min_length=1, max_length=4_000)]
@@ -81,11 +112,31 @@ class ExtractionValue(ContractModel):
     provenance: SourceReference
     confidence: Annotated[float, Field(ge=0, le=1)]
     review_required: bool
+    reading_order: Annotated[int, Field(ge=1)] | None = None
+    recipe_id: ExtractionRecipe | None = None
+    variant_id: Annotated[str, Field(pattern=r"^[a-z0-9][a-z0-9-]{0,63}$")] | None = None
+    rotation_degrees: Literal[0, 90, 180, 270] | None = None
+    deskew_millidegrees: Annotated[int, Field(ge=-10_000, le=10_000)] | None = None
+    deskew_status: Literal["NOT_NEEDED", "APPLIED", "OUT_OF_BOUNDS"] | None = None
+    perspective_corrected: bool | None = None
+    reason_codes: list[ExtractionReviewReason] = Field(default_factory=list)
+
+    @field_validator("reason_codes", mode="before")
+    @classmethod
+    def canonicalize_reason_codes(cls, value: object) -> object:
+        if not isinstance(value, list):
+            return value
+        if len(value) != len(set(value)):
+            raise ValueError("extraction reason codes must be unique")
+        present = set(value)
+        return [reason for reason in EXTRACTION_REASON_ORDER if reason in present]
 
     @model_validator(mode="after")
     def confidence_requires_review(self) -> ExtractionValue:
         if self.confidence < 1 and not self.review_required:
             raise ValueError("confidence below 1 requires review")
+        if self.reason_codes and not self.review_required:
+            raise ValueError("extraction reason codes require review")
         return self
 
 
@@ -94,7 +145,7 @@ class ExtractionCandidate(ContractModel):
     candidate_id: UUID
     created_at: datetime
     document: SourceReference
-    provider_name: Literal["synthetic-fixture"]
+    provider_name: Literal["local-paddleocr", "synthetic-fixture"]
     values: Annotated[list[ExtractionValue], Field(min_length=1)]
     review_required: bool
 
@@ -109,6 +160,22 @@ class ExtractionCandidate(ContractModel):
     def require_review_for_child(self) -> ExtractionCandidate:
         if any(value.review_required for value in self.values) and not self.review_required:
             raise ValueError("candidate review_required must include value review requirements")
+        if self.provider_name == "local-paddleocr" and not self.review_required:
+            raise ValueError("local OCR candidates always require human review")
+        if self.provider_name == "local-paddleocr":
+            if any(not value.review_required for value in self.values):
+                raise ValueError("all local OCR values require human review")
+            if any(
+                value.reading_order is None
+                or value.recipe_id is None
+                or value.variant_id is None
+                or value.rotation_degrees is None
+                or value.deskew_millidegrees is None
+                or value.deskew_status is None
+                or value.perspective_corrected is None
+                for value in self.values
+            ):
+                raise ValueError("local OCR values require complete transform provenance")
         return self
 
     @field_serializer("created_at", when_used="json")

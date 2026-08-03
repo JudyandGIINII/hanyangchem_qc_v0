@@ -2,6 +2,8 @@
 
 **Status:** `PENDING / NOT APPROVED`
 
+> **2026-08-03 lane note:** retained as a future external-Provider gate, but superseded/deferred from the active local-only OCR lane. No Azure/provider account, credential, or approval request is active.
+
 Use one separately completed packet for exactly one proposed Provider/model/endpoint combination. This template neither suggests nor selects a Provider and contains no credential value, person name, endpoint, or approval.
 
 ## 0. Research prefill — non-approval only
