@@ -1,6 +1,8 @@
 # DEVLOG
 
-## 2026-08-03 — local-only low-quality PDF OCR implementation candidate
+## 2026-08-03 — local-only low-quality PDF OCR implementation candidate (historical pre-final-review snapshot)
+
+This section preserves the candidate state at that capture time. The later accepted/delivered closure section at the end of this DEVLOG supersedes its current-status language without rewriting the historical commands or evidence.
 
 ### Scope and implementation
 
@@ -22,7 +24,7 @@ Initial setup is separate evidence: the worktree initially lacked development de
 
 ### State
 
-`SECOND_REQUEST_CHANGES_REMEDIATED_READY_FOR_INDEPENDENT_REREVIEW`. The tree is intentionally uncommitted/unpushed. Active Next is independent read-only re-review and controller acceptance. P4-B real-corpus and P4-C external Provider lanes remain future/deferred and their existing gate tokens remain binding if those scopes are later requested.
+Historical capture-time state: `SECOND_REQUEST_CHANGES_REMEDIATED_READY_FOR_INDEPENDENT_REREVIEW`. The tree was then intentionally uncommitted/unpushed, and Active Next was independent read-only re-review and controller acceptance. The closure section below records the later acceptance/delivery truth. P4-B real-corpus and P4-C external Provider gate tokens remain binding only if those scopes are later requested.
 
 ### Independent review remediation
 
@@ -524,7 +526,7 @@ The first authorized push delivered range `1e96836..58e963c` to `origin/main`. F
 equality verified `origin/main` at `58e963c`, and ancestry verification proved source commit
 `996056b` is an ancestor of that delivered remote state. Therefore `58e963c` is the verified
 first-push/integration-evidence commit and a durable ancestor, not a continuing/current/live final
-tip. This uncommitted post-push documentation reconciliation, when later controller-committed and
+tip. At that historical capture time, this uncommitted post-push documentation reconciliation, when later controller-committed and
 pushed, will become a later descendant and final remote tip; Git history is authoritative for the
 current live tip. P2 remains complete, accepted, committed, fresh-main integrated, and delivered
 to `origin/main` under separate explicit user authorization. P3 remains blocked/not authorized;
@@ -535,11 +537,11 @@ remain unauthorized and unperformed.
 ## 2026-08-01 — P3 vertical-slice implementation candidate builder verification
 
 The separately authorized P3 work was continued in the isolated worktree at exact unchanged
-base `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. The inherited uncommitted implementation
+base `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. At that historical candidate checkpoint, the inherited uncommitted implementation
 adds Alembic head `20260801_0004`, PostgreSQL-backed FastAPI intake/document/inspection/LOT
 routes and services, fixture-only local actors with RBAC, OpenAPI/generated-client updates, an
 API-backed Next.js inspection workspace, a synthetic calcium-chloride-bead seed, disposable
-PostgreSQL integration coverage, and three Playwright scenarios. All changes remain uncommitted.
+PostgreSQL integration coverage, and three Playwright scenarios. All changes were uncommitted at that capture time.
 
 The first observed `make p3-e2e` run failed all three scenarios because randomized loopback web
 ports were rejected by API CORS preflight. Fixture mode now permits only HTTP `localhost` or
@@ -596,7 +598,7 @@ secret, or prohibited Git operation was used or performed.
 ## 2026-08-01 — P3 completion-remediation implementation candidate builder verification
 
 Hermes independently reproduced three integration blockers and dispatched a bounded remediation
-against the existing uncommitted P3 candidate at unchanged base
+against the then-uncommitted P3 candidate at the historical unchanged base
 `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`. Tests were added first; the initial disposable
 PostgreSQL run reproduced all three product defects as four focused failures: cross-allocation
 inspection creation returned 201, the second internal-result PUT returned 500, finalized evidence
@@ -635,7 +637,7 @@ Final commands actually observed from the remediation candidate:
   changed-path inventory, and the aggregate disposable Compose project inventory all passed; every
   P2/P3/E2E project left containers/networks/volumes `0/0/0`.
 
-This remains `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`: an uncommitted
+At that historical checkpoint this remained `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`: an uncommitted
 remediation candidate awaiting Hermes independent QA/review/integration. It is not accepted,
 integrated, committed, pushed, deployed, released, production-ready, or authorization for real
 data, external OCR/AI, non-disposable migration, public exposure, or production DB-role activation.
@@ -690,7 +692,7 @@ Commands actually observed from the second-remediation candidate:
 - Final `git diff --check`, frozen-migration byte-identity, secret/sensitive-document scans,
   changed-path/artifact inventory, and exact Docker/temp cleanup inventory passed.
 
-This second remediation is still an uncommitted builder-verified candidate at
+At that historical checkpoint this second remediation was still an uncommitted builder-verified candidate at
 `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. It does not claim Hermes
 acceptance, integration, commit, push, deployment, release, production readiness, or authority for
 real data, external OCR/AI, non-disposable migration, public exposure, or production role use.
@@ -746,7 +748,7 @@ Commands actually observed for this final-polish candidate:
   `8124e6420c72cca5f63bd6999116350edd8e6d00214ecd2de471ba9b4c2ea9ee`.
 
 Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5 session eviction remain disclosed
-follow-ups. This remains an uncommitted builder-verified P3 candidate pending Hermes independent
+follow-ups. At that historical checkpoint this remained an uncommitted builder-verified P3 candidate pending Hermes independent
 QA/review/integration; it is not accepted, integrated, committed, pushed, deployed, released, or
 production-ready, and it does not authorize real/external data or services.
 
@@ -783,7 +785,7 @@ Commands actually observed for this remediation candidate:
 - `make p3-e2e`: Playwright 3/3 passed against loopback PostgreSQL/FastAPI/Next.js, followed by
   exact disposable Compose cleanup.
 
-The independently reported M-1/N-7 blocker is closed in this uncommitted builder candidate only.
+At that historical checkpoint the independently reported M-1/N-7 blocker was closed in this uncommitted builder candidate only.
 Hermes independent QA/review/integration remains pending; no acceptance, Git integration, push,
 deployment, release, production readiness, real data, or external service use is claimed.
 
@@ -832,7 +834,7 @@ Commands actually observed for this remediation candidate:
 - Final `git diff --check`, explicit contract/scans, and exact disposable cleanup inventory passed;
   containers, networks, volumes, P3 test storage roots, and invalid-upload roots were all zero.
 
-This is still an uncommitted builder-verified P3 implementation candidate at
+At that historical checkpoint this was still an uncommitted builder-verified P3 implementation candidate at
 `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. Hermes independent
 QA/review/integration remains. Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5
 session eviction remain disclosed; there is no acceptance, integration, commit, push, deployment,
@@ -847,7 +849,7 @@ release, production-readiness, real-data, external OCR/AI, n8n, or production-ro
 - `backend/tests/integration/api/test_db_serialization.py` passes 27 tests. Nine evidence I/U/D families run two fresh cycles each (18 approval races); 16 extraction run/field/section/link I/U/D/reparent families run two fresh cycles each (32 confirmation races). PostgreSQL `pg_blocking_pids` is the deterministic barrier: each forced-after-terminal app-role writer is proven blocked on the authoritative parent, then rejected by `finalized inspection evidence is immutable` or `confirmed extraction lineage is immutable` after the terminal transaction commits. No race returns 500 or leaves residue.
 - Positive/rollback controls prove pending direct I/U/D remains legal, legitimate confirmation remains atomic, a missing-allocation confirmation rolls back all field/status/link changes, and a direct app-role confirmed allocation-link rebind to another LOT is rejected without changing lineage. Existing five-cycle first-confirmation and API rewrite/rebind regressions remain green under parent-run serialization.
 - Verified commands on the final candidate: `make bootstrap && make check`; `make p2-postgres-check`; `make p3-postgres-check`; `make p3-e2e`; focused 27-test serialization suite; PostgreSQL migration upgrade→downgrade→upgrade/runtime-object/empty-drift check; `git diff --check`; generated OpenAPI/client drift; secret and sensitive-document scans. Results: backend `346 passed, 77 PostgreSQL deselected`, strict mypy 39 files, frontend Vitest 32 plus lint/typecheck/build, migration contract 4, P2 PostgreSQL 10, P3 PostgreSQL 67, Playwright 3/3, and exact disposable cleanup 0 containers/0 networks/0 volumes/0 storage trees.
-- Gate remains `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. This is uncommitted and awaiting Hermes independent QA/review/integration; it is not accepted, integrated, pushed, deployed, released, or production-ready. Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5 session eviction remain explicit non-production debt; accepted P2 N-M3 remains a separate pre-production DB-role follow-up.
+- Historical capture-time gate was `P3_IMPLEMENTATION_CANDIDATE_BUILDER_VERIFIED_HERMES_QA_PENDING`. It was then uncommitted and awaiting Hermes independent QA/review/integration; it was not accepted, integrated, pushed, deployed, released, or production-ready. Fixture-only N-1 validation ordering, N-2 GET seeding, and N-5 session eviction remain explicit non-production debt; accepted P2 N-M3 remains a separate pre-production DB-role follow-up.
 
 ## 2026-08-01 — P3 final independent source acceptance and documentation truth sync
 
@@ -856,7 +858,7 @@ release, production-readiness, real-data, external OCR/AI, n8n, or production-ro
 - Hermes controller independently passed `make bootstrap && make check` (Ruff; strict mypy 39; backend 346/77 deselected; frontend Vitest 32; Next build; migration 4; scans and Compose), P2 PostgreSQL 10, P3 PostgreSQL 67, real Playwright 3, and `test_db_serialization.py` 27 tests across three fresh cycles (81 total). The candidate hash remained frozen during this QA; final HYC Docker containers/networks/volumes were 0/0/0 and only user-owned n8n remained running and untouched.
 - All historical blocker/major findings are fixed: cross-LOT lineage; repeated internal-result replace/clear; finalized evidence I/U/D; reconfirm and confirmed-review DB immutability; genuine first-confirm race; no-row idempotency races; invalid-upload mapping/residue; approval/evidence serialization; confirmed extraction run/field/section/link serialization; and confirmed cross-LOT rebind denial.
 - The pre-doc-final freeze was base HEAD `b7bc4a8ca258d1d44d240f8884a4b4ec8cbb6abf`, 50 changed/untracked files, and source hash `51f3bbb1d23970484813e893e51fd781f89fb781d02fac2db5cb475b00cac7f2`. This documentation sync changes the tree, so that value is deliberately recorded only as the frozen pre-doc source hash, not a post-doc hash.
-- P3 is now source complete/accepted and ready for an exact-candidate commit followed by fresh-main fast-forward integration. At this documentation point it remains uncommitted, unintegrated, and unpushed; no deployment, release, public service, real-data import/apply, external OCR/AI, production migration, or production DB-role activation is authorized or performed.
+- At this historical source-acceptance checkpoint, P3 was source complete/accepted and ready for an exact-candidate commit followed by fresh-main fast-forward integration. At that documentation point it remained uncommitted, unintegrated, and unpushed; no deployment, release, public service, real-data import/apply, external OCR/AI, production migration, or production DB-role activation was authorized or performed.
 - At this historical P3 source-acceptance checkpoint, accepted non-production debt remained fixture-only N-1 validation/auth ordering, N-2 GET seeding, N-5 in-memory session eviction, and the separate P2 N-M3 broad direct-role history-bypass warning; P4/P5 were then unstarted and all real data remained prohibited. Current P4-A state is recorded in [`HANDOFF.md`](HANDOFF.md) and the [P4 plan](plans/2026-08-02-p4-ocr-golden-provider-benchmark-kickoff.md); those records supersede only this checkpoint's P4-A state.
 - Created `docs/HANDOFF.md` with the exact worktree/branch/base, delivered scope, architecture/synthetic boundary, canonical commands, verified counts, invariant enforcement/tests, accepted debt, Git state, safe next steps, and forbidden operations.
 - Documentation validation commands actually run: `git diff --check`; `python3 scripts/scan_secrets.py`; `python3 scripts/check_sensitive_documents.py`; README local-link existence check; and a current-state truth scan over README, PRD, KANBAN, traceability, integrated plan, and handoff. All returned exit 0; the secret scan and tracked-sensitive-document scan printed their explicit pass messages.
@@ -930,3 +932,14 @@ release, production-readiness, real-data, external OCR/AI, n8n, or production-ro
 - Synchronized the P4-C packet with a non-approval research prefill. Every formal account, contract, payload, retention, credential, pricing/budget, P4-B intersection, and approver field remains `PENDING`; packet status remains `PENDING / NOT APPROVED` and all fail-closed rules remain in force.
 - Recorded private local inventory only as aggregate: 4 candidate documents, 0 eligible because no human-label evidence and no independent-review evidence are present. It is non-representative and not a QUALITY corpus; no filename, path, hash, or body was recorded.
 - Approval boundaries are unchanged: P4-B remains `BLOCKED_QUALITY_CORPUS_APPROVAL`, P4-C remains `BLOCKED_AP02_PROVIDER_OPT_IN`, and no actual Provider selection, external benchmark, corpus quality, network invocation, deployment, or production-readiness claim is made.
+
+## 2026-08-03 — local-only P4 engineering acceptance/delivery documentation closure
+
+- The authorized local-only low-quality PDF OCR engineering lane is complete, independently accepted, committed, fresh-`origin/main` fast-forward integrated, and delivered. Source/integration commit `91fd4a8229b12d2b229f2ef9abb9dceef93591b5` (`feat: add local-only low-quality PDF OCR`) is an ancestor of pre-closure main `96413d20230b62033ecb754a12e5a1a621a7b95c` (`fix: keep Vercel demo frontend-only`). The commit containing this documentation-only closure will be a newer descendant; Git history is authoritative for its exact SHA and remote-tip state.
+- Final independent source review returned `ACCEPT_WITH_MINOR`, BLOCKER 0, MAJOR 0, MINOR 4, NOTE 8. B1/M1-M9 and MA-1 are closed. The four bounded minors remain: broad/over-inclusive native table detection; fake-backend-only native low-confidence evaluator wiring because production native lines use confidence 1.00; no expensive smoke rerun inside the independent review after final native-route remediation, although later Hermes ran the final source successfully; and duplicate native word extraction per native page. The eight operational/contract/scope notes remain detailed in the implementation note and are not production approvals.
+- Final Hermes controller evidence on the source: backend `641 passed, 92 deselected`; strict mypy 67/0; frontend Vitest 32/build; golden 198; P4 preflight 97; local OCR preflight/runtime 43; migration 4; scans/Compose. The final post-remediation real PaddleOCR smoke passed with header/numeric/review `1.0000/1.0000/1.0000`, initialization/prediction network `0/0`, output SHA-256 `581ed7dad0973c3a999ce6e1b48bc9368452e5f6f9aab3fdc3e8c1fbe72437c1`, and aggregate SHA-256 `6545119c4a18c2e788024521a3e77fbdd38b4fc902a01900063d79327b1c6a9c`.
+- This evidence proves generated-synthetic/local engineering behavior only. It does not prove representative real-corpus accuracy, Korean-only native extraction, real scan-noise performance, multi-worker deployment safety, full P4/P5, product production readiness, or production activation. OCR output remains candidate-only and mandatory Human Review/fail-closed behavior remains binding.
+- P4-B remains `BLOCKED_QUALITY_CORPUS_APPROVAL` because private aggregate inventory is 4 candidate documents and 0 eligible without human-label and independent-review evidence. P4-B is a future real-corpus validation gate, not unfinished code debt. If real-corpus validation is not desired, local-only P4 engineering may hand off to the next separately approved phase. P4-C is deferred/not selected/not approved, is not required for local-only architecture, and has no active account, credential, endpoint, network call, or implementation request.
+- Public frontend remediation `96413d2…` preserves the local API path when `NEXT_PUBLIC_HYC_PUBLIC_DEMO` is absent and makes the exact `=1` mode synthetic frontend-only with no backend/internal API call or server persistence. Its independent review was `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 6): vacuous static approval assertion; no runtime fetch-spy/effect coverage; formatting-brittle source slicing; possibly server-oriented public status; no committed `vercel.json`/`.vercelignore` pinning flag/Root Directory; root `.env.example` does not feed the Compose web image build. None is fixed. Controller frontend verification was 36 passed plus build. Production/Preview flag settings were saved, but missing/incorrect flag or configuration can fall back to localhost-fetch mode, so post-flag rebuild/redeploy and browser-network proof remain required. Documentation does not claim that a particular redeploy is live; deployment API evidence and browser network/behavior observation are authoritative for live identity. The reviewer ran Vitest 36, `tsc`, and `eslint`, not a build or Playwright. Backend, DB, worker, OCR, models, and original documents remain local/intranet-only.
+- This writer changed only the nine authorized documentation paths. No source, test, lockfile, approval-packet status, protected document body, Git index/history/remote, Vercel setting, or deployment was changed by this closure task.
+- Documentation verification actually run: `git status --short --branch` showed only the nine allowlisted modified files; the exact `git diff --name-only` set matched the allowlist; `git diff --check` exited 0; the requested stale-language search found only explicitly historical/capture-time P3/P4-A/local-candidate records; `python3 scripts/scan_secrets.py` printed `secret scan passed`; `python3 scripts/check_sensitive_documents.py` printed `tracked sensitive document scan passed`. Repository search found no documentation contract/source-string test referencing these nine authority files, so no such test was invented or reported.

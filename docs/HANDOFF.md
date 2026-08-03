@@ -1,17 +1,18 @@
-# P4 local-only OCR candidate handoff — pending independent acceptance
+# P4 local-only OCR accepted delivery handoff
 
 ## 2026-08-03 active handoff
 
-- The isolated-worktree candidate implements local-only low-quality PDF OCR with page-level native-text preference and exact locally installed PaddleOCR models. It is uncommitted, unpushed, not independently accepted, and not delivered.
+- The authorized local-only low-quality PDF OCR engineering lane is complete, independently accepted, committed, fresh-`origin/main` fast-forward integrated, and delivered. Source/integration baseline is `91fd4a8229b12d2b229f2ef9abb9dceef93591b5` (`feat: add local-only low-quality PDF OCR`). Pre-closure main baseline `96413d20230b62033ecb754a12e5a1a621a7b95c` is its later descendant; the commit containing this documentation closure will be newer, and Git history is authoritative for its exact SHA/remote-tip state.
 - All OCR output is a candidate with `review_required=true`; missing/low-confidence/conflicting/table-layout results fail closed. Runtime network, credentials, endpoints, model auto-download, external Provider fallback, and automatic final decisions are prohibited.
-- Real generated-synthetic PaddleOCR smoke passed twice serially with identical output digest `581ed7dad0973c3a999ce6e1b48bc9368452e5f6f9aab3fdc3e8c1fbe72437c1` and aggregate digest `6545119c4a18c2e788024521a3e77fbdd38b4fc902a01900063d79327b1c6a9c`; field/physical-line header and numeric metrics plus public-provider candidate review exposure were `1.0000/1.0000/1.0000`, and initialization/prediction network attempts were `0/0`.
-- Independent Claude review initially returned `REQUEST_CHANGES` at blocker/major/minor `1/9/14`; fresh re-review confirmed B1/M1-M9 closed but raised one new major for native-route reason evaluation. That major is now fixed with shared stable evaluation plus native missing-LOT, low-confidence, and real native-table regressions. The candidate is ready for another independent review but has not yet been accepted.
+- Final post-remediation generated-synthetic PaddleOCR smoke passed with output digest `581ed7dad0973c3a999ce6e1b48bc9368452e5f6f9aab3fdc3e8c1fbe72437c1`, aggregate digest `6545119c4a18c2e788024521a3e77fbdd38b4fc902a01900063d79327b1c6a9c`, field/physical-line header/numeric/public-provider review exposure `1.0000/1.0000/1.0000`, and initialization/prediction network attempts `0/0`.
+- Final independent Claude review returned `ACCEPT_WITH_MINOR` at BLOCKER/MAJOR/MINOR/NOTE `0/0/4/8`. It confirmed B1/M1-M9 and MA-1 closed. The four bounded minors remain: broad/over-inclusive native table detection; native low-confidence evaluator wiring exercised only through a fake backend because production native lines are confidence 1.00; no expensive smoke rerun inside the independent review after final native remediation, although the later Hermes final-source run produced the digests above; and duplicate native word extraction per native page.
 - Final-tree evidence: backend `641 passed, 92 deselected`, strict mypy 67, frontend Vitest 32/build, P4 golden 198, P4 preflight 97, local preflight focused/runtime 43 plus real engine initialization, migration 4, contracts, scans, and Compose passed. Final `make check` exited 0 after documentation sync.
 - Readiness failure caching is fail-closed and restart-required. Ordinary CI deliberately does not require model binaries; exact local runtime/model validation remains a separate mandatory `make p4-local-ocr-preflight` gate.
-- Active Next is independent read-only re-review and controller acceptance of this exact remediated candidate. P4-B real-corpus and P4-C external Provider work remain future/deferred lanes; Azure account or approval is not an active request.
+- Active local-only P4 engineering is complete. If representative real-corpus validation is desired, the next boundary is P4-B QUALITY corpus approval and missing human-label/independent-review evidence; this is a validation gate, not code debt. Otherwise the work may hand off to the next separately approved phase. P4-C external Provider work is deferred/not required for local-only scope; no account or approval request is active.
+- Public synthetic-demo remediation `96413d2…` preserves local API behavior when `NEXT_PUBLIC_HYC_PUBLIC_DEMO` is absent and blocks backend calls/server persistence when it is exactly `1`. Its independent review was `ACCEPT_WITH_MINOR` (BLOCKER 0, MAJOR 0, MINOR 6): a static approval assertion is vacuous; no runtime fetch-spy/effect coverage exists; source-slicing tests are formatting-brittle; public status copy can remain server-oriented; no committed `vercel.json`/`.vercelignore` pins the flag or Root Directory; and root `.env.example` does not feed the Compose web image build. These residuals are not fixed. Controller frontend verification was 36 passed plus build. Production/Preview flag settings were saved, but a missing/incorrect flag or configuration can fall back to localhost-fetch mode, so post-flag rebuild/redeploy and browser network proof remain required. This handoff does not infer live deployment identity or redeploy completion from source state: deployment API evidence and browser network/behavior observation are authoritative. The reviewer ran Vitest 36, `tsc`, and `eslint`, not a build or Playwright. Backend, DB, worker, OCR, models, and original documents remain local/intranet-only.
 - The complete design, evidence, limitations, setup distinction, and prohibitions are in [`research/2026-08-03-local-only-low-quality-pdf-ocr.md`](research/2026-08-03-local-only-low-quality-pdf-ocr.md).
 
-The historical accepted/delivered P4-A and preflight record below remains authoritative for those increments. Nothing in this candidate changes their Git evidence or grants P4-B/P4-C, deployment, or production approval.
+The historical accepted/delivered P4-A and preflight record below remains authoritative for those increments. This local-only delivery does not grant P4-B/P4-C, representative-corpus quality, external Provider, deployment, or production approval.
 
 ## 현재 handoff
 
@@ -36,13 +37,13 @@ The historical accepted/delivered P4-A and preflight record below remains author
 |Lane|Status|What the next session may do|
 |---|---|---|
 |P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Preserve original source/integration baseline `aeedceb…`, maintenance delivery `cad1ab4…`, and their capture-time evidence; do not expand the synthetic-only scope.|
-|P4 local-only OCR candidate|`VERIFIED_PENDING_INDEPENDENT_ACCEPTANCE`|Independently review the exact worktree candidate and controller evidence; no commit/delivery claim yet.|
-|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL` / deferred|Future real-corpus work only; complete the [`P4-B QUALITY packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md) before any such run.|
-|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN` / deferred|Future external-Provider work only; complete a [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) before any call. No account request is active.|
+|P4 local-only OCR|`COMPLETE_ACCEPTED_COMMITTED_FRESH_MAIN_FF_INTEGRATED_DELIVERED_TO_ORIGIN_MAIN`|Preserve source/integration baseline `91fd4a8…`, final review `ACCEPT_WITH_MINOR` 0/0/4 with 8 notes, final controller evidence, and the local-only boundary.|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL` / future validation gate|If representative real-corpus validation is desired, complete the [`P4-B QUALITY packet`](approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md) and supply human-label plus independent-review evidence before any run. This is not unfinished code debt.|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN` / deferred, not required for local-only scope|Only if a future external Provider is separately requested, complete a [`P4-C Provider-specific AP-02 packet`](approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) before any call. No account request is active.|
 
 P4-B approval does not unlock P4-C, and P4-C approval does not establish corpus representativeness. CI remains fixture-provider-only, network-free, and credential-free. Missing KPI expands Human Review/manual fallback and never permits auto-finalization.
 
-The delivered preflight contracts do not change these lane decisions. P4-B remains blocked because the aggregate local inventory has 0 eligible documents, and the research-only Azure candidate does not satisfy any formal field in the P4-C decision packet.
+The delivered preflight/local OCR contracts do not change these lane decisions. P4-B remains blocked because aggregate local inventory is 4 candidate documents and 0 eligible, and the research-only Azure candidate does not satisfy any formal field in the P4-C decision packet.
 
 ## P4-A final maintenance evidence
 
@@ -58,10 +59,10 @@ The delivered preflight contracts do not change these lane decisions. P4-B remai
 
 ## Safe next action
 
-1. Perform independent read-only re-review of the exact remediated local-only OCR candidate and reproduce the documented preflight/smoke/full gates.
-2. If accepted, let the authorized controller record acceptance and documentation state separately; this builder must not commit or push.
-3. Keep P4-B and P4-C deferred. Do not run a real corpus until P4-B approval is complete, and do not request an account/credential or invoke an external Provider until provider-specific P4-C approval is complete.
-4. Preserve all historical P4-A source/integration evidence and obtain any future delivery SHA from Git history.
+1. Preserve `91fd4a8…` as the local-only OCR source/integration baseline, `96413d2…` as its pre-closure descendant, and obtain the closure/live tip from Git history.
+2. If real-corpus validation is desired, obtain P4-B QUALITY approval plus human-label and independent-review evidence before reading/running the corpus; otherwise hand off to the next separately approved phase.
+3. Keep P4-C deferred. Do not request an account/credential or invoke an external Provider unless provider-specific P4-C approval is separately requested and completed.
+4. For any public synthetic demo, preserve the frontend-only invariant; because a missing/incorrect flag can return localhost-fetch mode, rebuild/redeploy after the saved flag and verify browser network plus live identity/behavior from deployment API; do not infer it from this document.
 
 This P4 section supersedes only section 7, “안전한 다음 단계”, in the historical P3 handoff below. All P3 scope, evidence, counts, accepted debt, delivery proof, and prohibitions remain truthful historical evidence.
 

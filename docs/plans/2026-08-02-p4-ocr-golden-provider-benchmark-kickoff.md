@@ -4,9 +4,9 @@
 **정본:** [`../../Prd.md`](../../Prd.md)
 **상위 delivery contract:** [`2026-07-30-integrated-implementation-plan.md`](2026-07-30-integrated-implementation-plan.md)
 **추적표:** [`../TRACEABILITY_MATRIX.md`](../TRACEABILITY_MATRIX.md)
-**상태:** P4-A Offline/Synthetic and its pre-P4-B maintenance are complete/independently accepted/committed/fresh-main fast-forward integrated/delivered; P4-B/P4-C independently blocked
+**상태:** P4-A/preflight and local-only OCR engineering are complete/accepted/committed/fresh-main fast-forward integrated/delivered; P4-B is a blocked future real-corpus validation gate; P4-C is deferred/not required for local-only scope
 
-> **2026-08-03 active-lane update:** 이 문서의 P4-B/P4-C kickoff 순서는 2026-08-03 [local-only OCR implementation candidate](../research/2026-08-03-local-only-low-quality-pdf-ocr.md)에 의해 active Next에서 superseded/deferred됐다. 기존 gate와 packet은 삭제·승인되지 않았고 future real-corpus/external-Provider scope에만 계속 적용된다. 현재 Next는 local-only candidate의 독립 review/controller acceptance이며 Azure 계정·승인 요청이 아니다.
+> **2026-08-03 closure update:** [Local-only OCR engineering](../research/2026-08-03-local-only-low-quality-pdf-ocr.md)은 source/integration baseline `91fd4a8…`에서 complete·independently accepted·delivered 됐다. Pre-closure main `96413d2…`는 그 후손이고 closure commit/live tip은 Git history가 정본이다. Active local-only P4 engineering은 complete다. Representative real-corpus validation을 원하면 P4-B QUALITY approval/evidence가 다음 boundary이고, 원하지 않으면 다음 별도 승인 phase로 handoff할 수 있다. P4-C는 local-only architecture에 필요하지 않은 deferred opt-in이며 Azure 계정·승인 요청은 active하지 않다.
 
 ## 1. 목적과 현재 사실
 
@@ -18,15 +18,18 @@ Final 25-path candidate의 fresh independent read-only review는 `ACCEPT_WITH_MI
 
 그 뒤 post-integration documentation commits `1d98e4cf17b37e0ea95eadcbe69418778d1a614f`와 `afe58a0fe556e8ae94b11926dd572ef9b2e60ee5`가 ancestry를 보존했다. Exact four-path pre-P4-B maintenance candidate는 review 전후 digest `7ed91a678ba1dd72c30f7e9b58d5e5066fdcf41f8cde2b9da8239447345a85ce`를 유지했고 independent final `VERDICT: ACCEPT` (blocker 0, major 0, minor 0)를 받았다. Commit `cad1ab48b7ab1923638fe8600f23ef640efdab73` (`fix: stabilize P4-A geometry validation`)은 `afe58a0…`의 direct descendant이며 fresh `origin/main` fast-forward와 non-force push로 delivered 됐다. Capture time에 local integration HEAD, `origin/main`, remote main은 모두 `cad1ab4…`였고 ancestry/clean status가 통과했다. 이후 documentation-only closure의 exact SHA/remote-tip 상태는 Git history가 정본이다.
 
-## 2. 세 개의 독립 lane과 gate
+Local-only OCR final controller evidence는 backend `641 passed, 92 deselected`, strict mypy 67/0, frontend Vitest 32/build, golden 198, P4 preflight 97, local OCR 43, migration 4, scans/Compose와 post-remediation real PaddleOCR smoke header/numeric/review `1.0000/1.0000/1.0000`, network `0/0`, output `581ed7da…437c1`, aggregate `6545119c…6a9c`다. Final independent review `ACCEPT_WITH_MINOR` 0/0/4, NOTE 8의 네 minor는 broad native-table signal, fake-backend-only native-low-confidence evaluator wiring, independent-review-time smoke non-rerun before the later controller run, duplicate native word extraction이다. Public Vercel boundary commit `96413d2…`의 independent review는 `ACCEPT_WITH_MINOR` 0/0/6였다: static approval assertion vacuous, runtime fetch-spy/effect coverage 없음, formatting-brittle source slicing, server-oriented public status copy 가능성, flag/Root Directory를 pin하는 committed `vercel.json`/`.vercelignore` 부재, root `.env.example`이 Compose web image build에 주입되지 않는 residuals는 고치지 않았다. Controller frontend verification은 36 passed plus build였다. `NEXT_PUBLIC_HYC_PUBLIC_DEMO=1`일 때만 synthetic frontend-only/no-backend/no-server-persistence이며 missing/incorrect flag 또는 configuration은 localhost-fetch mode로 fall back할 수 있으므로 post-flag rebuild/redeploy와 browser-network proof가 필요하다. Production/Preview flag는 저장됐지만 live identity/behavior는 deployment API와 browser observation이 정본이다. Reviewer는 Vitest 36, `tsc`, `eslint`만 실행했고 build/Playwright는 실행하지 않았다.
+
+## 2. 네 개의 독립 lane과 gate
 
 |Lane|현재 상태|허용 범위|해제 조건|
 |---|---|---|---|
 |P4-A — Offline/Synthetic foundation|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|생성된 비민감 synthetic fixture, 기존 fixture-provider seam, 결정론적 golden/schema/scorer/runner, staged artifact contract, accepted geometry-validation hygiene|Original baseline `aeedceb…`와 maintenance `cad1ab4…` delivery 완료; 범위를 real corpus/Provider/full P4로 확대하지 않음|
-|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL`|승인된 로컬 코퍼스에 동일 runner 적용|[`P4-B QUALITY packet`](../approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md)의 모든 필드와 named approval이 완성됨. 현재 `PENDING / NOT APPROVED`|
-|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN`|특정 Provider/model/endpoint에 대한 재현 가능한 benchmark와 선택|Provider별 [`P4-C AP-02 packet`](../approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md)의 모든 필드와 named approval이 완성됨. 현재 `PENDING / NOT APPROVED`; generic approval 금지|
+|P4 local-only OCR engineering|`COMPLETE_ACCEPTED_DELIVERED_TO_ORIGIN_MAIN`|Native-text-first plus local PaddleOCR, mandatory Human Review, generated-synthetic/local controller evidence|Source/integration baseline `91fd4a8…`; final `ACCEPT_WITH_MINOR` 0/0/4, NOTE 8; four bounded minors retained; no real-corpus/production claim|
+|P4-B — Approved corpus benchmark|`BLOCKED_QUALITY_CORPUS_APPROVAL` / future validation gate|승인된 로컬 코퍼스에 동일 runner 적용|Real-corpus validation을 원하는 경우 [`P4-B QUALITY packet`](../approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md)의 모든 필드, human labels, independent review, named approval 완성. 현재 inventory 4 candidate/0 eligible, packet `PENDING / NOT APPROVED`; code debt가 아님|
+|P4-C — External Provider benchmark/selection|`BLOCKED_AP02_PROVIDER_OPT_IN` / deferred, not required for local-only|특정 Provider/model/endpoint에 대한 재현 가능한 benchmark와 선택|Future external Provider가 별도 요청된 경우에만 Provider별 [`P4-C AP-02 packet`](../approvals/P4C_PROVIDER_AP02_DECISION_PACKET.md) 완성. 현재 `PENDING / NOT APPROVED`; generic approval 금지; active account request 없음|
 
-P4-B와 P4-C는 서로 독립적으로 blocked다. 코퍼스 승인은 외부 전송 승인이 아니며, Provider opt-in은 코퍼스 대표성 승인도 아니다. 실제 Provider 선정은 두 gate가 모두 해당 실행에 대해 충족되고 재현 가능한 benchmark와 Human Review fallback이 증명된 뒤에만 가능하다.
+P4-B와 P4-C는 서로 독립적인 future gate다. 코퍼스 승인은 외부 전송 승인이 아니며, Provider opt-in은 코퍼스 대표성 승인도 아니다. Local-only scope에는 P4-C가 필요하지 않다. 실제 Provider 선정은 두 gate가 모두 해당 실행에 대해 충족되고 재현 가능한 benchmark와 Human Review fallback이 증명된 뒤에만 가능하다.
 
 ## 3. 공통 안전 불변식
 
@@ -302,8 +305,15 @@ fresh-main fast-forward integrated/delivered 상태다. Original source/integrat
 aeedceb2c3b7008439a9c72e3984be77f6135e51이고 maintenance delivery는
 cad1ab48b7ab1923638fe8600f23ef640efdab73이다. Later docs-only SHA/remote-tip은 Git history가 정본이다.
 
-P4-B는 QUALITY corpus approval이 없어 blocked이고 P4-C는 provider-specific AP-02 opt-in이 없어
-blocked다. Real PDF/XLS/XLSX, external OCR/AI, credential, provider call, deployment, production
+Local-only OCR engineering도 source/integration baseline
+91fd4a8229b12d2b229f2ef9abb9dceef93591b5에서 complete/independently accepted/committed/
+fresh-main fast-forward integrated/delivered 상태다. Pre-closure main 96413d2…는 그 후손이며
+closure/live tip은 Git history가 정본이다. Final review는 ACCEPT_WITH_MINOR 0/0/4, NOTE 8이고
+네 bounded minor와 synthetic-vs-real limitation을 유지한다.
+
+P4-B는 QUALITY corpus approval이 없어 blocked인 future real-corpus validation gate이지 code debt가
+아니다. P4-C는 provider-specific AP-02 opt-in이 없는 deferred lane이며 local-only scope에 필요하지
+않고 active account request도 없다. Real PDF/XLS/XLSX, external OCR/AI, credential, provider call, deployment, production
 DB/migration/role, auto-finalization은 금지한다. 실제 명령과 결과만 DEVLOG/KANBAN/traceability에
 기록하라. docs/approvals의 P4-B QUALITY packet과 P4-C Provider-specific AP-02 packet은 모두
 PENDING / NOT APPROVED다. 모든 필드와 named approval을 완성하기 전 real-corpus benchmark,
