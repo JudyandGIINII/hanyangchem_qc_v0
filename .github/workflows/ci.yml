@@ -10,7 +10,7 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with: { version: "0.11.14", enable-cache: true }
       - run: uv lock --project backend --check
-      - run: uv sync --project backend --extra dev
+      - run: uv sync --project backend --extra dev --extra local-ocr
       - run: uv run --project backend ruff check --force-exclude backend/src backend/scripts backend/alembic backend/tests scripts
       - run: uv run --project backend mypy --config-file backend/pyproject.toml backend/src backend/scripts backend/alembic scripts
       - run: uv run --project backend pytest -q -m "not postgres"
