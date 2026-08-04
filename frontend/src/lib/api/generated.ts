@@ -38,6 +38,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/documents/{document_id}/extractions/{run_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Extraction Run */
+        get: operations["get_extraction_run_api_v1_documents__document_id__extractions__run_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/documents/{document_id}/reviews/{run_id}": {
         parameters: {
             query?: never;
@@ -337,16 +354,39 @@ export interface components {
             bbox: components["schemas"]["BoundingBox"];
             /** Confidence */
             confidence: string;
+            /**
+             * Field Id
+             * Format: uuid
+             */
+            field_id: string;
             /** Field Key */
             field_key: string;
+            /** Final Text */
+            final_text?: string | null;
+            /** Mapped Field Key */
+            mapped_field_key?: string | null;
+            /** Mapping Disposition */
+            mapping_disposition?: ("MAP" | "UNMAPPED") | null;
             /** Ocr Text */
             ocr_text: string;
             /** Original Text */
             original_text: string;
             /** Page Number */
             page_number: number;
+            /** Provenance */
+            provenance?: {
+                [key: string]: unknown;
+            };
+            /** Reason */
+            reason?: string | null;
             /** Required */
             required: boolean;
+            /** Review Reasons */
+            review_reasons?: string[];
+            /** Source */
+            source?: ("ORIGINAL" | "OCR" | "MANUAL") | null;
+            /** Source Field Key */
+            source_field_key: string;
             /**
              * Status
              * @enum {string}
@@ -366,6 +406,8 @@ export interface components {
             document_id: string;
             /** Fields */
             fields: components["schemas"]["ExtractionFieldResponse"][];
+            /** Provider Name */
+            provider_name: string;
             /**
              * Run Id
              * Format: uuid
@@ -381,6 +423,8 @@ export interface components {
         };
         /** FieldReviewInput */
         FieldReviewInput: {
+            /** Field Id */
+            field_id?: string | null;
             /** Field Key */
             field_key: string;
             /** Final Text */
@@ -392,6 +436,10 @@ export interface components {
             logic_conflict: boolean;
             /** Manual Text */
             manual_text?: string | null;
+            /** Mapped Field Key */
+            mapped_field_key?: string | null;
+            /** Mapping Disposition */
+            mapping_disposition?: ("MAP" | "UNMAPPED") | null;
             /** Reason */
             reason: string;
             /**
@@ -408,6 +456,8 @@ export interface components {
              * @constant
              */
             fixture_only: true;
+            /** Mapping Item Codes */
+            mapping_item_codes: string[];
             /**
              * Material Id
              * Format: uuid
@@ -661,6 +711,8 @@ export interface components {
             allocation_id: string;
             /** Fields */
             fields: components["schemas"]["FieldReviewInput"][];
+            /** Spec Version Id */
+            spec_version_id?: string | null;
         };
         /** ValidationError */
         ValidationError: {
@@ -728,6 +780,38 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ExtractionRunResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_extraction_run_api_v1_documents__document_id__extractions__run_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                document_id: string;
+                run_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };

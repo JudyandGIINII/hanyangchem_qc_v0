@@ -231,6 +231,26 @@ def test_invalid_or_oversized_inputs_fail_closed_before_inference(
     assert engine.calls == []
 
 
+def test_selected_line_limit_fails_closed_without_truncation() -> None:
+    lines = tuple(_line(f"generated line {index}", reading_order=index) for index in range(1, 502))
+    page = RenderedPage(
+        page_number=1,
+        width=1000,
+        height=1000,
+        rendered_dpi=300,
+        native_text="SYNTHETIC COA SUPPLIER PRODUCT LOT SYN-001 " + "x" * 64,
+        native_lines=lines,
+        image_png=b"",
+        table_suspected=False,
+    )
+    engine = RecordingOcrEngine(results={})
+
+    with pytest.raises(LocalOcrError, match="LOCAL_OCR_LINE_LIMIT_EXCEEDED"):
+        LocalOcrPipeline(FakeDocumentBackend((page,)), engine).extract(b"generated-line-limit")
+
+    assert engine.calls == []
+
+
 def test_sanitized_report_digest_is_deterministic_and_contains_no_text_or_path(
     tmp_path: Path,
 ) -> None:
@@ -385,3 +405,5 @@ def test_invalid_dpi_and_concurrency_limits_are_rejected() -> None:
         replace(LocalOcrLimits(), render_dpi=400, oversample_dpi=399)
     with pytest.raises(ValueError):
         replace(LocalOcrLimits(), max_concurrency=2)  # type: ignore[arg-type]
+    with pytest.raises(ValueError):
+        replace(LocalOcrLimits(), max_lines_per_document=0)

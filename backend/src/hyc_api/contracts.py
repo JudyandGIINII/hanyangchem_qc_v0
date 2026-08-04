@@ -35,6 +35,12 @@ def reject_binary_float(value: object) -> object:
         if not value.is_finite() or not re.fullmatch(CANONICAL_DECIMAL_STRING_PATTERN, str(value)):
             raise ValueError("candidate decimal value is not canonical")
         return value
+    return parse_canonical_decimal_string(value)
+
+
+def parse_canonical_decimal_string(value: object) -> Decimal:
+    """Parse the one canonical finite Decimal string policy used at all write gates."""
+
     if not isinstance(value, str):
         raise ValueError("candidate decimal values must be canonical decimal strings")
     if not re.fullmatch(CANONICAL_DECIMAL_STRING_PATTERN, value):
@@ -146,7 +152,7 @@ class ExtractionCandidate(ContractModel):
     created_at: datetime
     document: SourceReference
     provider_name: Literal["local-paddleocr", "synthetic-fixture"]
-    values: Annotated[list[ExtractionValue], Field(min_length=1)]
+    values: Annotated[list[ExtractionValue], Field(min_length=1, max_length=500)]
     review_required: bool
 
     @field_validator("created_at")
@@ -216,6 +222,7 @@ class FixtureContextResponse(APIRequestModel):
     spec_version_id: UUID
     supplier_name: str
     material_name: str
+    mapping_item_codes: list[str]
     fixture_only: Literal[True] = True
 
 
@@ -245,14 +252,23 @@ class DocumentResponse(APIRequestModel):
 
 
 class ExtractionFieldResponse(APIRequestModel):
+    field_id: UUID
     field_key: str
+    source_field_key: str
     original_text: str
     ocr_text: str
+    final_text: str | None = None
+    source: Literal["ORIGINAL", "OCR", "MANUAL"] | None = None
+    reason: str | None = None
     confidence: DecimalString
     page_number: int
     bbox: BoundingBox
     required: bool
     status: Literal["REVIEW_REQUIRED", "CONFIRMED"]
+    mapping_disposition: Literal["MAP", "UNMAPPED"] | None = None
+    mapped_field_key: str | None = None
+    review_reasons: list[str] = Field(default_factory=list)
+    provenance: dict[str, object] = Field(default_factory=dict)
 
 
 class ExtractionRunResponse(APIRequestModel):
@@ -260,22 +276,41 @@ class ExtractionRunResponse(APIRequestModel):
     document_id: UUID
     status: Literal["REVIEW_REQUIRED", "CONFIRMED"]
     version: int
+    provider_name: str
     fields: list[ExtractionFieldResponse]
     conflicts: list[dict[str, object]]
 
 
 class FieldReviewInput(APIRequestModel):
+    field_id: UUID | None = None
     field_key: str
     manual_text: str | None = None
     final_text: Annotated[str, Field(min_length=1, max_length=4_000)]
     source: Literal["ORIGINAL", "OCR", "MANUAL"]
     reason: Annotated[str, Field(min_length=1, max_length=1_000)]
     logic_conflict: bool = False
+    mapping_disposition: Literal["MAP", "UNMAPPED"] | None = None
+    mapped_field_key: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+
+    @field_validator("field_key", "final_text", "reason", mode="before")
+    @classmethod
+    def require_string_review_scalars(cls, value: object) -> object:
+        if not isinstance(value, str):
+            raise ValueError("review scalar values must be strings")
+        return value
+
+    @field_validator("manual_text", "mapped_field_key", mode="before")
+    @classmethod
+    def require_optional_string_review_scalars(cls, value: object) -> object:
+        if value is not None and not isinstance(value, str):
+            raise ValueError("optional review scalar values must be strings")
+        return value
 
 
 class ReviewRequest(APIRequestModel):
-    fields: Annotated[list[FieldReviewInput], Field(min_length=1)]
+    fields: Annotated[list[FieldReviewInput], Field(min_length=1, max_length=500)]
     allocation_id: UUID
+    spec_version_id: UUID | None = None
 
 
 class InspectionCreateRequest(APIRequestModel):

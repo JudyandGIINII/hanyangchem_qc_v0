@@ -58,7 +58,7 @@ describe("inspection workspace source contract", () => {
     for (const label of ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적"]) {
       expect(workspace).toContain(label);
     }
-    expect(workspace).toContain("Fixture UX");
+    expect(workspace).toContain("LOCAL-ONLY OCR");
     expect(workspace).toContain("서버 저장 없음");
     expect(workspace).toContain("실제 문서 아님");
     expect(workspace).toContain("production LOT automatic ERP link is not enabled");
@@ -145,7 +145,7 @@ describe("inspection workspace source contract", () => {
     expect(headers).not.toEqual([]);
     expect(headers.every((header) => /scope="(?:col|row)"/.test(header))).toBe(true);
     expect(headers.some((header) => header.includes('scope="row"'))).toBe(true);
-    expect(tableRegions).toHaveLength(3);
+    expect(tableRegions).toHaveLength(4);
   });
 
   it("locks submitted mutations, persists document reasons, and exposes state-dependent internal completion copy", () => {

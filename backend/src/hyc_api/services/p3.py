@@ -16,6 +16,7 @@ from hyc_api.contracts import (
     IntakeRequest,
     InternalResultsRequest,
     ReviewRequest,
+    parse_canonical_decimal_string,
 )
 from hyc_data.models import (
     AuditLog,
@@ -55,6 +56,19 @@ _CONFIRM_REVIEW_CONFLICT_CONSTRAINTS = frozenset(
     }
 )
 _IDEMPOTENCY_RESERVATION_CONSTRAINT = "uq_idempotency_principal_scope_key"
+
+
+def _canonical_finite_decimal(raw: object) -> Decimal | None:
+    try:
+        value = parse_canonical_decimal_string(raw)
+    except ValueError:
+        return None
+    if not isinstance(raw, str):
+        return None
+    integer_part, _, fractional_part = raw.removeprefix("-").partition(".")
+    if len(integer_part) > 12 or len(fractional_part) > 12:
+        return None
+    return value
 
 
 def require_if_match(raw: str | None) -> int:
@@ -135,6 +149,36 @@ def reserve_idempotency(
             status_code=409, detail="Idempotency request is already pending"
         ) from error
     return record, None
+
+
+def replay_idempotency_if_present(
+    session: Session,
+    *,
+    principal: Principal,
+    scope: str,
+    key: str,
+    payload: dict[str, Any],
+) -> dict[str, Any] | None:
+    digest = request_hash(payload)
+    record = session.scalar(
+        select(IdempotencyKey)
+        .where(
+            IdempotencyKey.principal_id == str(principal.actor_id),
+            IdempotencyKey.scope == scope,
+            IdempotencyKey.key == key,
+        )
+        .with_for_update()
+    )
+    if record is None:
+        return None
+    if record.request_hash != digest:
+        raise HTTPException(status_code=409, detail="Idempotency key request conflict")
+    if record.state == "COMPLETED" and record.response_body is not None:
+        body = json.loads(record.response_body)
+        if not isinstance(body, dict):
+            raise RuntimeError("stored idempotency response is invalid")
+        return body
+    raise HTTPException(status_code=409, detail="Idempotency request is already pending")
 
 
 def complete_idempotency(
@@ -248,10 +292,10 @@ def confirm_review(
 ) -> ExtractionRun:
     document_runs = list(
         session.scalars(
-        select(ExtractionRun)
-        .where(ExtractionRun.document_id == document_id)
-        .order_by(ExtractionRun.id)
-        .with_for_update()
+            select(ExtractionRun)
+            .where(ExtractionRun.document_id == document_id)
+            .order_by(ExtractionRun.id)
+            .with_for_update()
         )
     )
     run = next((item for item in document_runs if item.id == run_id), None)
@@ -261,38 +305,164 @@ def confirm_review(
         raise HTTPException(status_code=409, detail="Extraction review is already confirmed")
     if run.lock_version != expected_version:
         raise HTTPException(status_code=409, detail="Stale extraction review version")
-    fields = {
-        field.field_key: field
-        for field in session.scalars(
-            select(ExtractionFieldReview).where(ExtractionFieldReview.extraction_run_id == run.id)
+    field_rows = list(
+        session.scalars(
+            select(ExtractionFieldReview)
+            .where(ExtractionFieldReview.extraction_run_id == run.id)
+            .with_for_update()
         )
-    }
+    )
+    fields = {field.field_key: field for field in field_rows}
+    if len(fields) != len(field_rows):
+        raise HTTPException(status_code=422, detail="Duplicate extraction fields")
     submitted = {item.field_key: item for item in request.fields}
-    if set(fields) != set(submitted):
+    if len(submitted) != len(request.fields) or set(fields) != set(submitted):
         raise HTTPException(
             status_code=422, detail="Every extraction field must be explicitly reviewed"
         )
-    conflicts: list[dict[str, Any]] = []
-    for key, field in fields.items():
+    allocation = session.get(ReceiptLotAllocation, request.allocation_id, with_for_update=True)
+    if allocation is None:
+        raise HTTPException(status_code=404, detail="Allocation not found")
+
+    local_ocr = run.provider_name == "local-paddleocr"
+    fixture_numeric_field_keys: set[str] = set()
+    payload_fields = run.candidate_payload.get("fields", [])
+    metadata_by_id: dict[str, dict[str, Any]] = {}
+    if local_ocr:
+        if not isinstance(payload_fields, list):
+            raise HTTPException(status_code=422, detail="Extraction source identity is invalid")
+        for metadata in payload_fields:
+            if not isinstance(metadata, dict) or not isinstance(metadata.get("field_id"), str):
+                raise HTTPException(status_code=422, detail="Extraction source identity is invalid")
+            field_id = metadata["field_id"]
+            if field_id in metadata_by_id:
+                raise HTTPException(status_code=422, detail="Duplicate extraction source ids")
+            metadata_by_id[field_id] = metadata
+        expected_ids = {str(field.id) for field in field_rows}
+        if set(metadata_by_id) != expected_ids:
+            raise HTTPException(status_code=422, detail="Extraction source identity is invalid")
+        submitted_ids = [str(item.field_id) for item in request.fields if item.field_id]
+        if len(submitted_ids) != len(request.fields) or len(submitted_ids) != len(
+            set(submitted_ids)
+        ):
+            raise HTTPException(status_code=422, detail="Unknown or stale source field ids")
+        if set(submitted_ids) != expected_ids:
+            raise HTTPException(status_code=422, detail="Unknown or stale source field ids")
+
+        version, _profile = _select_spec(session, allocation)
+        if request.spec_version_id is None or request.spec_version_id != version.id:
+            raise HTTPException(status_code=422, detail="Selected specification is stale")
+        allowed_targets = set(
+            session.scalars(
+                select(StandardTestItem.code)
+                .join(SpecItem, SpecItem.standard_test_item_id == StandardTestItem.id)
+                .where(SpecItem.spec_version_id == version.id)
+            )
+        )
+        fields_by_id = {field.id: field for field in field_rows}
+        mapped_targets: list[str] = []
+        for item in request.fields:
+            if item.field_id is None or item.field_id not in fields_by_id:
+                raise HTTPException(status_code=422, detail="Unknown or stale source field ids")
+            field = fields_by_id[item.field_id]
+            metadata = metadata_by_id[str(field.id)]
+            if metadata.get("source_field_key") != item.field_key:
+                raise HTTPException(status_code=422, detail="Unknown or stale source field ids")
+            if item.mapping_disposition not in {"MAP", "UNMAPPED"}:
+                raise HTTPException(status_code=422, detail="Explicit MAP or UNMAPPED is required")
+            if item.mapping_disposition == "UNMAPPED":
+                if item.mapped_field_key is not None:
+                    raise HTTPException(status_code=422, detail="UNMAPPED forbids a target code")
+                continue
+            if item.mapped_field_key is None or item.mapped_field_key not in allowed_targets:
+                raise HTTPException(
+                    status_code=422, detail="Mapped target is outside the current spec"
+                )
+            if _canonical_finite_decimal(item.final_text) is None:
+                raise HTTPException(
+                    status_code=422, detail="Mapped value must be a canonical finite decimal string"
+                )
+            mapped_targets.append(item.mapped_field_key)
+        if len(mapped_targets) != len(set(mapped_targets)):
+            raise HTTPException(status_code=422, detail="Duplicate mapped target codes")
+    else:
+        version, _profile = _select_spec(session, allocation)
+        if request.spec_version_id is not None and request.spec_version_id != version.id:
+            raise HTTPException(status_code=422, detail="Selected specification is stale")
+        fixture_numeric_field_keys = set(
+            session.scalars(
+                select(StandardTestItem.code)
+                .join(SpecItem, SpecItem.standard_test_item_id == StandardTestItem.id)
+                .where(SpecItem.spec_version_id == version.id)
+            )
+        )
+
+    for key in fields:
         item = submitted[key]
         if item.source == "MANUAL" and not item.manual_text:
-            raise HTTPException(status_code=422, detail=f"{key} manual source requires manual_text")
-        field.manual_text = item.manual_text
-        field.final_text = item.final_text
-        field.source = item.source
-        field.reason = item.reason
-        field.logic_conflict = item.logic_conflict
+            raise HTTPException(status_code=422, detail="Manual source requires manual text")
         if item.logic_conflict:
-            conflicts.append({"field_key": key, "code": "LOGIC_CONFLICT", "visible": True})
-            field.status = "REVIEW_REQUIRED"
-        else:
-            field.status = "CONFIRMED"
-    if conflicts:
-        raise HTTPException(status_code=422, detail="Logic conflicts remain visible and unresolved")
-    try:
-        section = session.scalar(
-            select(DocumentSection).where(DocumentSection.document_id == document_id)
+            raise HTTPException(
+                status_code=422, detail="Logic conflicts remain visible and unresolved"
+            )
+        if not local_ocr and key in fixture_numeric_field_keys:
+            if _canonical_finite_decimal(item.final_text) is None:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Supplier result must fit NUMERIC(24,12)",
+                )
+
+    section = session.scalar(
+        select(DocumentSection).where(DocumentSection.document_id == document_id).with_for_update()
+    )
+    confirmed_links = (
+        list(
+            session.scalars(
+                select(DocumentAllocationLink)
+                .where(
+                    DocumentAllocationLink.document_section_id == section.id,
+                    DocumentAllocationLink.match_status == "CONFIRMED",
+                )
+                .with_for_update()
+            )
         )
+        if section is not None
+        else []
+    )
+    if len(confirmed_links) > 1 or (
+        confirmed_links and confirmed_links[0].receipt_lot_allocation_id != allocation.id
+    ):
+        raise HTTPException(
+            status_code=409,
+            detail="Document section already has a confirmed allocation",
+        )
+    try:
+        mapped_codes: list[str] = []
+        unmapped_count = 0
+        reviewed_payload_fields: list[dict[str, Any]] = []
+        for key, field in fields.items():
+            item = submitted[key]
+            field.manual_text = item.manual_text
+            field.final_text = item.final_text
+            field.source = item.source
+            field.reason = item.reason
+            field.logic_conflict = False
+            field.status = "CONFIRMED"
+            if local_ocr:
+                metadata = dict(metadata_by_id[str(field.id)])
+                metadata["mapping_disposition"] = item.mapping_disposition
+                metadata["mapped_field_key"] = item.mapped_field_key
+                reviewed_payload_fields.append(metadata)
+                if item.mapping_disposition == "MAP":
+                    if item.mapped_field_key is None:
+                        raise HTTPException(
+                            status_code=422, detail="Mapped field is missing its target code"
+                        )
+                    field.field_key = item.mapped_field_key
+                    mapped_codes.append(item.mapped_field_key)
+                else:
+                    unmapped_count += 1
+        session.flush()
         if section is None:
             section = DocumentSection(
                 document_id=document_id,
@@ -303,26 +473,6 @@ def confirm_review(
             )
             session.add(section)
             session.flush()
-        allocation = session.get(ReceiptLotAllocation, request.allocation_id)
-        if allocation is None:
-            raise HTTPException(status_code=404, detail="Allocation not found")
-        confirmed_links = list(
-            session.scalars(
-                select(DocumentAllocationLink)
-                .where(
-                    DocumentAllocationLink.document_section_id == section.id,
-                    DocumentAllocationLink.match_status == "CONFIRMED",
-                )
-                .with_for_update()
-            )
-        )
-        if len(confirmed_links) > 1 or (
-            confirmed_links and confirmed_links[0].receipt_lot_allocation_id != allocation.id
-        ):
-            raise HTTPException(
-                status_code=409,
-                detail="Document section already has a confirmed allocation",
-            )
         if not confirmed_links:
             session.add(
                 DocumentAllocationLink(
@@ -334,12 +484,28 @@ def confirm_review(
             session.flush()
         run.status = "CONFIRMED"
         run.conflicts = []
+        if local_ocr:
+            run.candidate_payload = run.candidate_payload | {
+                "fields": reviewed_payload_fields,
+                "review": {
+                    "spec_version_id": str(request.spec_version_id),
+                    "mapped_count": len(mapped_codes),
+                    "unmapped_count": unmapped_count,
+                    "target_codes": sorted(mapped_codes),
+                },
+            }
         session.add(
             AuditLog(
                 entity_type="extraction_run",
                 entity_id=run.id,
                 action="P3_EXTRACTION_REVIEW_CONFIRMED",
-                payload={"allocation_id": str(allocation.id), "field_count": len(fields)},
+                payload={
+                    "allocation_id": str(allocation.id),
+                    "field_count": len(fields),
+                    "mapped_count": len(mapped_codes),
+                    "unmapped_count": unmapped_count,
+                    "target_codes": sorted(mapped_codes),
+                },
             )
         )
         session.commit()
@@ -447,8 +613,12 @@ def create_inspection(
     idempotency_key: str,
 ) -> dict[str, Any]:
     payload = {"allocation_id": str(allocation_id), "extraction_run_id": str(extraction_run_id)}
-    record, replay = reserve_idempotency(
-        session, principal=principal, scope="p3.inspections", key=idempotency_key, payload=payload
+    replay = replay_idempotency_if_present(
+        session,
+        principal=principal,
+        scope="p3.inspections",
+        key=idempotency_key,
+        payload=payload,
     )
     if replay is not None:
         return replay
@@ -458,6 +628,11 @@ def create_inspection(
         raise HTTPException(
             status_code=422, detail="Confirmed extraction and allocation are required"
         )
+    record, replay = reserve_idempotency(
+        session, principal=principal, scope="p3.inspections", key=idempotency_key, payload=payload
+    )
+    if replay is not None:
+        return replay
     linked_allocation_id = session.scalar(
         select(DocumentAllocationLink.receipt_lot_allocation_id)
         .join(
@@ -476,6 +651,101 @@ def create_inspection(
     if linked_allocation_id is None:
         raise HTTPException(status_code=409, detail="Extraction allocation lineage mismatch")
     version, profile = _select_spec(session, allocation)
+    spec_items = list(
+        session.scalars(select(SpecItem).where(SpecItem.spec_version_id == version.id))
+    )
+    standards = {
+        item.id: item
+        for item in session.scalars(
+            select(StandardTestItem).where(
+                StandardTestItem.id.in_([item.standard_test_item_id for item in spec_items])
+            )
+        )
+    }
+    standards_by_code = {standard.code: standard for standard in standards.values()}
+    if len(standards_by_code) != len(standards):
+        raise HTTPException(status_code=422, detail="Duplicate current specification codes")
+    reviewed_rows = list(
+        session.scalars(
+            select(ExtractionFieldReview).where(ExtractionFieldReview.extraction_run_id == run.id)
+        )
+    )
+    if not reviewed_rows or any(field.status != "CONFIRMED" for field in reviewed_rows):
+        raise HTTPException(status_code=422, detail="Every extraction field must be confirmed")
+
+    reviewed: dict[str, Decimal] = {}
+    if run.provider_name == "local-paddleocr":
+        review_payload = run.candidate_payload.get("review")
+        payload_fields = run.candidate_payload.get("fields")
+        if (
+            not isinstance(review_payload, dict)
+            or review_payload.get("spec_version_id") != str(version.id)
+            or not isinstance(payload_fields, list)
+        ):
+            raise HTTPException(status_code=422, detail="Confirmed mapping specification mismatch")
+        metadata_by_id: dict[str, dict[str, Any]] = {}
+        for metadata in payload_fields:
+            if not isinstance(metadata, dict) or not isinstance(metadata.get("field_id"), str):
+                raise HTTPException(status_code=422, detail="Confirmed mapping identity is invalid")
+            field_id = metadata["field_id"]
+            if field_id in metadata_by_id:
+                raise HTTPException(status_code=422, detail="Duplicate confirmed mapping identity")
+            metadata_by_id[field_id] = metadata
+        if set(metadata_by_id) != {str(field.id) for field in reviewed_rows}:
+            raise HTTPException(status_code=422, detail="Confirmed mapping identity is invalid")
+        mapped_codes: list[str] = []
+        for field in reviewed_rows:
+            metadata = metadata_by_id[str(field.id)]
+            source_key = metadata.get("source_field_key")
+            disposition = metadata.get("mapping_disposition")
+            mapped_key = metadata.get("mapped_field_key")
+            if not isinstance(source_key, str):
+                raise HTTPException(status_code=422, detail="Confirmed mapping identity is invalid")
+            if disposition == "UNMAPPED":
+                if mapped_key is not None or field.field_key != source_key:
+                    raise HTTPException(
+                        status_code=422, detail="Confirmed UNMAPPED field is invalid"
+                    )
+                continue
+            if (
+                disposition != "MAP"
+                or not isinstance(mapped_key, str)
+                or mapped_key not in standards_by_code
+                or field.field_key != mapped_key
+            ):
+                raise HTTPException(
+                    status_code=422, detail="Confirmed mapping is outside the selected spec"
+                )
+            value = _canonical_finite_decimal(field.final_text)
+            if value is None:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Confirmed supplier result must be a canonical finite decimal string",
+                )
+            mapped_codes.append(mapped_key)
+            reviewed[mapped_key] = value
+        if len(mapped_codes) != len(set(mapped_codes)) or set(mapped_codes) != set(reviewed):
+            raise HTTPException(status_code=422, detail="Duplicate confirmed supplier result")
+        if (
+            review_payload.get("mapped_count") != len(mapped_codes)
+            or review_payload.get("unmapped_count") != len(reviewed_rows) - len(mapped_codes)
+            or review_payload.get("target_codes") != sorted(mapped_codes)
+        ):
+            raise HTTPException(status_code=422, detail="Confirmed mapping summary is invalid")
+    else:
+        for field in reviewed_rows:
+            if field.field_key not in standards_by_code:
+                continue
+            if field.field_key in reviewed:
+                raise HTTPException(status_code=422, detail="Duplicate confirmed supplier result")
+            value = _canonical_finite_decimal(field.final_text)
+            if value is None:
+                raise HTTPException(
+                    status_code=422,
+                    detail="Confirmed supplier result must be a canonical finite decimal string",
+                )
+            reviewed[field.field_key] = value
+
     case_id = uuid4()
     case = InspectionCase(
         id=case_id,
@@ -490,16 +760,6 @@ def create_inspection(
     )
     session.add(case)
     session.flush()
-    reviewed = {
-        field.field_key: field.final_text
-        for field in session.scalars(
-            select(ExtractionFieldReview).where(ExtractionFieldReview.extraction_run_id == run.id)
-        )
-    }
-    spec_items = list(
-        session.scalars(select(SpecItem).where(SpecItem.spec_version_id == version.id))
-    )
-    standards = {item.id: item for item in session.scalars(select(StandardTestItem))}
     for item in spec_items:
         standard = standards[item.standard_test_item_id]
         raw = reviewed.get(standard.code)
@@ -509,7 +769,7 @@ def create_inspection(
             inspection_case_id=case.id,
             standard_test_item_id=standard.id,
             supplier_item_name=standard.name,
-            normalized_value=Decimal(raw) if raw is not None else None,
+            normalized_value=raw,
             mapping_status="MANUAL_CONFIRMED",
             supplier_spec_text="Synthetic supplier reference specification",
             supplier_decision="ACCEPTED" if raw is not None else None,
@@ -518,9 +778,7 @@ def create_inspection(
         session.flush()
         if raw is not None:
             session.add(
-                SampleMeasurement(
-                    supplier_result_id=result.id, sample_index=1, numeric_value=Decimal(raw)
-                )
+                SampleMeasurement(supplier_result_id=result.id, sample_index=1, numeric_value=raw)
             )
     session.add(
         AuditLog(

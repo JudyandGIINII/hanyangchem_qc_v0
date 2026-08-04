@@ -328,6 +328,9 @@ class LocalOcrPipeline:
                     ),
                 )
             )
+        selected_line_count = sum(len(result.selected_lines) for result in results)
+        if selected_line_count > self._limits.max_lines_per_document:
+            raise LocalOcrError("LOCAL_OCR_LINE_LIMIT_EXCEEDED")
         return LocalOcrResult(
             pages=tuple(results), input_sha256=hashlib.sha256(document_bytes).hexdigest()
         )

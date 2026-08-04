@@ -8,6 +8,16 @@ test("server hold blocks submit until persisted internal result clears it", asyn
   await page.getByTestId("document-upload").setInputFiles({ name: "hold-synthetic.txt", mimeType: "text/plain", buffer: Buffer.from("P3 SYNTHETIC HOLD COA") });
   await expect(page.getByTestId("extract-document")).toBeEnabled();
   await page.getByTestId("extract-document").click();
+  await page.getByRole("button", { name: "문서 검토" }).first().click();
+  const reviewReasons = page.getByPlaceholder("명시적 검토 사유");
+  await expect(reviewReasons.first()).toBeVisible();
+  const reviewReasonCount = await reviewReasons.count();
+  expect(reviewReasonCount).toBeGreaterThan(0);
+  await expect(page.getByTestId("confirm-review")).toBeDisabled();
+  await expect(page.getByTestId("create-inspection")).toBeDisabled();
+  for (let index = 0; index < reviewReasonCount; index += 1) {
+    await reviewReasons.nth(index).fill("합성 fixture 추출값을 명시적으로 검토함");
+  }
   await expect(page.getByTestId("confirm-review")).toBeEnabled();
   await page.getByTestId("confirm-review").click();
   await expect(page.getByTestId("create-inspection")).toBeEnabled();

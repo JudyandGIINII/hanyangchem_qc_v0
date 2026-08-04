@@ -36,6 +36,7 @@ class LocalOcrLimits:
     render_dpi: int = 300
     oversample_dpi: int = 400
     max_variants_per_page: int = 12
+    max_lines_per_document: int = 500
     timeout_seconds: int = 120
     max_concurrency: Literal[1] = 1
     native_text_min_characters: int = 48
@@ -49,8 +50,12 @@ class LocalOcrLimits:
             raise ValueError("local OCR DPI must stay within the approved 300-400 range")
         if self.render_dpi > self.oversample_dpi:
             raise ValueError("local OCR base DPI cannot exceed oversample DPI")
-        if self.max_variants_per_page < 1 or self.timeout_seconds < 1:
-            raise ValueError("local OCR variant and timeout limits must be positive")
+        if (
+            self.max_variants_per_page < 1
+            or self.max_lines_per_document < 1
+            or self.timeout_seconds < 1
+        ):
+            raise ValueError("local OCR variant, line, and timeout limits must be positive")
         if self.max_concurrency != 1:
             raise ValueError("local OCR concurrency is fixed at one")
 

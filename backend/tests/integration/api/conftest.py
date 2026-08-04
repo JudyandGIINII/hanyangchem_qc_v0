@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Generator
 from dataclasses import dataclass
+from pathlib import Path
 from uuid import uuid4
 
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from hyc_api.config import Settings
 from hyc_api.main import create_app
@@ -131,6 +135,16 @@ class P3Harness:
         )
 
 
+@dataclass(slots=True)
+class P3EngineStorageHarness:
+    """Direct P3 dependencies for storage/DB integration tests without HTTP."""
+
+    engine: Engine
+    document_lock_engine: Engine
+    session_factory: sessionmaker[Session]
+    storage_root: Path
+
+
 def _auth(client: TestClient, fixture_principal: str) -> dict[str, str]:
     response = client.post(
         "/api/v1/local-auth/sessions", json={"fixture_principal": fixture_principal}
@@ -175,3 +189,34 @@ def p3() -> P3Harness:
             app_database_url,
         )
     create_engine(database_url).dispose()
+
+
+@pytest.fixture
+def p3_engine_storage() -> Generator[P3EngineStorageHarness, None, None]:
+    """Build the real P3 engine and storage settings without a TestClient."""
+
+    database_url = os.environ.get("HYC_P3_TEST_POSTGRES_DSN")
+    if not database_url:
+        pytest.skip("HYC_P3_TEST_POSTGRES_DSN is required")
+    storage = os.environ.get("HYC_P3_TEST_STORAGE", "/tmp/hyc-p3-api-tests")
+    app = create_app(
+        Settings(
+            database_url=database_url,
+            redis_url="redis://127.0.0.1:1/0",
+            check_database_on_ready=False,
+            check_redis_on_ready=False,
+            p3_fixture_mode=True,
+            p3_storage_root=storage,
+            p3_fault_injection_enabled=True,
+        )
+    )
+    try:
+        yield P3EngineStorageHarness(
+            engine=app.state.engine,
+            document_lock_engine=app.state.document_lock_engine,
+            session_factory=app.state.session_factory,
+            storage_root=Path(storage),
+        )
+    finally:
+        app.state.document_lock_engine.dispose()
+        app.state.engine.dispose()

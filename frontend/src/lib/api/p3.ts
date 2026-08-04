@@ -1,5 +1,7 @@
 import type { components } from "./generated";
 import { apiRequest } from "./client";
+import { buildReviewFields } from "../inspection/ocr-review";
+import type { OcrReviewDrafts } from "../inspection/ocr-review";
 
 export type FixtureContext = components["schemas"]["FixtureContextResponse"];
 export type Intake = components["schemas"]["IntakeResponse"];
@@ -52,20 +54,20 @@ export async function extractDocument(sessionHandle: string, documentId: string)
   return (await apiRequest<ExtractionRun>(`/api/v1/documents/${documentId}/extractions`, { method: "POST" }, sessionHandle)).body;
 }
 
-export async function confirmReview(sessionHandle: string, documentId: string, run: ExtractionRun, allocationId: string) {
+export async function getExtractionRun(sessionHandle: string, documentId: string, runId: string) {
+  return (await apiRequest<ExtractionRun>(`/api/v1/documents/${documentId}/extractions/${runId}`, {}, sessionHandle)).body;
+}
+
+export async function confirmReview(sessionHandle: string, documentId: string, run: ExtractionRun, allocationId: string, drafts: OcrReviewDrafts, specVersionId?: string) {
+  if (run.provider_name === "local-paddleocr" && !specVersionId) throw new Error("Explicit local OCR review is required");
+  const fields = buildReviewFields(run, drafts);
   return (await apiRequest<ExtractionRun>(`/api/v1/documents/${documentId}/reviews/${run.run_id}`, {
     method: "PUT",
     headers: { ...jsonHeaders, "If-Match": String(run.version) },
     body: JSON.stringify({
       allocation_id: allocationId,
-      fields: run.fields.map((field) => ({
-        field_key: field.field_key,
-        manual_text: null,
-        final_text: field.ocr_text,
-        source: "OCR",
-        reason: "P3 synthetic fixture reviewed in API-backed UI",
-        logic_conflict: false,
-      })),
+      spec_version_id: run.provider_name === "local-paddleocr" ? specVersionId : undefined,
+      fields,
     }),
   }, sessionHandle)).body;
 }

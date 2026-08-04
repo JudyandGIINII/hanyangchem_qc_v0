@@ -6,23 +6,45 @@ import stat
 from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
-from typing import Protocol
+from typing import TYPE_CHECKING, Protocol, cast
 from uuid import UUID, uuid4
 
 from hyc_api.contracts import BoundingBox, ExtractionCandidate, ExtractionValue, SourceReference
-from hyc_local_ocr.contracts import OcrLine, OcrPageResult
-from hyc_local_ocr.errors import LocalOcrError
-from hyc_local_ocr.pipeline import LocalOcrPipeline
+
+if TYPE_CHECKING:
+    from hyc_local_ocr.contracts import OcrLine, OcrPageResult
+    from hyc_local_ocr.pipeline import LocalOcrPipeline
+
+
+def _local_ocr_error(code: str) -> Exception:
+    """Construct a local-OCR error without importing optional extras at startup."""
+
+    from hyc_local_ocr.errors import LocalOcrError, LocalOcrErrorCode
+
+    return LocalOcrError(cast(LocalOcrErrorCode, code))
 
 
 class ExtractionProvider(Protocol):
-    def extract(self, document_id: str, source_reference: str) -> ExtractionCandidate: ...
+    def extract(
+        self,
+        document_id: str,
+        source_reference: str,
+        *,
+        document_bytes: bytes | None = None,
+    ) -> ExtractionCandidate: ...
 
 
 class SyntheticFixtureExtractionProvider:
     """Only synthetic contract data; this port never calls OCR or AI."""
 
-    def extract(self, document_id: str, source_reference: str) -> ExtractionCandidate:
+    def extract(
+        self,
+        document_id: str,
+        source_reference: str,
+        *,
+        document_bytes: bytes | None = None,
+    ) -> ExtractionCandidate:
+        del document_bytes
         reference = SourceReference(
             document_id=UUID(document_id),
             source_reference=source_reference,
@@ -65,31 +87,29 @@ class RootedLocalDocumentResolver:
 
     def read(self, source_reference: str) -> bytes:
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", source_reference):
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT")
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
         relative = self._references.get(source_reference)
         if relative is None:
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT")
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
         candidate = (self._root / relative).resolve()
         if candidate == self._root or self._root not in candidate.parents:
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT")
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
         descriptor = -1
         try:
             descriptor = os.open(candidate, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0))
             metadata = os.fstat(descriptor)
             if not stat.S_ISREG(metadata.st_mode):
-                raise LocalOcrError("LOCAL_OCR_INVALID_INPUT")
+                raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
             if metadata.st_size > self._max_file_bytes:
-                raise LocalOcrError("LOCAL_OCR_FILE_TOO_LARGE")
+                raise _local_ocr_error("LOCAL_OCR_FILE_TOO_LARGE")
             with os.fdopen(descriptor, "rb", closefd=True) as source:
                 descriptor = -1
                 body = source.read(self._max_file_bytes + 1)
             if len(body) > self._max_file_bytes:
-                raise LocalOcrError("LOCAL_OCR_FILE_TOO_LARGE")
+                raise _local_ocr_error("LOCAL_OCR_FILE_TOO_LARGE")
             return body
-        except LocalOcrError:
-            raise
         except OSError as error:
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT") from error
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT") from error
         finally:
             if descriptor >= 0:
                 os.close(descriptor)
@@ -103,11 +123,11 @@ class BytesDocumentResolver:
 
     def read(self, source_reference: str) -> bytes:
         if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,127}", source_reference):
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT")
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
         try:
             return self._references[source_reference]
         except KeyError as error:
-            raise LocalOcrError("LOCAL_OCR_INVALID_INPUT") from error
+            raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT") from error
 
 
 def _line_reference(
@@ -135,13 +155,27 @@ def _line_reference(
 class LocalOcrExtractionProvider:
     """Candidate-only adapter; local failures never fall back to another provider."""
 
-    def __init__(self, pipeline: LocalOcrPipeline, resolver: LocalDocumentResolver) -> None:
+    def __init__(
+        self,
+        pipeline: LocalOcrPipeline,
+        resolver: LocalDocumentResolver | None = None,
+    ) -> None:
         self._pipeline = pipeline
         self._resolver = resolver
 
-    def extract(self, document_id: str, source_reference: str) -> ExtractionCandidate:
+    def extract(
+        self,
+        document_id: str,
+        source_reference: str,
+        *,
+        document_bytes: bytes | None = None,
+    ) -> ExtractionCandidate:
         parsed_document_id = UUID(document_id)
-        result = self._pipeline.extract(self._resolver.read(source_reference))
+        if document_bytes is None:
+            if self._resolver is None:
+                raise _local_ocr_error("LOCAL_OCR_INVALID_INPUT")
+            document_bytes = self._resolver.read(source_reference)
+        result = self._pipeline.extract(document_bytes)
         values: list[ExtractionValue] = []
         value_index = 0
         for page in result.pages:

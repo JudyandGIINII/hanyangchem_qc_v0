@@ -139,9 +139,51 @@
             "title": "Confidence",
             "type": "string"
           },
+          "field_id": {
+            "format": "uuid",
+            "title": "Field Id",
+            "type": "string"
+          },
           "field_key": {
             "title": "Field Key",
             "type": "string"
+          },
+          "final_text": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Final Text"
+          },
+          "mapped_field_key": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mapped Field Key"
+          },
+          "mapping_disposition": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MAP",
+                  "UNMAPPED"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mapping Disposition"
           },
           "ocr_text": {
             "title": "Ocr Text",
@@ -155,9 +197,52 @@
             "title": "Page Number",
             "type": "integer"
           },
+          "provenance": {
+            "additionalProperties": true,
+            "title": "Provenance",
+            "type": "object"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
           "required": {
             "title": "Required",
             "type": "boolean"
+          },
+          "review_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Review Reasons",
+            "type": "array"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "enum": [
+                  "ORIGINAL",
+                  "OCR",
+                  "MANUAL"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          },
+          "source_field_key": {
+            "title": "Source Field Key",
+            "type": "string"
           },
           "status": {
             "enum": [
@@ -169,7 +254,9 @@
           }
         },
         "required": [
+          "field_id",
           "field_key",
+          "source_field_key",
           "original_text",
           "ocr_text",
           "confidence",
@@ -204,6 +291,10 @@
             "title": "Fields",
             "type": "array"
           },
+          "provider_name": {
+            "title": "Provider Name",
+            "type": "string"
+          },
           "run_id": {
             "format": "uuid",
             "title": "Run Id",
@@ -227,6 +318,7 @@
           "document_id",
           "status",
           "version",
+          "provider_name",
           "fields",
           "conflicts"
         ],
@@ -236,6 +328,18 @@
       "FieldReviewInput": {
         "additionalProperties": false,
         "properties": {
+          "field_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Field Id"
+          },
           "field_key": {
             "title": "Field Key",
             "type": "string"
@@ -261,6 +365,34 @@
               }
             ],
             "title": "Manual Text"
+          },
+          "mapped_field_key": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mapped Field Key"
+          },
+          "mapping_disposition": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MAP",
+                  "UNMAPPED"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mapping Disposition"
           },
           "reason": {
             "maxLength": 1000,
@@ -295,6 +427,13 @@
             "default": true,
             "title": "Fixture Only",
             "type": "boolean"
+          },
+          "mapping_item_codes": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Mapping Item Codes",
+            "type": "array"
           },
           "material_id": {
             "format": "uuid",
@@ -331,7 +470,8 @@
           "model_id",
           "spec_version_id",
           "supplier_name",
-          "material_name"
+          "material_name",
+          "mapping_item_codes"
         ],
         "title": "FixtureContextResponse",
         "type": "object"
@@ -835,9 +975,22 @@
             "items": {
               "$ref": "#/components/schemas/FieldReviewInput"
             },
+            "maxItems": 500,
             "minItems": 1,
             "title": "Fields",
             "type": "array"
+          },
+          "spec_version_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Version Id"
           }
         },
         "required": [
@@ -975,6 +1128,59 @@
           }
         },
         "summary": "Extract Document",
+        "tags": [
+          "p3-documents"
+        ]
+      }
+    },
+    "/api/v1/documents/{document_id}/extractions/{run_id}": {
+      "get": {
+        "operationId": "get_extraction_run_api_v1_documents__document_id__extractions__run_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "run_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Run Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractionRunResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Extraction Run",
         "tags": [
           "p3-documents"
         ]

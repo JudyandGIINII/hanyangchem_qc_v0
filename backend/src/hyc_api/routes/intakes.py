@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, Header, Request, status
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from hyc_api.auth import create_fixture_session, require_principal, require_role
@@ -15,6 +16,7 @@ from hyc_api.contracts import (
 )
 from hyc_api.dependencies import database_session
 from hyc_api.services.p3 import create_intake, require_idempotency_key
+from hyc_data.models import SpecItem, StandardTestItem
 from hyc_data.p3_fixture_seed import (
     MATERIAL_ID,
     MODEL_ID,
@@ -42,6 +44,14 @@ def local_session(request: Request, body: LocalSessionRequest) -> LocalSessionRe
 def fixture_context(request: Request, session: DBSession) -> FixtureContextResponse:
     require_principal(request)
     seed_p3_fixture(session)
+    mapping_item_codes = list(
+        session.scalars(
+            select(StandardTestItem.code)
+            .join(SpecItem, SpecItem.standard_test_item_id == StandardTestItem.id)
+            .where(SpecItem.spec_version_id == SPEC_VERSION_ID)
+            .order_by(StandardTestItem.code)
+        )
+    )
     return FixtureContextResponse(
         supplier_id=SUPPLIER_ID,
         material_id=MATERIAL_ID,
@@ -49,6 +59,7 @@ def fixture_context(request: Request, session: DBSession) -> FixtureContextRespo
         spec_version_id=SPEC_VERSION_ID,
         supplier_name="P3 합성 공급사",
         material_name="염화칼슘 비드 (합성 fixture)",
+        mapping_item_codes=mapping_item_codes,
     )
 
 

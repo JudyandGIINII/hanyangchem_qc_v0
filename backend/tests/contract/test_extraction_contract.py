@@ -15,6 +15,7 @@ from pydantic import ValidationError
 from hyc_api.contracts import (
     CANONICAL_DECIMAL_STRING_PATTERN,
     ExtractionCandidate,
+    ReviewRequest,
     to_seoul_display,
 )
 
@@ -80,6 +81,27 @@ def test_unknown_provider_is_rejected() -> None:
 
     with pytest.raises(ValidationError):
         ExtractionCandidate.model_validate_json(json.dumps(payload))
+
+
+def test_candidate_and_review_contracts_reject_more_than_500_rows() -> None:
+    candidate = candidate_payload()
+    candidate["values"] = [candidate["values"][0]] * 501
+    with pytest.raises(ValidationError):
+        ExtractionCandidate.model_validate(candidate)
+
+    field = {
+        "field_key": "SYNTHETIC_VALUE",
+        "final_text": "12.30",
+        "source": "OCR",
+        "reason": "generated review",
+    }
+    with pytest.raises(ValidationError):
+        ReviewRequest.model_validate(
+            {
+                "allocation_id": "123e4567-e89b-12d3-a456-426614174002",
+                "fields": [field] * 501,
+            }
+        )
 
 
 def test_local_provider_is_candidate_only_and_requires_review_metadata() -> None:

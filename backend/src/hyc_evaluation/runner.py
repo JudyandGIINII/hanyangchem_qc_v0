@@ -41,7 +41,14 @@ SUPPORTED_VERSION = "1.0.0"
 class DeterministicSyntheticFixtureProvider:
     """Deterministic adapter for the existing synthetic-only extraction port."""
 
-    def extract(self, document_id: str, source_reference: str) -> ExtractionCandidate:
+    def extract(
+        self,
+        document_id: str,
+        source_reference: str,
+        *,
+        document_bytes: bytes | None = None,
+    ) -> ExtractionCandidate:
+        del document_bytes
         stable_document_id = uuid5(NAMESPACE_URL, f"hyc:{document_id}")
         reference = SourceReference(
             document_id=stable_document_id,

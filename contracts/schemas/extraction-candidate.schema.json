@@ -296,6 +296,7 @@
       "items": {
         "$ref": "#/$defs/ExtractionValue"
       },
+      "maxItems": 500,
       "minItems": 1,
       "title": "Values",
       "type": "array"
