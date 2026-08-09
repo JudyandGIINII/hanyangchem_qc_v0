@@ -371,6 +371,68 @@ class LotTraceResponse(APIRequestModel):
     audits: list[dict[str, object]]
 
 
+class SupplierCreateRequest(APIRequestModel):
+    supplier_code: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    name: Annotated[str, Field(min_length=1, max_length=256)]
+    active: bool = True
+
+
+class SupplierUpdateRequest(SupplierCreateRequest):
+    pass
+
+
+class SupplierResponse(APIRequestModel):
+    id: UUID
+    supplier_code: str | None
+    name: str
+    active: bool
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class MaterialCreateRequest(APIRequestModel):
+    material_code: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    name: Annotated[str, Field(min_length=1, max_length=256)]
+    default_unit: Annotated[str, Field(min_length=1, max_length=32)] | None = None
+    active: bool = True
+
+
+class MaterialUpdateRequest(MaterialCreateRequest):
+    pass
+
+
+class MaterialResponse(APIRequestModel):
+    id: UUID
+    material_code: str | None
+    name: str
+    default_unit: str | None
+    active: bool
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class MaterialModelCreateRequest(APIRequestModel):
+    material_id: UUID
+    model_code: Annotated[str, Field(min_length=1, max_length=64)] | None = None
+    name: Annotated[str, Field(min_length=1, max_length=256)]
+
+
+class MaterialModelUpdateRequest(MaterialModelCreateRequest):
+    pass
+
+
+class MaterialModelResponse(APIRequestModel):
+    id: UUID
+    material_id: UUID
+    model_code: str | None
+    name: str
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
 def to_seoul_display(value: datetime) -> datetime:
     """Display-only conversion. Storage/API boundaries remain UTC."""
     if value.tzinfo is None:

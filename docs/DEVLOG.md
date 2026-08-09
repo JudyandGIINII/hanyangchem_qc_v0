@@ -988,3 +988,35 @@ Two sibling agent CLIs sharing this single worktree each ran a broad `git checko
 ### Boundary
 
 This increment closes disclosed code-level residuals and redeploys the exact synthetic frontend boundary. It does not prove representative real-corpus OCR accuracy, and it grants no P4-B, P4-C, P5, real-data apply/import, external Provider, production migration, production DB-role, or production-readiness approval. Backend, DB, worker, OCR, models, and original documents remain local/intranet-only. Root Directory and Framework Preset remain dashboard state that no committed file can pin, so a future misconfiguration can still fall back to localhost-fetch mode and must be re-verified against the deployment API and a real browser session.
+
+## 2026-08-10 — P5 scope plan and first structural slice (master data)
+
+### Scope decision
+
+P5 had no plan document while every earlier phase has one under `docs/plans/`; it existed only as 21 `P5`-tagged rows in the traceability matrix plus the `KANBAN.md` statement that P5 is unstarted and unapproved. [`plans/2026-08-10-p5-core-mvp-scope-plan.md`](plans/2026-08-10-p5-core-mvp-scope-plan.md) now classifies all 21 rows.
+
+Four rows are gated on approvals that do not exist and were deliberately left closed, because they encode inspection policy and implementing them would mean inventing sampling and pass/fail rules for a chemical incoming-inspection system: FR-SPEC-003 (QUALITY review), FR-SPEC-007 (항목 정책 QUALITY 승인), FR-MAP-003 (QUALITY approval), and FR-OCR-001 (AP-02 plus QUALITY benchmark, still dependent on blocked P4-B/P4-C). No policy value, threshold, sampling rule, or alias-promotion rule was invented.
+
+### Implemented — FR-MST-001/002/003/005
+
+The DATA layer already existed from P2; the `P2/P5` tag on these rows means P2 delivered the tables and P5 adds the API surface. `suppliers`, `materials`, and `material_models` were already modelled with the `Versioned` mixin, so no new table and no Alembic migration were created.
+
+- Added `backend/src/hyc_api/routes/masters.py` with list/get/create/update for the three master entities, following the existing `routes/lots.py` pattern, registered in `hyc_api/main.py`, with request/response models in `hyc_api/contracts.py`.
+- Updates take a row lock via `with_for_update()`, require an `If-Match` header reusing the existing `require_if_match` helper, and return a stable 409 on a stale `lock_version`. A duplicate master code also maps to 409 rather than a 500. Soft delete is honored through `deleted_at`; nothing is hard-deleted and soft-deleted rows are excluded from list and lookup.
+- `contracts/openapi.json` was regenerated, and the frontend generated client `frontend/src/lib/api/generated.ts` was regenerated to match, which `make contracts-check` requires.
+- Added `backend/tests/integration/db/test_nullable_code_uniqueness.py`, parametrized across all three entities, proving that several rows may hold a `NULL` code at once, that a duplicate non-null code is rejected on insert, and that an `UPDATE` colliding with an existing code is rejected.
+- Added `backend/tests/integration/api/test_material_master.py`, `test_supplier_master.py`, and `test_model_master.py`.
+
+### Test-runner gap found and fixed
+
+`backend/scripts/run_p2_postgres_tests.sh` selected a single hardcoded file, so the new `integration/db` test would have run in **no** make target while the traceability matrix cited it as FR-MST-005 evidence — a test that never executes is worse than no test because it manufactures false assurance. The runner now selects the `backend/tests/integration/db` directory; `-m postgres` still filters, and all files in that directory use the same `HYC_P2_TEST_POSTGRES_DSN` or none. `make p2-postgres-check` moved from 10 to 13 passed as a result.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 69 source files/0 errors, backend `671 passed, 148 deselected`, frontend Vitest `43 passed` across 5 files plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`. The new master tests are PostgreSQL-marked, so they are deselected here and are covered by the PostgreSQL targets below.
+- `make p2-postgres-check` 13 passed (was 10); `make p3-postgres-check` 118 passed (was 115); `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+- The first `make check` failed at `contracts-check` because the backend regenerated `contracts/openapi.json` without regenerating the frontend client. That was a gap in the task brief rather than in the implementation, and was fixed by running `pnpm generate:client`.
+
+### Boundary
+
+This slice delivers five structural rows only and is not P5 Core MVP completion, which additionally requires the sequenced rows (FR-MST-004, FR-MAP-001, FR-SPEC-002, FR-INT-006, FR-APR-003, FR-NCR-001/002/003) and the four approval-gated rows. No policy invention, real-data apply/import, external Provider, network call, production or non-disposable migration, production DB-role activation, deployment, or release claim is made.

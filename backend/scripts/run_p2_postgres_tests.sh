@@ -26,5 +26,5 @@ app_dsn="postgresql+psycopg://hyc_app_test:TEST_FIXTURE_ONLY_P2_APP_PASSWORD@127
 HYC_APP_ROLE=hyc_app_test \
 HYC_P2_TEST_POSTGRES_DSN="$owner_dsn" \
 HYC_P2_TEST_APP_DSN="$app_dsn" \
-  uv run --project "$root/backend" pytest -q -m postgres "$root/backend/tests/integration/db/test_p2_postgres_invariants.py"
+  uv run --project "$root/backend" pytest -q -m postgres "$root/backend/tests/integration/db"
 uv run --project "$root/backend" python "$root/backend/scripts/check_migrations.py" --postgres-url "$owner_dsn"
