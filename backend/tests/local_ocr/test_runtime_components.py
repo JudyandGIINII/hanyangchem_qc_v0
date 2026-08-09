@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
 
 from hyc_local_ocr.contracts import LocalOcrLimits, RenderedPage
 from hyc_local_ocr.errors import LocalOcrError
-from hyc_local_ocr.pdf_backend import PyMuPdfDocumentBackend, _select_dpi
+from hyc_local_ocr.pdf_backend import (
+    PyMuPdfDocumentBackend,
+    _native_table_suspected,
+    _select_dpi,
+)
 from hyc_local_ocr.pipeline import LocalOcrPipeline
 from hyc_local_ocr.preprocess import OpenCvPreprocessor, _deskew
 from hyc_local_ocr.synthetic import (
@@ -99,6 +104,75 @@ def _native_table_pdf() -> bytes:
         return bytes(document.tobytes(garbage=4, deflate=True, no_new_id=True))
     finally:
         document.close()
+
+
+def _native_aligned_prose_pdf() -> bytes:
+    """Ordinary left-aligned prose rows: three words each, no wide column gutters."""
+
+    import fitz  # type: ignore[import-untyped]
+
+    document = fitz.open()
+    try:
+        page = document.new_page(width=595, height=842)
+        page.insert_text(
+            (40, 45),
+            "SYNTHETIC COA SUPPLIER TEST LAB PRODUCT GENERATED MATERIAL LOT SYN-001",
+            fontsize=11,
+        )
+        for y_position, line in (
+            (110, "SUPPLIER OPERATOR DOCUMENT"),
+            (140, "MATERIAL FACILITY LOCATION"),
+            (170, "SHIPMENT RECEIVER APPROVAL"),
+        ):
+            page.insert_text((50, y_position), line, fontname="courier", fontsize=12)
+        return bytes(document.tobytes(garbage=4, deflate=True, no_new_id=True))
+    finally:
+        document.close()
+
+
+def _native_words(document_bytes: bytes) -> tuple[tuple[object, ...], ...]:
+    import fitz  # type: ignore[import-untyped]
+
+    document = fitz.open(stream=document_bytes, filetype="pdf")
+    try:
+        return tuple(tuple(word) for word in document[0].get_text("words", sort=True))
+    finally:
+        document.close()
+
+
+def _three_word_row_gaps(words: tuple[tuple[object, ...], ...]) -> tuple[float, ...]:
+    grouped: dict[tuple[int, int], list[tuple[object, ...]]] = {}
+    for word in words:
+        grouped.setdefault((int(word[5]), int(word[6])), []).append(word)
+    gaps: list[float] = []
+    for row in grouped.values():
+        sorted_row = sorted(row, key=lambda word: float(word[0]))
+        if len(sorted_row) != 3:
+            continue
+        for index in range(1, len(sorted_row)):
+            gaps.append(float(sorted_row[index][0]) - float(sorted_row[index - 1][2]))
+    return tuple(gaps)
+
+
+def test_native_table_signal_requires_wide_cell_gutters() -> None:
+    prose_words = _native_words(_native_aligned_prose_pdf())
+    table_words = _native_words(_native_table_pdf())
+
+    assert _three_word_row_gaps(prose_words)
+    assert max(_three_word_row_gaps(prose_words)) < 8.0
+    assert _native_table_suspected(prose_words) is False
+    assert min(_three_word_row_gaps(table_words)) >= 12.0
+    assert _native_table_suspected(table_words) is True
+
+
+def test_real_native_backend_has_no_low_confidence_signal_for_the_evaluator() -> None:
+    result = LocalOcrPipeline(PyMuPdfDocumentBackend(), RecordingOcrEngine(results={})).extract(
+        generate_mixed_native_scanned_pdf()
+    )
+
+    assert result.pages[0].route == "NATIVE_TEXT"
+    assert {line.confidence for line in result.pages[0].selected_lines} == {Decimal("1.00")}
+    assert "LOW_CONFIDENCE" not in result.pages[0].reason_codes
 
 
 def test_shared_native_predicate_renders_and_ocrs_punctuation_heavy_layer() -> None:

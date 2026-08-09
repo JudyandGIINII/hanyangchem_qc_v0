@@ -1,0 +1,22 @@
+# Exclude backend code, database migrations, and python scripts
+backend/
+
+# Exclude internal documentation, research notes, decision packets, and evidence
+docs/
+
+# Exclude local Docker Compose deployment configurations
+docker/
+compose.yaml
+compose.override.yaml
+Makefile
+scripts/
+
+# Exclude sensitive raw source documents and local OCR model artifacts
+*.pdf
+*.xlsx
+*.xls
+.local-ocr-models/
+
+# Exclude root governance markdown files
+AGENTS.md
+Prd.md

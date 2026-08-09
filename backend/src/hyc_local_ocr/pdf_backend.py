@@ -14,6 +14,9 @@ from hyc_local_ocr.contracts import (
 from hyc_local_ocr.errors import LocalOcrError
 from hyc_local_ocr.native_text import native_text_is_sufficient
 
+NativeWord = tuple[Any, ...]
+_MIN_COLUMN_GUTTER_POINTS = 12.0
+
 
 def _runtime_modules() -> tuple[Any, Any, Any]:
     try:
@@ -25,29 +28,30 @@ def _runtime_modules() -> tuple[Any, Any, Any]:
     return fitz, cv2, numpy
 
 
-def _native_lines(page: Any, dpi: int) -> tuple[OcrLine, ...]:
+def _native_lines(words: tuple[NativeWord, ...], dpi: int) -> tuple[OcrLine, ...]:
     scale = Decimal(dpi) / Decimal(72)
     grouped: dict[tuple[int, int], list[tuple[float, float, float, float, str, int]]] = (
         defaultdict(list)
     )
-    for word in page.get_text("words", sort=True):
+    for word in words:
         x0, y0, x1, y1, text, block_no, line_no, word_no = word[:8]
         grouped[(int(block_no), int(line_no))].append(
             (float(x0), float(y0), float(x1), float(y1), str(text), int(word_no))
         )
     lines: list[OcrLine] = []
     for reading_order, key in enumerate(sorted(grouped), start=1):
-        words = sorted(grouped[key], key=lambda item: item[5])
-        text = " ".join(item[4] for item in words).strip()
+        row_words = sorted(grouped[key], key=lambda item: item[5])
+        text = " ".join(item[4] for item in row_words).strip()
         if not text:
             continue
-        left = max(0, int(Decimal(str(min(item[0] for item in words))) * scale))
-        top = max(0, int(Decimal(str(min(item[1] for item in words))) * scale))
-        right = max(left + 1, int(Decimal(str(max(item[2] for item in words))) * scale))
-        bottom = max(top + 1, int(Decimal(str(max(item[3] for item in words))) * scale))
+        left = max(0, int(Decimal(str(min(item[0] for item in row_words))) * scale))
+        top = max(0, int(Decimal(str(min(item[1] for item in row_words))) * scale))
+        right = max(left + 1, int(Decimal(str(max(item[2] for item in row_words))) * scale))
+        bottom = max(top + 1, int(Decimal(str(max(item[3] for item in row_words))) * scale))
         lines.append(
             OcrLine(
                 text=text,
+                # Native PDF text has no per-word confidence signal.
                 confidence=Decimal("1.00"),
                 bbox=OcrBoundingBox(left=left, top=top, right=right, bottom=bottom),
                 reading_order=reading_order,
@@ -70,15 +74,29 @@ def _select_dpi(page: Any, limits: LocalOcrLimits) -> int:
     return limits.render_dpi
 
 
-def _native_table_suspected(page: Any) -> bool:
-    """Conservatively detect three-by-three aligned native-text table geometry."""
+def _native_cell_starts(positions: list[tuple[float, float]]) -> tuple[float, ...]:
+    sorted_positions = sorted(positions)
+    if not sorted_positions:
+        return ()
+    starts = [sorted_positions[0][0]]
+    previous_x1 = sorted_positions[0][1]
+    for x0, x1 in sorted_positions[1:]:
+        if x0 - previous_x1 >= _MIN_COLUMN_GUTTER_POINTS:
+            starts.append(x0)
+        previous_x1 = max(previous_x1, x1)
+    return tuple(starts)
 
-    grouped: dict[tuple[int, int], list[float]] = defaultdict(list)
-    for word in page.get_text("words", sort=True):
-        x0, _, _, _, text, block_no, line_no = word[:7]
+
+def _native_table_suspected(words: tuple[NativeWord, ...]) -> bool:
+    """Conservatively detect three-by-three aligned native-text cell geometry."""
+
+    grouped: dict[tuple[int, int], list[tuple[float, float]]] = defaultdict(list)
+    for word in words:
+        x0, _, x1, _, text, block_no, line_no = word[:7]
         if str(text).strip():
-            grouped[(int(block_no), int(line_no))].append(float(x0))
-    rows = [tuple(sorted(positions)) for positions in grouped.values() if len(positions) >= 3]
+            grouped[(int(block_no), int(line_no))].append((float(x0), float(x1)))
+    rows = [_native_cell_starts(positions) for positions in grouped.values()]
+    rows = [positions for positions in rows if len(positions) >= 3]
     if len(rows) < 3:
         return False
 
@@ -151,7 +169,9 @@ class PyMuPdfDocumentBackend:
             if document.page_count < 1 or document.page_count > limits.max_pages:
                 raise LocalOcrError("LOCAL_OCR_PAGE_LIMIT_EXCEEDED")
 
-            plans: list[tuple[Any, str, tuple[OcrLine, ...], int, int, int]] = []
+            plans: list[
+                tuple[Any, str, tuple[OcrLine, ...], tuple[NativeWord, ...], int, int, int]
+            ] = []
             total_pixels = 0
             for page_number in range(document.page_count):
                 _check_deadline(deadline)
@@ -161,7 +181,8 @@ class PyMuPdfDocumentBackend:
                     dpi = _select_dpi(page, limits)
                     width = max(1, round(float(page.rect.width) * dpi / 72))
                     height = max(1, round(float(page.rect.height) * dpi / 72))
-                    native_lines = _native_lines(page, dpi)
+                    words: tuple[NativeWord, ...] = tuple(page.get_text("words", sort=True))
+                    native_lines = _native_lines(words, dpi)
                 except LocalOcrError:
                     raise
                 except Exception as error:
@@ -169,16 +190,18 @@ class PyMuPdfDocumentBackend:
                 total_pixels += width * height
                 if total_pixels > limits.max_total_pixels:
                     raise LocalOcrError("LOCAL_OCR_PIXEL_LIMIT_EXCEEDED")
-                plans.append((page, text, native_lines, dpi, width, height))
+                plans.append((page, text, native_lines, words, dpi, width, height))
 
             rendered: list[RenderedPage] = []
-            for page_number, (page, text, lines, dpi, width, height) in enumerate(plans, start=1):
+            for page_number, (page, text, lines, words, dpi, width, height) in enumerate(
+                plans, start=1
+            ):
                 _check_deadline(deadline)
                 image_png = b""
                 table = False
                 if native_text_is_sufficient(text, limits):
                     try:
-                        table = _native_table_suspected(page)
+                        table = _native_table_suspected(words)
                     except Exception as error:
                         raise LocalOcrError("LOCAL_OCR_PDF_CORRUPT") from error
                     _check_deadline(deadline)

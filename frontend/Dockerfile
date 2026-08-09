@@ -4,6 +4,8 @@ RUN corepack enable
 COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY frontend ./
+ARG NEXT_PUBLIC_HYC_PUBLIC_DEMO=0
+ENV NEXT_PUBLIC_HYC_PUBLIC_DEMO=$NEXT_PUBLIC_HYC_PUBLIC_DEMO
 RUN pnpm build
 
 FROM node:24-alpine

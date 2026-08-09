@@ -59,7 +59,9 @@ export function InspectionWorkspace({ publicDemo = PUBLIC_DEMO_MODE }: { publicD
   const [marker] = useState(() => `${Date.now()}`);
   const workflowStatus = inspection
     ? `${serverStatusCopy[inspection.status] ?? "서버 상태"} · ${inspection.status}`
-    : `검사 생성 전 · ${statusCopy[state.workflowStatus]}`;
+    : publicDemo
+      ? `합성 로컬 상태 · ${statusCopy[state.workflowStatus]}`
+      : `검사 생성 전 · ${statusCopy[state.workflowStatus]}`;
   const frozen = state.workflowStatus === "APPROVED";
   const mutationLocked = state.workflowStatus === "SUBMITTED" || frozen;
   const reviewComplete = isDocumentReviewCompleteForFixture(state);

@@ -1,0 +1,3 @@
+# Exclude end-to-end tests and test fixtures
+tests/e2e/
+playwright.config.ts

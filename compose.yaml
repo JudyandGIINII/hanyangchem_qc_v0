@@ -66,6 +66,8 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        NEXT_PUBLIC_HYC_PUBLIC_DEMO: ${NEXT_PUBLIC_HYC_PUBLIC_DEMO:-0}
     depends_on:
       api: { condition: service_healthy }
     ports: ["127.0.0.1:${HYC_WEB_HOST_PORT:-13000}:3000"]
