@@ -35,14 +35,22 @@ and `frontend/Dockerfile` declares `ARG NEXT_PUBLIC_HYC_PUBLIC_DEMO=0` with a ma
 
 The default here is **`0` on purpose**. Compose is the local intranet stack and must keep talking to the real backend API; only an explicit operator override (`NEXT_PUBLIC_HYC_PUBLIC_DEMO=1 docker compose …`) selects demo mode. `backend/tests/contract/test_public_demo_build_contract.py` pins this default, the compose wiring, and the requirement that `ARG`/`ENV` precede `pnpm build`.
 
-## 3. Dashboard-only settings
+## 3. Deployment root and dashboard-only settings
 
-These are project settings that `vercel.json` cannot express. They must be set in the Vercel dashboard (or via project link) and are **not** pinned by anything in this repository:
+Verified against the live project on 2026-08-10 (`vercel project inspect hanyangchem_qc`): **Root Directory is `.` and Framework Preset is `Next.js`.** Root Directory is *not* `frontend`.
 
-- **Root Directory** — set to `frontend`.
-- **Framework Preset** — set to `Next.js`.
+That works because deployments are made with the CLI **from inside `frontend/`**, so the uploaded directory becomes the deployment root and `.` resolves to the Next.js app. `vercel inspect` on the previous production deployment confirms a build root of `.` containing `index`, `_not-found`, and `api/health`. There is no root `package.json` or `next.config`, so deploying from the repository root would not build.
 
-Because these remain dashboard state, a missing or incorrect configuration can still produce a build that falls back to localhost-fetch mode. Any future public deployment must therefore be re-verified against the deployment API and a real browser session, as recorded in `HANDOFF.md`.
+Deploy with:
+
+```sh
+cd frontend && vercel --prod
+```
+
+Two consequences follow:
+
+- Because only `frontend/` is uploaded, `frontend/vercel.json` and `frontend/.vercelignore` are the copies that take effect, and `backend/`, `docs/`, and evidence are excluded structurally rather than only by ignore rules. The root copies remain committed as a safety net in case Root Directory is ever repointed at the repository root.
+- Root Directory and Framework Preset are dashboard state that no file in this repository can pin. A missing or incorrect configuration can still produce a build that falls back to localhost-fetch mode, so any public deployment must be re-verified against the deployment API and a real browser session, as recorded in `HANDOFF.md`.
 
 ## 4. Test coverage
 

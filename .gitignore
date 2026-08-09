@@ -50,3 +50,7 @@ artifacts/
 .DS_Store
 .vscode/
 .idea/
+.vercel
+.env*
+# .env.example is a committed placeholder-only template, never real credentials.
+!.env.example
