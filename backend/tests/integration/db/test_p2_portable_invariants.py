@@ -547,6 +547,7 @@ def test_every_quality_numeric_column_rejects_python_float(session: Session) -> 
     assert strict_columns == {
         "extraction_field_reviews.confidence",
         "internal_results.evaluated_value",
+        "nonconformances.quantity",
         "receipt_lot_allocations.quantity",
         "sample_measurements.numeric_value",
         "spec_items.lower_value",

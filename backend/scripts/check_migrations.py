@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260801_0004"
+EXPECTED_MIGRATION_HEAD = "20260810_0005"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -48,6 +48,19 @@ EXPECTED_P3_PARTIAL_UNIQUE_INDEXES: frozenset[str] = frozenset(
     }
 )
 
+EXPECTED_NCR_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
+    {
+        "hyc_deny_approved_nonconformance_mutation",
+        "hyc_deny_nonconformance_disposition_delete",
+    }
+)
+EXPECTED_NCR_TRIGGERS: frozenset[str] = frozenset(
+    {
+        "trg_approved_nonconformance_immutable",
+        "trg_nonconformance_disposition_no_delete",
+    }
+)
+
 EXPECTED_P2_TABLES: frozenset[str] = frozenset(
     {
         "approvals",
@@ -66,6 +79,10 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "material_lots",
         "material_models",
         "materials",
+        "nonconformance_approvals",
+        "nonconformance_attachments",
+        "nonconformance_dispositions",
+        "nonconformances",
         "outbox_events",
         "receipt_lot_allocations",
         "sample_measurements",
@@ -145,6 +162,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("P3 mutation triggers are incomplete at head")
                 if not EXPECTED_P3_PARTIAL_UNIQUE_INDEXES.issubset(indexes):
                     raise RuntimeError("P3 partial unique indexes are incomplete at head")
+                if not EXPECTED_NCR_TRIGGER_FUNCTIONS.issubset(functions):
+                    raise RuntimeError("NCR trigger functions are incomplete at head")
+                if not EXPECTED_NCR_TRIGGERS.issubset(triggers):
+                    raise RuntimeError("NCR mutation triggers are incomplete at head")
     finally:
         engine.dispose()
     command.downgrade(config, "base")
@@ -163,6 +184,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("P3 triggers remain after downgrade")
                 if EXPECTED_P3_PARTIAL_UNIQUE_INDEXES.intersection(indexes):
                     raise RuntimeError("P3 partial unique indexes remain after downgrade")
+                if EXPECTED_NCR_TRIGGER_FUNCTIONS.intersection(functions):
+                    raise RuntimeError("NCR trigger functions remain after downgrade")
+                if EXPECTED_NCR_TRIGGERS.intersection(triggers):
+                    raise RuntimeError("NCR triggers remain after downgrade")
     finally:
         engine.dispose()
     command.upgrade(config, "head")

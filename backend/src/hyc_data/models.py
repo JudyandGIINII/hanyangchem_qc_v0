@@ -585,6 +585,88 @@ class Approval(Base):
     )
 
 
+class NonconformanceDisposition(Base, Versioned):
+    __tablename__ = "nonconformance_dispositions"
+    __table_args__ = (UniqueConstraint("code", name="uq_nonconformance_dispositions_code"),)
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    code: Mapped[str] = mapped_column(String(64), nullable=False)
+    name: Mapped[str] = mapped_column(String(256), nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    sort_order: Mapped[int] = mapped_column(Integer, nullable=False)
+
+
+class Nonconformance(Base, Versioned):
+    __tablename__ = "nonconformances"
+    __table_args__ = (
+        UniqueConstraint("ncr_number", name="uq_nonconformances_ncr_number"),
+        CheckConstraint(
+            "severity IS NULL OR severity IN ('MAJOR','MINOR')",
+            name="ck_nonconformances_severity",
+        ),
+        CheckConstraint("quantity > 0", name="ck_nonconformances_quantity_positive"),
+        CheckConstraint(
+            "status IN ('DRAFT','SUBMITTED','APPROVED','REJECTED','CLOSED')",
+            name="ck_nonconformances_status",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    ncr_number: Mapped[str] = mapped_column(String(64), nullable=False)
+    inspection_case_id: Mapped[UUID] = mapped_column(
+        ForeignKey("inspection_cases.id"), nullable=False
+    )
+    spec_item_id: Mapped[UUID | None] = mapped_column(ForeignKey("spec_items.id"))
+    severity: Mapped[str | None] = mapped_column(String(16))
+    quantity: Mapped[Decimal] = mapped_column(StrictNumeric(), nullable=False)
+    description: Mapped[str | None] = mapped_column(Text)
+    cause: Mapped[str | None] = mapped_column(Text)
+    disposition_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("nonconformance_dispositions.id")
+    )
+    disposition_snapshot: Mapped[dict[str, Any] | None] = mapped_column(JSON)
+    target_completion_date: Mapped[date | None] = mapped_column(Date)
+    completion_date: Mapped[date | None] = mapped_column(Date)
+    status: Mapped[str] = mapped_column(String(16), nullable=False, default="DRAFT")
+    retest_case_id: Mapped[UUID | None] = mapped_column(ForeignKey("inspection_cases.id"))
+
+
+class NonconformanceApproval(Base):
+    __tablename__ = "nonconformance_approvals"
+    __table_args__ = (
+        CheckConstraint(
+            "actor_role = 'LEAD'", name="ck_nonconformance_approvals_actor_role_lead"
+        ),
+        CheckConstraint(
+            "action IN ('APPROVE','REJECT')", name="ck_nonconformance_approvals_action"
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    nonconformance_id: Mapped[UUID] = mapped_column(
+        ForeignKey("nonconformances.id"), nullable=False
+    )
+    actor_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    action: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
+class NonconformanceAttachment(Base):
+    __tablename__ = "nonconformance_attachments"
+    __table_args__ = (
+        UniqueConstraint(
+            "nonconformance_id",
+            "document_id",
+            name="uq_nonconformance_attachment_document",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    nonconformance_id: Mapped[UUID] = mapped_column(
+        ForeignKey("nonconformances.id"), nullable=False
+    )
+    document_id: Mapped[UUID] = mapped_column(ForeignKey("documents.id"), nullable=False)
+
+
 class LotMergeApproval(Base):
     __tablename__ = "lot_merge_approvals"
     __table_args__ = (

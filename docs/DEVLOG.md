@@ -1081,3 +1081,41 @@ A read-only investigation was delegated and then independently re-verified, whic
 ### P5 status
 
 Seven of the 21 P5-tagged rows are implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, and FR-NCR-004. FR-JDG-004, FR-INT-001, and FR-INT-002 appear already satisfied by P2/P3 but their matrix citations need correcting. Still open: FR-MAP-001 and FR-NCR-001/002/003, which all require new tables and an Alembic migration, plus FR-INT-006 and FR-APR-003. FR-INT-003 is blocked by the same QUALITY gate as FR-SPEC-007. The four QUALITY/AP-02-gated rows remain deliberately unimplemented, so P5 is not complete.
+
+## 2026-08-10 — P5 fourth increment: NCR module schema (FR-NCR-001, FR-NCR-002)
+
+### Design correction made before implementing
+
+A prior statement in this log that all three NCR rows needed new tables was wrong and is corrected here. FR-NCR-003 재검사 연결 needs **no new table**: `inspection_cases` already carries `retest_of_case_id`, `correction_of_case_id`, `lineage_root_id`, `round_no`, `revision_no`, and `lineage_reason`, with `ck_inspection_correction_revision` and `uq_inspection_lineage_round_revision` enforcing round/revision consistency. This increment only references that existing lineage by FK. The approved design is recorded in [`plans/2026-08-10-p5-ncr-module-schema-design.md`](plans/2026-08-10-p5-ncr-module-schema-design.md).
+
+Two other reuse decisions followed from inspection rather than assumption. `documents` is reused for attachments because it already provides SHA-256 deduplication, `ck_documents_always_immutable`, and `uq_documents_storage_key`, so no new file storage was created and FR-INT-006 사진/시험기록 증빙 is satisfied by the same link table. `approvals` could **not** be reused because `ck_approval_actor_role_lead` and `ck_approval_action` pin it to `LEAD`/`APPROVE` with a NOT NULL `inspection_case_id`, so a separate NCR approval table was required.
+
+### Implemented
+
+Single Alembic revision `20260810_0005` with `down_revision = 20260801_0004`, written as pure DDL because `test_historical_migrations_are_metadata_independent` forbids importing models or touching metadata inside a migration.
+
+- `nonconformance_dispositions` with `code` UNIQUE, `name`, `active`, `sort_order`, and the `Versioned` columns, seeded with the six values enumerated in the PRD: 반품, 재작업, 용도변경, 폐기, 선별작업, 특채. These are PRD-stated values, not invented ones.
+- `nonconformances` with `ncr_number` UNIQUE, FKs to `inspection_cases` and `spec_items`, optional `severity` CHECK `IN ('MAJOR','MINOR')`, `quantity` on the existing `StrictNumeric` with `CHECK quantity > 0`, `description`, `cause`, `disposition_id`, `disposition_snapshot` JSON, `target_completion_date`, `completion_date`, `status` CHECK across `DRAFT`/`SUBMITTED`/`APPROVED`/`REJECTED`/`CLOSED`, nullable `retest_case_id`, and `Versioned`.
+- `nonconformance_approvals` with `CHECK actor_role = 'LEAD'` and `CHECK action IN ('APPROVE','REJECT')`, mirroring the existing approvals guard so AP-04's ADMIN non-approval principle holds in the database rather than only in service code.
+- `nonconformance_attachments` linking a nonconformance to a `documents` row with `UNIQUE(nonconformance_id, document_id)`.
+
+Two PostgreSQL triggers enforce the requirements that a CHECK cannot express. `hyc_deny_nonconformance_disposition_delete` refuses any DELETE on the disposition master so that "관리자가 값을 추가/비활성화할 수 있으나 과거 기록은 유지한다" is guaranteed by the database and deactivation is only possible through `active=false`. `hyc_deny_approved_nonconformance_mutation` makes an `APPROVED` nonconformance immutable, following the finalized-evidence immutability pattern already used in P3. `backend/scripts/check_migrations.py` was extended to assert both trigger functions and triggers exist, so their removal would fail the migration contract.
+
+`disposition_snapshot` exists because a foreign key alone cannot preserve the meaning of a historical record once the master row is deactivated or renamed; the snapshot pins the code and name at recording time, matching the `spec_snapshot` approach used in P3.
+
+### Policy deliberately not encoded
+
+No Major/Minor severity criteria, no target-completion-date derivation, and no rule selecting a disposition for a given nonconformance type. All three are stored exactly as supplied. Judgment and sampling policy remain the QUALITY-gated concern of FR-SPEC-007 and are untouched.
+
+### Scope deliberately excluded
+
+FR-MAP-001 표준 항목 별칭 was excluded to keep one concern per migration and narrow the rollback surface. When it is added, it should carry scope-limited columns only and must not introduce a global-promotion column, because FR-MAP-003 학습형 전역 운영 is QUALITY-gated and the schema should not leave room for it. No API routes were added in this increment; schema and models only.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 73 source files/0 errors, backend `705 passed, 153 deselected`, frontend Vitest `47 passed` across 6 files plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`.
+- `make p2-postgres-check` 18 passed (was 16), including the migration upgrade/downgrade roundtrip and empty autogenerate drift; `make p3-postgres-check` 118 passed; `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+
+### P5 status
+
+Nine of the 21 P5-tagged rows are now implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, FR-NCR-004, FR-NCR-001, and FR-NCR-002, with FR-INT-006 satisfied at the storage level by the attachment link. FR-NCR-003 is satisfied by pre-existing lineage. Still open: NCR API routes and UI, FR-MAP-001, FR-APR-003, and the QUALITY-gated FR-SPEC-003, FR-SPEC-007, FR-MAP-003, FR-OCR-001, plus FR-INT-003 which shares the FR-SPEC-007 gate. P5 is not complete.
