@@ -1177,3 +1177,19 @@ The new routes reuse the narrow `P0001`-only `DBAPIError` mapping introduced in 
 Twelve of the 21 P5-tagged rows are implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, FR-NCR-001/002/004, FR-MAP-001, FR-APR-003, plus FR-INT-006 satisfied through the attachment link. FR-NCR-003 is satisfied by pre-existing lineage, and FR-JDG-004, FR-INT-001, FR-INT-002 appear satisfied by P2/P3 though their matrix citations need correcting.
 
 **Every remaining row is blocked on QUALITY or AP-02 approval, none on engineering.** FR-SPEC-003 needs QUALITY review, FR-SPEC-007 needs 항목 정책 QUALITY 승인, FR-MAP-003 needs QUALITY approval, FR-OCR-001 needs AP-02 plus a QUALITY benchmark and depends on the still-blocked P4-B/P4-C, and FR-INT-003 shares the FR-SPEC-007 gate because its sampling mechanism exists while per-item policy assignment does not. Both approval packets remain `PENDING / NOT APPROVED` with 49 and 60 unfilled fields and no named approver, and the local corpus is 4 candidate documents with 0 eligible. P5 is therefore **not complete**, and no further P5 progress is possible without human QUALITY decisions.
+
+## 2026-08-10 — P5 종료 문서화 및 P6 handoff
+
+문서 전용 증분이다. 소스, 테스트, 계약, 마이그레이션은 변경하지 않았다.
+
+`HANDOFF.md`의 제목을 P4 한정에서 저장소 전체 인계 문서로 바꾸고 최상단에 2026-08-10 P5 종료 / P6 handoff 섹션을 추가했다. 기존 P4 이하 섹션은 해당 증분의 역사적 증거로 보존했고 무효화하지 않았다.
+
+인계 섹션이 기록하는 것은 다음과 같다. P5는 21개 행 중 12행 구현으로 **미완료**이며 남은 5행은 전부 QUALITY/AP-02 승인 게이트라 코드 부채가 아니라는 결론. 완료·미완료 행별 표와 각 게이트. 승인 패킷이 각각 49개와 60개 필드 `PENDING`이고 승인자조차 미지정이며 로컬 코퍼스가 후보 4건/적격 0건이라 병목이 절차가 아니라 재료 부재라는 사실.
+
+P6 착수 가능 여부를 항목별로 구분한 것이 이 문서의 실질적 가치다. Feature Flag는 FR-NCR-004로 이미 완료되어 재작업이 필요 없고, 부적합 후속조치와 Raw Data/보고서/통계는 새 승인 없이 착수 가능하며, OCR 운영 모니터링은 관측만 가능하고 KPI 임계값은 FR-OCR-005 미승인이라 만들면 안 되고, 마스터 Import와 NAS/Google Drive 자동 수집은 계속 금지다. P5 미완료 5행이 P6 착수를 막지는 않는다는 판단도 명시했다.
+
+P6가 보존해야 할 불변식과, 이번 작업에서 실제로 부딪힌 환경·운영 사실도 함께 남겼다. `COMPOSE_BAKE=false`가 필요한 이유, 로컬 OCR preflight가 정상적으로 fail closed 되는 이유, openapi 재생성 시 프런트 클라이언트도 함께 재생성해야 하는 이유, `APPROVED_FIXTURES` 다이제스트 갱신 누락이 `make check`를 깨뜨린다는 사실, 광범위한 `DBAPIError`를 409로 매핑하면 인프라 장애가 업무 충돌로 위장된다는 점과 `P0001` 한정 헬퍼를 재사용하라는 지침, 그리고 여러 에이전트가 하나의 worktree를 공유할 때 실제로 두 차례 작업이 파괴된 경험이다.
+
+`KANBAN.md`의 P6 백로그 항목과 `TRACEABILITY_MATRIX.md` 상단 상태도 같은 결론으로 동기화했다. 매트릭스에는 인용 경로 정정도 함께 기록했다: FR-INT-002가 인용한 `test_internal_results_api.py`는 존재하지 않으며 실제 커버리지는 `test_vertical_slice.py`와 `test_internal_substitute_hold.py`에 있다.
+
+이 문서 증분은 어떤 승인도 부여하지 않으며 P5 완료를 주장하지 않는다.

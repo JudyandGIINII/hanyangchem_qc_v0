@@ -1,4 +1,99 @@
-# P4 local-only OCR accepted delivery handoff
+# 한양화학 v0 인계 문서 — P5 종료 / P6 착수 준비
+
+## 2026-08-10 P5 종료 및 P6 handoff (현행 인계 문서)
+
+이 섹션이 현재 인계 상태의 정본이다. 아래 P4 이하 섹션은 해당 증분의 역사적 증거로 계속 유효하며 이 섹션이 그것을 무효화하지 않는다.
+
+### 1. P5 결론
+
+**P5 Core MVP는 완료되지 않았다.** 매트릭스 기준 21개 `P5` 태그 행 중 12행이 구현됐고, 남은 5행은 전부 QUALITY/AP-02 승인 대기다. 남은 항목은 코드 부채가 아니라 **사람의 품질 판단이 필요한 승인 게이트**이며, 엔지니어링만으로는 더 진행할 수 없다.
+
+전달 커밋은 `ad5b4a1`, `88c89e0`, `f54688f`, `bdd5c98`, `251d417`, `9a1d5fb`이며 전부 `origin/main`에 non-force fast-forward로 전달됐다. 범위 분류는 [`plans/2026-08-10-p5-core-mvp-scope-plan.md`](plans/2026-08-10-p5-core-mvp-scope-plan.md), NCR 스키마 설계는 [`plans/2026-08-10-p5-ncr-module-schema-design.md`](plans/2026-08-10-p5-ncr-module-schema-design.md)에 있다.
+
+### 2. 구현 완료 (12행)
+
+|FR|내용|근거|
+|---|---|---|
+|FR-MST-001/002/003|품목·공급업체·모델 마스터|P2 테이블 위에 `routes/masters.py` API 추가. 신규 테이블·마이그레이션 없음|
+|FR-MST-004|품목-공급사-모델 매핑|`spec_profiles`의 optional scope를 `test_supplier_material_model_scope.py`로 고정|
+|FR-MST-005|nullable 코드/후속 업데이트|다중 NULL 허용, 중복 non-null insert/update 거부를 3개 엔티티 파라미터화 회귀로 고정|
+|FR-SPEC-002|Draft/Active 기준 버전·적용일|`routes/specs.py`의 activate/retire 전이. profile당 ACTIVE 1건을 행 잠금 + 경쟁 행 `FOR UPDATE`로 동시성 하에서 보장|
+|FR-NCR-001|처리방안|`nonconformance_dispositions`. PRD 명시 6종 seed, DELETE 거부 트리거로 과거 기록 보존|
+|FR-NCR-002|부적합 기록/승인/기한/증빙|`nonconformances` + 승인/첨부 테이블, API, UI. APPROVED 불변성 트리거|
+|FR-NCR-004|모듈 Feature Flag|5개 모듈 플래그. 32개 조합 전수 회귀로 불변식 비활성 불가를 증명|
+|FR-MAP-001|표준 항목 별칭|scope + priority. 전역 승격 컬럼을 의도적으로 만들지 않음|
+|FR-APR-003|반려/사유/재제출|append-only 이력 테이블. `reason TEXT NOT NULL`로 필수 사유를 DB가 강제|
+|FR-INT-006|사진/시험기록 증빙|`documents` 재사용 링크 테이블로 저장 계층 충족|
+
+FR-NCR-003 재검사 연결은 P2/P3의 `inspection_cases` lineage로 이미 충족되어 신규 작업이 없었다.
+
+### 3. 미완료 (5행) — 전부 승인 게이트
+
+|FR|내용|대기 중인 승인|
+|---|---|---|
+|FR-SPEC-003|표준 검사항목|QUALITY review|
+|FR-SPEC-007|샘플 계산/판정 정책|항목 정책 QUALITY 승인|
+|FR-MAP-003|학습형 별칭 운영|QUALITY approval|
+|FR-OCR-001|정확도 우선 파이프라인|AP-02 + QUALITY benchmark. P4-B/P4-C에 연쇄 종속|
+|FR-INT-003|가변 샘플|FR-SPEC-007과 동일 게이트|
+
+이 다섯은 **판정 임계값과 샘플링 규칙**을 확정해야 진행 가능하다. 실제 입고 검사 합부 판정에 쓰이는 값이므로 구현자가 임의로 만들면 안 되며, 그래서 의도적으로 비워 두었다. `SamplePolicy`는 이미 6종 StrEnum으로 존재하므로 **메커니즘은 있고 품목별 정책 배정만 없다**.
+
+### 4. 승인 현황 — 착수조차 안 된 상태
+
+|항목|상태|
+|---|---|
+|AP-01 ~ AP-05|승인 완료. 단 AP-02는 "절차" 승인이며 특정 Provider 승인이 아니다|
+|P4-B QUALITY 코퍼스 패킷|`PENDING / NOT APPROVED`, PENDING 필드 **49개**, `Named QUALITY approver` 미지정|
+|P4-C Provider AP-02 패킷|`PENDING / NOT APPROVED`, PENDING 필드 **60개**, 승인자 미지정|
+|로컬 코퍼스|후보 문서 4건 / **적격 0건** (human-label 증거와 독립 검토 증거 부재)|
+
+병목은 승인 절차가 막힌 것이 아니라 **승인에 올릴 재료가 없는 것**이다. 순서는 QUALITY 승인자 지정 → 코퍼스 확보와 human-label → 항목별 판정·샘플 정책 확정이다.
+
+### 5. P6 착수 가능 여부
+
+P6는 KANBAN의 "수집/운영/Pilot"이며 PRD `Phase 2: Operations`에 해당한다. 항목별로 성격이 다르므로 그대로 착수하면 안 된다.
+
+|P6 항목|상태|근거|
+|---|---|---|
+|Feature Flag|**이미 완료**|FR-NCR-004로 5개 모듈 플래그와 불변식 보호가 구현됨. 재작업 불필요|
+|부적합 후속조치|**착수 가능**|NCR 스키마·API·UI가 이미 있어 그 위에 확장하면 된다. 새 승인 불필요|
+|Raw Data / 통합 보고서 / 통계|**착수 가능**|기존 합성 데이터 위에서 구현 가능. 새 승인 불필요|
+|OCR 운영 모니터링|**부분 착수 가능**|로컬 OCR 파이프라인과 preflight가 이미 있어 관측·지표 수집은 가능하다. 단 KPI 임계값 판정은 FR-OCR-005 KPI가 미승인이므로 임계값을 만들지 말 것|
+|마스터 Import|**금지**|실데이터 apply/import는 계속 미승인. AP-05의 실 PDF/XLSX 정책도 유효|
+|NAS / Google Drive 자동 수집|**금지**|외부 NAS/Drive/ERP 호출은 계속 미승인. 별도 승인 없이는 착수 불가|
+
+**P5 미완료 5행이 P6 착수를 막지는 않는다.** 다만 FR-OCR-001이 미승인이므로 OCR 품질 KPI를 P6에서 확정된 것처럼 다루면 안 된다.
+
+### 6. P6가 반드시 보존해야 할 불변식
+
+- OCR/추출 결과는 후보일 뿐이며 사람 확인 전 확정 금지. 누락·미매핑·저신뢰·internal incomplete는 fail closed
+- 별칭은 후보 추천 전용이며 매칭을 자동 확정하지 않는다. 전역 승격은 FR-MAP-003 승인 전까지 금지이며 스키마에 그 여지를 만들지 말 것
+- 승인 권한은 LEAD이며 ADMIN은 비승인권(AP-04). NCR 승인도 DB CHECK와 API 403 이중으로 강제됨
+- finalized evidence와 APPROVED 부적합은 DB에서 불변. disposition 마스터는 DELETE 불가이며 비활성화만 가능
+- 모듈 feature flag로 위 불변식을 끌 수 없다. 플래그는 `module_exposure.py`의 노출 계층에 격리되어 있고 32개 조합 회귀가 이를 지킨다
+- 공개 Vercel 데모는 frontend-only 합성 경계이며 backend/DB/worker/OCR/모델/원본 문서는 사내망 전용이다
+
+### 7. P6 착수 전 알아야 할 환경·운영 사실
+
+- `make p3-e2e`는 이 체크아웃 경로에 비ASCII 문자가 있어 Docker bake가 실패하므로 `COMPOSE_BAKE=false make p3-e2e`로 실행한다
+- `make p4-local-ocr-preflight`는 모델 아티팩트가 부트스트랩되지 않아 `LOCAL_OCR_MODEL_MISSING`으로 **정상적으로 fail closed** 된다. 실제 실행에는 `make local-ocr-bootstrap`이 필요하며 이는 모델 아카이브를 내려받는다
+- `contracts/openapi.json`을 재생성하면 `frontend/src/lib/api/generated.ts`도 함께 재생성해야 `make contracts-check`가 통과한다
+- `scripts/scan_secrets.py`의 `APPROVED_FIXTURES`에 등재된 파일을 수정하면 SHA-256 다이제스트를 갱신해야 한다. 갱신 없이 커밋하면 `make check`가 깨진다
+- 이 저장소는 도메인 불변식을 마이그레이션 23곳에서 `RAISE EXCEPTION`으로 강제하며 PostgreSQL이 여기에 SQLSTATE `P0001`을 부여한다. 광범위한 `DBAPIError`를 통째로 409로 매핑하면 연결 끊김·타임아웃 같은 인프라 장애가 업무 충돌로 위장되어 무의미한 재시도를 유발하고 장애를 은폐한다. `routes/nonconformances.py`의 `_is_domain_invariant_violation` 헬퍼를 재사용해 `P0001`만 409로 좁힐 것
+- 여러 에이전트 CLI가 하나의 worktree를 공유하면 위험하다. 이 저장소에서 실제로 두 차례 `git checkout`/`restore`로 승인된 작업이 파괴됐다. 워커별 worktree를 분리하거나 브리프에서 Git 상태 변경을 금지할 것
+
+### 8. 계속 금지
+
+실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP 호출, production/비일회성 migration, production DB-role activation, release·production readiness 선언. 이 인계 문서 자체는 어떤 승인 권한도 부여하지 않는다.
+
+### 9. 최종 검증 상태
+
+최종 트리(`9a1d5fb`) 기준 `make check` exit 0 (Ruff, strict mypy 77 files/0 errors, backend `705 passed, 160 deselected`, frontend Vitest `61 passed`/8 files 및 Next production build, migration contract 4, scans, Compose), `make p2-postgres-check` 18, `make p3-postgres-check` 125, `make p4-golden-check` 199, `make p4-preflight-check` 97, Docker 잔여 0/0/0. Playwright E2E는 이번 P5 증분에서 재실행하지 않았다.
+
+---
+
+# P4 local-only OCR accepted delivery handoff (이전 증분, 역사적 증거)
 
 ## 2026-08-03 active handoff
 
