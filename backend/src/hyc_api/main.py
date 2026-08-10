@@ -30,6 +30,7 @@ from hyc_api.routes.inspections import router as inspections_router
 from hyc_api.routes.intakes import router as intakes_router
 from hyc_api.routes.lots import router as lots_router
 from hyc_api.routes.masters import router as masters_router
+from hyc_api.routes.nonconformances import router as nonconformances_router
 from hyc_api.routes.specs import router as specs_router
 
 LocalOcrProviderFactory = Callable[[Settings], ExtractionProvider]
@@ -107,7 +108,7 @@ def create_app(
         allow_origin_regex=(
             r"^http://(?:127\.0\.0\.1|localhost)(?::\d+)?$" if settings.p3_fixture_mode else None
         ),
-        allow_methods=["GET", "POST", "PUT", "OPTIONS"],
+        allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         allow_headers=["*"],
     )
 
@@ -192,6 +193,7 @@ def create_app(
     app.include_router(lots_router)
     app.include_router(masters_router)
     app.include_router(specs_router)
+    app.include_router(nonconformances_router)
     app.include_router(feature_flags_router)
 
     return app

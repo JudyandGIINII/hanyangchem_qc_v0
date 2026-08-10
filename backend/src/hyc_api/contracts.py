@@ -479,6 +479,71 @@ class SpecVersionResponse(APIRequestModel):
     updated_at: datetime
 
 
+class NonconformanceDispositionResponse(APIRequestModel):
+    id: UUID
+    code: str
+    name: str
+    active: bool
+    sort_order: int
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class NonconformanceCreateRequest(APIRequestModel):
+    ncr_number: Annotated[str, Field(min_length=1, max_length=64)]
+    inspection_case_id: UUID
+    spec_item_id: UUID | None = None
+    severity: Literal["MAJOR", "MINOR"] | None = None
+    quantity: DecimalString
+    description: str | None = None
+    cause: str | None = None
+    disposition_id: UUID | None = None
+    target_completion_date: date | None = None
+    completion_date: date | None = None
+    status: Literal["DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "CLOSED"] = "DRAFT"
+    retest_case_id: UUID | None = None
+
+
+class NonconformanceUpdateRequest(NonconformanceCreateRequest):
+    pass
+
+
+class NonconformanceResponse(APIRequestModel):
+    id: UUID
+    ncr_number: str
+    inspection_case_id: UUID
+    spec_item_id: UUID | None
+    severity: Literal["MAJOR", "MINOR"] | None
+    quantity: DecimalString
+    description: str | None
+    cause: str | None
+    disposition_id: UUID | None
+    disposition_snapshot: dict[str, object] | None
+    target_completion_date: date | None
+    completion_date: date | None
+    status: Literal["DRAFT", "SUBMITTED", "APPROVED", "REJECTED", "CLOSED"]
+    retest_case_id: UUID | None
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class NonconformanceApprovalResponse(APIRequestModel):
+    id: UUID
+    nonconformance_id: UUID
+    actor_id: UUID
+    actor_role: Literal["LEAD"]
+    action: Literal["APPROVE", "REJECT"]
+    created_at: datetime
+
+
+class NonconformanceAttachmentResponse(APIRequestModel):
+    id: UUID
+    nonconformance_id: UUID
+    document_id: UUID
+
+
 class ModuleFeatureFlagsResponse(APIRequestModel):
     ncr_report_module_enabled: bool
     ncr_approver_module_enabled: bool

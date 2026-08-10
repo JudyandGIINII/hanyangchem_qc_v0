@@ -1119,3 +1119,28 @@ FR-MAP-001 표준 항목 별칭 was excluded to keep one concern per migration a
 ### P5 status
 
 Nine of the 21 P5-tagged rows are now implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, FR-NCR-004, FR-NCR-001, and FR-NCR-002, with FR-INT-006 satisfied at the storage level by the attachment link. FR-NCR-003 is satisfied by pre-existing lineage. Still open: NCR API routes and UI, FR-MAP-001, FR-APR-003, and the QUALITY-gated FR-SPEC-003, FR-SPEC-007, FR-MAP-003, FR-OCR-001, plus FR-INT-003 which shares the FR-SPEC-007 gate. P5 is not complete.
+
+## 2026-08-10 — P5 fifth increment: NCR API routes and UI
+
+### Implemented
+
+`backend/src/hyc_api/routes/nonconformances.py` exposes the NCR surface over the schema from `20260810_0005`, following the `routes/masters.py` and `routes/specs.py` conventions for row locks, `If-Match` optimistic locking, 409 mapping, and soft-delete handling: `GET /nonconformance-dispositions` with an `include_inactive` flag so deactivated values stay visible for historical records, list/get/create/update for `/nonconformances`, `POST /{id}/approve` and `/reject`, and `POST`/`DELETE /{id}/attachments/{document_id}`.
+
+Two rules are enforced in the API rather than left to the database alone. Approve and reject call `require_role(principal, "LEAD")` and return 403 for any other role, so AP-04's ADMIN non-approval principle does not depend solely on the `ck_nonconformance_approvals_actor_role_lead` CHECK. On create, `disposition_snapshot` captures the referenced disposition's code and name at that moment, so a later rename or deactivation of the master cannot retroactively change what a historical record meant.
+
+`frontend/src/components/nonconformance/NonconformanceWorkspace.tsx` and `frontend/src/lib/api/nonconformance.ts` provide the UI, reusing the transport already used by `master-data.ts`. It renders the disposition from each record's stored snapshot rather than the live master list, renders a placeholder when the optional `severity` is absent, disables editing once status is `APPROVED`, and surfaces 403 and 409 as readable messages. The bootstrap effect returns early on `canUseBackend(publicDemo)` and renders synthetic rows instead, preserving the public demo boundary.
+
+### Defect found and fixed during review
+
+The delivered `_commit` helper caught bare `DBAPIError` and mapped it to 409. `DBAPIError` is SQLAlchemy's broad base class, so connection loss, timeouts, and other infrastructure faults would have been reported to clients as a business conflict — inviting a pointless retry, hiding real outages from monitoring, and contradicting the fail-closed posture this repository maintains elsewhere.
+
+This repository raises every trigger-enforced domain invariant with a bare `RAISE EXCEPTION`, which PostgreSQL assigns SQLSTATE `P0001`; there are 23 such sites across the migrations. No prior convention existed for translating them, since this is the first route to encounter one. The helper now narrows to `P0001` via `_is_domain_invariant_violation` and re-raises everything else, so an intentional rule violation becomes 409 while an infrastructure fault keeps propagating.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 74 source files/0 errors, backend `705 passed, 157 deselected`, frontend Vitest `54 passed` across 7 files (up from 47) plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`.
+- `make p2-postgres-check` 18 passed; `make p3-postgres-check` **122 passed** (up from 118, the four NCR API tests); `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+
+### P5 status
+
+Ten of the 21 P5-tagged rows are implemented, with FR-NCR-001 and FR-NCR-002 now complete through API and UI, FR-NCR-003 satisfied by pre-existing lineage, and FR-INT-006 satisfied at the storage and link level. Still open: FR-MAP-001 and FR-APR-003, plus the QUALITY-gated FR-SPEC-003, FR-SPEC-007, FR-MAP-003, FR-OCR-001 and the FR-INT-003 row that shares the FR-SPEC-007 gate. P5 is not complete.

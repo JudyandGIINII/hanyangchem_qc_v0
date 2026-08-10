@@ -1282,6 +1282,586 @@
         "title": "ModuleFeatureFlagsResponse",
         "type": "object"
       },
+      "NonconformanceApprovalResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "action": {
+            "enum": [
+              "APPROVE",
+              "REJECT"
+            ],
+            "title": "Action",
+            "type": "string"
+          },
+          "actor_id": {
+            "format": "uuid",
+            "title": "Actor Id",
+            "type": "string"
+          },
+          "actor_role": {
+            "const": "LEAD",
+            "title": "Actor Role",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nonconformance_id": {
+            "format": "uuid",
+            "title": "Nonconformance Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nonconformance_id",
+          "actor_id",
+          "actor_role",
+          "action",
+          "created_at"
+        ],
+        "title": "NonconformanceApprovalResponse",
+        "type": "object"
+      },
+      "NonconformanceAttachmentResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "document_id": {
+            "format": "uuid",
+            "title": "Document Id",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nonconformance_id": {
+            "format": "uuid",
+            "title": "Nonconformance Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "nonconformance_id",
+          "document_id"
+        ],
+        "title": "NonconformanceAttachmentResponse",
+        "type": "object"
+      },
+      "NonconformanceCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cause"
+          },
+          "completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completion Date"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disposition_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disposition Id"
+          },
+          "inspection_case_id": {
+            "format": "uuid",
+            "title": "Inspection Case Id",
+            "type": "string"
+          },
+          "ncr_number": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Ncr Number",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "retest_case_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retest Case Id"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MAJOR",
+                  "MINOR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "spec_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Item Id"
+          },
+          "status": {
+            "default": "DRAFT",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "APPROVED",
+              "REJECTED",
+              "CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Completion Date"
+          }
+        },
+        "required": [
+          "ncr_number",
+          "inspection_case_id",
+          "quantity"
+        ],
+        "title": "NonconformanceCreateRequest",
+        "type": "object"
+      },
+      "NonconformanceDispositionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lock_version": {
+            "title": "Lock Version",
+            "type": "integer"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "sort_order": {
+            "title": "Sort Order",
+            "type": "integer"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "active",
+          "sort_order",
+          "lock_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "NonconformanceDispositionResponse",
+        "type": "object"
+      },
+      "NonconformanceResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cause"
+          },
+          "completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completion Date"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disposition_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disposition Id"
+          },
+          "disposition_snapshot": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disposition Snapshot"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "inspection_case_id": {
+            "format": "uuid",
+            "title": "Inspection Case Id",
+            "type": "string"
+          },
+          "lock_version": {
+            "title": "Lock Version",
+            "type": "integer"
+          },
+          "ncr_number": {
+            "title": "Ncr Number",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "retest_case_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retest Case Id"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MAJOR",
+                  "MINOR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "spec_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Item Id"
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "APPROVED",
+              "REJECTED",
+              "CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Completion Date"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "ncr_number",
+          "inspection_case_id",
+          "spec_item_id",
+          "severity",
+          "quantity",
+          "description",
+          "cause",
+          "disposition_id",
+          "disposition_snapshot",
+          "target_completion_date",
+          "completion_date",
+          "status",
+          "retest_case_id",
+          "lock_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "NonconformanceResponse",
+        "type": "object"
+      },
+      "NonconformanceUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "cause": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cause"
+          },
+          "completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completion Date"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Description"
+          },
+          "disposition_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Disposition Id"
+          },
+          "inspection_case_id": {
+            "format": "uuid",
+            "title": "Inspection Case Id",
+            "type": "string"
+          },
+          "ncr_number": {
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Ncr Number",
+            "type": "string"
+          },
+          "quantity": {
+            "pattern": "^-?(?:0|[1-9][0-9]*)(?:\\.[0-9]+)?$",
+            "title": "Quantity",
+            "type": "string"
+          },
+          "retest_case_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Retest Case Id"
+          },
+          "severity": {
+            "anyOf": [
+              {
+                "enum": [
+                  "MAJOR",
+                  "MINOR"
+                ],
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Severity"
+          },
+          "spec_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Spec Item Id"
+          },
+          "status": {
+            "default": "DRAFT",
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "APPROVED",
+              "REJECTED",
+              "CLOSED"
+            ],
+            "title": "Status",
+            "type": "string"
+          },
+          "target_completion_date": {
+            "anyOf": [
+              {
+                "format": "date",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Completion Date"
+          }
+        },
+        "required": [
+          "ncr_number",
+          "inspection_case_id",
+          "quantity"
+        ],
+        "title": "NonconformanceUpdateRequest",
+        "type": "object"
+      },
       "ReviewRequest": {
         "additionalProperties": false,
         "properties": {
@@ -3010,6 +3590,474 @@
         "summary": "Update Material",
         "tags": [
           "p5-masters"
+        ]
+      }
+    },
+    "/api/v1/nonconformance-dispositions": {
+      "get": {
+        "operationId": "list_dispositions_api_v1_nonconformance_dispositions_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "include_inactive",
+            "required": false,
+            "schema": {
+              "default": false,
+              "title": "Include Inactive",
+              "type": "boolean"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NonconformanceDispositionResponse"
+                  },
+                  "title": "Response List Dispositions Api V1 Nonconformance Dispositions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Dispositions",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances": {
+      "get": {
+        "operationId": "list_nonconformances_api_v1_nonconformances_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NonconformanceResponse"
+                  },
+                  "title": "Response List Nonconformances Api V1 Nonconformances Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Nonconformances",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      },
+      "post": {
+        "operationId": "create_nonconformance_api_v1_nonconformances_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NonconformanceCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Nonconformance",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances/{nonconformance_id}": {
+      "get": {
+        "operationId": "get_nonconformance_api_v1_nonconformances__nonconformance_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Nonconformance",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      },
+      "put": {
+        "operationId": "update_nonconformance_api_v1_nonconformances__nonconformance_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NonconformanceUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Nonconformance",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances/{nonconformance_id}/approve": {
+      "post": {
+        "operationId": "approve_nonconformance_api_v1_nonconformances__nonconformance_id__approve_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceApprovalResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Approve Nonconformance",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances/{nonconformance_id}/attachments/{document_id}": {
+      "delete": {
+        "operationId": "delete_attachment_api_v1_nonconformances__nonconformance_id__attachments__document_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Attachment",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      },
+      "post": {
+        "operationId": "add_attachment_api_v1_nonconformances__nonconformance_id__attachments__document_id__post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "document_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Document Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceAttachmentResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Add Attachment",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances/{nonconformance_id}/reject": {
+      "post": {
+        "operationId": "reject_nonconformance_api_v1_nonconformances__nonconformance_id__reject_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceApprovalResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Reject Nonconformance",
+        "tags": [
+          "p5-nonconformances"
         ]
       }
     },
