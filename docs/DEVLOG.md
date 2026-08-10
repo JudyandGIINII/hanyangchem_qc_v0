@@ -1144,3 +1144,36 @@ This repository raises every trigger-enforced domain invariant with a bare `RAIS
 ### P5 status
 
 Ten of the 21 P5-tagged rows are implemented, with FR-NCR-001 and FR-NCR-002 now complete through API and UI, FR-NCR-003 satisfied by pre-existing lineage, and FR-INT-006 satisfied at the storage and link level. Still open: FR-MAP-001 and FR-APR-003, plus the QUALITY-gated FR-SPEC-003, FR-SPEC-007, FR-MAP-003, FR-OCR-001 and the FR-INT-003 row that shares the FR-SPEC-007 gate. P5 is not complete.
+
+## 2026-08-10 — P5 sixth increment: FR-MAP-001 aliases and FR-APR-003 return, the last non-gated rows
+
+### Two separate migrations
+
+`20260810_0006` adds aliases and `20260810_0007` adds return-reason history, kept as separate revisions so either can roll back independently, both written as pure DDL under the migration contract. `check_migrations.py` was updated to the new head.
+
+### FR-MAP-001 표준 항목 별칭
+
+`standard_test_item_aliases` carries `standard_test_item_id`, `alias_text`, optional `supplier_id`/`material_id`/`model_id` forming the same optional scope pattern `spec_profiles` already uses, an integer `priority`, `active`, and the `Versioned` columns. Duplicate `alias_text` within an identical scope is rejected while the same text in a different scope is allowed, and lookup ordering is deterministic by priority then text.
+
+Deliberately absent: any column expressing global promotion, auto-approval, learned or confidence-weighted behavior. FR-MAP-003 학습형 운영 is QUALITY-approval-gated, so the schema leaves no room for it. Aliases are lookup candidates that never auto-confirm a mapping, preserving the standing invariant that human confirmation precedes finalization. The UI states this explicitly — 후보 추천 전용 · 수동 확정 필요 — and a test asserts the UI never labels an alias as confirmed or auto-applied.
+
+### FR-APR-003 반려
+
+PRD requires 반려 사유는 필수이며 수정 대상 항목을 지정할 수 있다. 검사자는 수정 후 재제출한다. Because an inspection can be returned, resubmitted, and returned again, this is modelled as the append-only history table `inspection_return_reasons` rather than a column, with `reason TEXT NOT NULL` so the mandatory reason is enforced by the database rather than by validation code alone. `POST /api/v1/inspections/{id}/return` is LEAD-only with 403 otherwise, 422 on a missing reason, and moves the case to `RETURNED` so the inspector can fix and resubmit. Tests cover return, resubmit, and return again persisting as separate history rows.
+
+The new routes reuse the narrow `P0001`-only `DBAPIError` mapping introduced in the previous increment rather than re-catching the broad base class.
+
+### Frontend
+
+`frontend/src/lib/api/standard-aliases.ts` and a `standard-aliases` workspace provide alias management, and the return control was added to the inspection review UI. Absent alias scope renders a 전체 범위 placeholder rather than `null`; the return submit control stays disabled until a non-empty reason is entered; 403 and 422 surface as readable permission and validation messages. Every fetch is guarded by `canUseBackend`, and tests assert zero fetch calls when `publicDemo=true` with a `publicDemo=false` positive control.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 77 source files/0 errors, backend `705 passed, 160 deselected`, frontend Vitest `61 passed` across 8 files (up from 54) plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`.
+- `make p2-postgres-check` 18 passed; `make p3-postgres-check` **125 passed** (up from 122); `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+
+### P5 status — non-gated work is complete
+
+Twelve of the 21 P5-tagged rows are implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, FR-NCR-001/002/004, FR-MAP-001, FR-APR-003, plus FR-INT-006 satisfied through the attachment link. FR-NCR-003 is satisfied by pre-existing lineage, and FR-JDG-004, FR-INT-001, FR-INT-002 appear satisfied by P2/P3 though their matrix citations need correcting.
+
+**Every remaining row is blocked on QUALITY or AP-02 approval, none on engineering.** FR-SPEC-003 needs QUALITY review, FR-SPEC-007 needs 항목 정책 QUALITY 승인, FR-MAP-003 needs QUALITY approval, FR-OCR-001 needs AP-02 plus a QUALITY benchmark and depends on the still-blocked P4-B/P4-C, and FR-INT-003 shares the FR-SPEC-007 gate because its sampling mechanism exists while per-item policy assignment does not. Both approval packets remain `PENDING / NOT APPROVED` with 49 and 60 unfilled fields and no named approver, and the local corpus is 4 candidate documents with 0 eligible. P5 is therefore **not complete**, and no further P5 progress is possible without human QUALITY decisions.

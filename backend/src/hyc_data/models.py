@@ -19,6 +19,7 @@ from sqlalchemy import (
     Text,
     UniqueConstraint,
     Uuid,
+    and_,
 )
 from sqlalchemy.engine.interfaces import Dialect
 from sqlalchemy.orm import DeclarativeBase, Mapped, declared_attr, mapped_column
@@ -156,6 +157,20 @@ class StandardTestItem(Base, Versioned):
     name: Mapped[str] = mapped_column(String(256), nullable=False)
     data_type: Mapped[str] = mapped_column(String(32), nullable=False)
     default_unit: Mapped[str | None] = mapped_column(String(32))
+
+
+class StandardTestItemAlias(Base, Versioned):
+    __tablename__ = "standard_test_item_aliases"
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    standard_test_item_id: Mapped[UUID] = mapped_column(
+        ForeignKey("standard_test_items.id"), nullable=False
+    )
+    alias_text: Mapped[str] = mapped_column(String(256), nullable=False)
+    supplier_id: Mapped[UUID | None] = mapped_column(ForeignKey("suppliers.id"))
+    material_id: Mapped[UUID | None] = mapped_column(ForeignKey("materials.id"))
+    model_id: Mapped[UUID | None] = mapped_column(ForeignKey("material_models.id"))
+    priority: Mapped[int] = mapped_column(Integer, nullable=False)
+    active: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class SpecItem(Base, Versioned):
@@ -458,6 +473,21 @@ class InspectionCase(Base, Versioned):
     spec_snapshot: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
 
 
+class InspectionReturnReason(Base):
+    __tablename__ = "inspection_return_reasons"
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    inspection_case_id: Mapped[UUID] = mapped_column(
+        ForeignKey("inspection_cases.id"), nullable=False
+    )
+    reason: Mapped[str] = mapped_column(Text, nullable=False)
+    target_spec_item_id: Mapped[UUID | None] = mapped_column(ForeignKey("spec_items.id"))
+    returned_by_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
 class SupplierResult(Base, Versioned):
     __tablename__ = "supplier_results"
     __table_args__ = (
@@ -744,6 +774,103 @@ class IdempotencyKey(Base):
 
 Index("ix_documents_checksum_sha256", Document.checksum_sha256)
 Index("ix_decision_snapshots_content_hash", DecisionSnapshotRow.content_hash)
+for name, columns, predicate in (
+    (
+        "uq_standard_alias_scope_000",
+        (StandardTestItemAlias.alias_text,),
+        and_(
+            StandardTestItemAlias.supplier_id.is_(None),
+            StandardTestItemAlias.material_id.is_(None),
+            StandardTestItemAlias.model_id.is_(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_100",
+        (StandardTestItemAlias.alias_text, StandardTestItemAlias.supplier_id),
+        and_(
+            StandardTestItemAlias.supplier_id.is_not(None),
+            StandardTestItemAlias.material_id.is_(None),
+            StandardTestItemAlias.model_id.is_(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_010",
+        (StandardTestItemAlias.alias_text, StandardTestItemAlias.material_id),
+        and_(
+            StandardTestItemAlias.supplier_id.is_(None),
+            StandardTestItemAlias.material_id.is_not(None),
+            StandardTestItemAlias.model_id.is_(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_001",
+        (StandardTestItemAlias.alias_text, StandardTestItemAlias.model_id),
+        and_(
+            StandardTestItemAlias.supplier_id.is_(None),
+            StandardTestItemAlias.material_id.is_(None),
+            StandardTestItemAlias.model_id.is_not(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_110",
+        (
+            StandardTestItemAlias.alias_text,
+            StandardTestItemAlias.supplier_id,
+            StandardTestItemAlias.material_id,
+        ),
+        and_(
+            StandardTestItemAlias.supplier_id.is_not(None),
+            StandardTestItemAlias.material_id.is_not(None),
+            StandardTestItemAlias.model_id.is_(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_101",
+        (
+            StandardTestItemAlias.alias_text,
+            StandardTestItemAlias.supplier_id,
+            StandardTestItemAlias.model_id,
+        ),
+        and_(
+            StandardTestItemAlias.supplier_id.is_not(None),
+            StandardTestItemAlias.material_id.is_(None),
+            StandardTestItemAlias.model_id.is_not(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_011",
+        (
+            StandardTestItemAlias.alias_text,
+            StandardTestItemAlias.material_id,
+            StandardTestItemAlias.model_id,
+        ),
+        and_(
+            StandardTestItemAlias.supplier_id.is_(None),
+            StandardTestItemAlias.material_id.is_not(None),
+            StandardTestItemAlias.model_id.is_not(None),
+        ),
+    ),
+    (
+        "uq_standard_alias_scope_111",
+        (
+            StandardTestItemAlias.alias_text,
+            StandardTestItemAlias.supplier_id,
+            StandardTestItemAlias.material_id,
+            StandardTestItemAlias.model_id,
+        ),
+        and_(
+            StandardTestItemAlias.supplier_id.is_not(None),
+            StandardTestItemAlias.material_id.is_not(None),
+            StandardTestItemAlias.model_id.is_not(None),
+        ),
+    ),
+):
+    Index(name, *columns, unique=True, postgresql_where=predicate, sqlite_where=predicate)
+Index(
+    "ix_standard_test_item_alias_lookup_order",
+    StandardTestItemAlias.priority,
+    StandardTestItemAlias.alias_text,
+)
 Index(
     "uq_document_section_one_confirmed_allocation",
     DocumentAllocationLink.document_section_id,

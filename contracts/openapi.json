@@ -620,6 +620,33 @@
         "title": "InspectionResponse",
         "type": "object"
       },
+      "InspectionReturnRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "reason": {
+            "minLength": 1,
+            "title": "Reason",
+            "type": "string"
+          },
+          "target_spec_item_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Target Spec Item Id"
+          }
+        },
+        "required": [
+          "reason"
+        ],
+        "title": "InspectionReturnRequest",
+        "type": "object"
+      },
       "IntakeRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2232,6 +2259,234 @@
         "title": "SpecVersionUpdateRequest",
         "type": "object"
       },
+      "StandardTestItemAliasCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "alias_text": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Alias Text",
+            "type": "string"
+          },
+          "material_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material Id"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "standard_test_item_id": {
+            "format": "uuid",
+            "title": "Standard Test Item Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id"
+          }
+        },
+        "required": [
+          "standard_test_item_id",
+          "alias_text",
+          "priority"
+        ],
+        "title": "StandardTestItemAliasCreateRequest",
+        "type": "object"
+      },
+      "StandardTestItemAliasResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "alias_text": {
+            "title": "Alias Text",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "lock_version": {
+            "title": "Lock Version",
+            "type": "integer"
+          },
+          "material_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material Id"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "standard_test_item_id": {
+            "format": "uuid",
+            "title": "Standard Test Item Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "title": "Updated At",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "standard_test_item_id",
+          "alias_text",
+          "supplier_id",
+          "material_id",
+          "model_id",
+          "priority",
+          "active",
+          "lock_version",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "StandardTestItemAliasResponse",
+        "type": "object"
+      },
+      "StandardTestItemAliasUpdateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "active": {
+            "default": true,
+            "title": "Active",
+            "type": "boolean"
+          },
+          "alias_text": {
+            "maxLength": 256,
+            "minLength": 1,
+            "title": "Alias Text",
+            "type": "string"
+          },
+          "material_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material Id"
+          },
+          "model_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Id"
+          },
+          "priority": {
+            "title": "Priority",
+            "type": "integer"
+          },
+          "standard_test_item_id": {
+            "format": "uuid",
+            "title": "Standard Test Item Id",
+            "type": "string"
+          },
+          "supplier_id": {
+            "anyOf": [
+              {
+                "format": "uuid",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Id"
+          }
+        },
+        "required": [
+          "standard_test_item_id",
+          "alias_text",
+          "priority"
+        ],
+        "title": "StandardTestItemAliasUpdateRequest",
+        "type": "object"
+      },
       "SupplierCreateRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2985,6 +3240,75 @@
           }
         },
         "summary": "Retest",
+        "tags": [
+          "p3-inspections"
+        ]
+      }
+    },
+    "/api/v1/inspections/{inspection_id}/return": {
+      "post": {
+        "operationId": "return_case_api_v1_inspections__inspection_id__return_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "inspection_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Inspection Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InspectionReturnRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InspectionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Return Case",
         "tags": [
           "p3-inspections"
         ]
@@ -4558,6 +4882,327 @@
         "summary": "Retire Version",
         "tags": [
           "p5-specs"
+        ]
+      }
+    },
+    "/api/v1/standard-test-item-aliases": {
+      "get": {
+        "operationId": "list_aliases_api_v1_standard_test_item_aliases_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StandardTestItemAliasResponse"
+                  },
+                  "title": "Response List Aliases Api V1 Standard Test Item Aliases Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Aliases",
+        "tags": [
+          "p5-aliases"
+        ]
+      },
+      "post": {
+        "operationId": "create_alias_api_v1_standard_test_item_aliases_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandardTestItemAliasCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardTestItemAliasResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Alias",
+        "tags": [
+          "p5-aliases"
+        ]
+      }
+    },
+    "/api/v1/standard-test-item-aliases/lookup": {
+      "get": {
+        "operationId": "lookup_aliases_api_v1_standard_test_item_aliases_lookup_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "alias_text",
+            "required": true,
+            "schema": {
+              "title": "Alias Text",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "supplier_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Supplier Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "material_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Material Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "model_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "format": "uuid",
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Model Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/StandardTestItemAliasResponse"
+                  },
+                  "title": "Response Lookup Aliases Api V1 Standard Test Item Aliases Lookup Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lookup Aliases",
+        "tags": [
+          "p5-aliases"
+        ]
+      }
+    },
+    "/api/v1/standard-test-item-aliases/{alias_id}": {
+      "delete": {
+        "operationId": "delete_alias_api_v1_standard_test_item_aliases__alias_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alias_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Alias Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete Alias",
+        "tags": [
+          "p5-aliases"
+        ]
+      },
+      "get": {
+        "operationId": "get_alias_api_v1_standard_test_item_aliases__alias_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alias_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Alias Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardTestItemAliasResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Alias",
+        "tags": [
+          "p5-aliases"
+        ]
+      },
+      "put": {
+        "operationId": "update_alias_api_v1_standard_test_item_aliases__alias_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "alias_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Alias Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "header",
+            "name": "If-Match",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "If-Match"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StandardTestItemAliasUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StandardTestItemAliasResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update Alias",
+        "tags": [
+          "p5-aliases"
         ]
       }
     },

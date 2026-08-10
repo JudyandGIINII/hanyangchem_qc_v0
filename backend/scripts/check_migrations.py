@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260810_0005"
+EXPECTED_MIGRATION_HEAD = "20260810_0007"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -74,6 +74,7 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "idempotency_keys",
         "inbound_receipts",
         "inspection_cases",
+        "inspection_return_reasons",
         "internal_results",
         "lot_merge_approvals",
         "material_lots",
@@ -90,6 +91,7 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "spec_profiles",
         "spec_versions",
         "standard_test_items",
+        "standard_test_item_aliases",
         "supplier_results",
         "suppliers",
     }

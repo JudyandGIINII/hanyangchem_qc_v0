@@ -27,6 +27,7 @@ from hyc_data.models import (
     IdempotencyKey,
     InboundReceipt,
     InspectionCase,
+    InspectionReturnReason,
     InternalResult,
     MaterialLot,
     ReceiptLotAllocation,
@@ -1000,22 +1001,14 @@ def approve_inspection(
     if case is None:
         raise HTTPException(status_code=404, detail="Inspection not found")
     if action == "RETURN":
-        if not reason or not reason.strip():
-            raise HTTPException(status_code=422, detail="Return requires a reason")
-        if case.lock_version != expected_version or case.status != "LEAD_REVIEW":
-            raise HTTPException(status_code=409, detail="Stale inspection version/state")
-        case.status = "RETURNED"
-        session.add(
-            AuditLog(
-                entity_type="inspection_case",
-                entity_id=case.id,
-                action="P3_RETURNED",
-                reason=reason,
-                payload={"actor_id": str(principal.actor_id)},
-            )
+        return return_inspection(
+            session,
+            case=case,
+            expected_version=expected_version,
+            principal=principal,
+            reason=reason,
+            target_spec_item_id=None,
         )
-        session.flush()
-        return case
     try:
         finalized = ApprovalRepository().finalize(
             session,
@@ -1040,6 +1033,49 @@ def approve_inspection(
             else 422
         )
         raise HTTPException(status_code=status, detail=str(error)) from error
+
+
+def return_inspection(
+    session: Session,
+    *,
+    case: InspectionCase,
+    expected_version: int,
+    principal: Principal,
+    reason: str | None,
+    target_spec_item_id: UUID | None,
+) -> InspectionCase:
+    if not reason or not reason.strip():
+        raise HTTPException(status_code=422, detail="Return requires a reason")
+    if case.lock_version != expected_version or case.status != "LEAD_REVIEW":
+        raise HTTPException(status_code=409, detail="Stale inspection version/state")
+    if target_spec_item_id is not None:
+        target = session.get(SpecItem, target_spec_item_id)
+        if target is None or target.spec_version_id != case.spec_version_id:
+            raise HTTPException(status_code=422, detail="Return target spec item is invalid")
+    case.status = "RETURNED"
+    session.add(
+        InspectionReturnReason(
+            inspection_case_id=case.id,
+            reason=reason,
+            target_spec_item_id=target_spec_item_id,
+            returned_by_id=principal.actor_id,
+            actor_role=principal.role,
+        )
+    )
+    session.add(
+        AuditLog(
+            entity_type="inspection_case",
+            entity_id=case.id,
+            action="P3_RETURNED",
+            reason=reason,
+            payload={
+                "actor_id": str(principal.actor_id),
+                "target_spec_item_id": str(target_spec_item_id) if target_spec_item_id else None,
+            },
+        )
+    )
+    session.flush()
+    return case
 
 
 def clone_lineage(

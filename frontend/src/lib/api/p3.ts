@@ -117,3 +117,11 @@ export async function createLineage(sessionHandle: string, inspection: Inspectio
 export async function getTrace(sessionHandle: string, lotId: string) {
   return (await apiRequest<LotTrace>(`/api/v1/lots/${lotId}/trace`, {}, sessionHandle)).body;
 }
+
+export async function returnInspection(sessionHandle: string, inspectionId: string, lockVersion: number, reason: string) {
+  return (await apiRequest<Inspection>(`/api/v1/inspections/${inspectionId}/return`, {
+    method: "POST",
+    headers: { ...jsonHeaders, "If-Match": String(lockVersion) },
+    body: JSON.stringify({ reason }),
+  }, sessionHandle)).body;
+}

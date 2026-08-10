@@ -24,6 +24,7 @@ from hyc_api.config import Settings
 from hyc_api.contracts import ErrorEnvelope, HealthEnvelope
 from hyc_api.dependencies import ReadinessDependencies
 from hyc_api.extraction import ExtractionProvider
+from hyc_api.routes.aliases import router as aliases_router
 from hyc_api.routes.documents import router as documents_router
 from hyc_api.routes.feature_flags import router as feature_flags_router
 from hyc_api.routes.inspections import router as inspections_router
@@ -193,6 +194,7 @@ def create_app(
     app.include_router(lots_router)
     app.include_router(masters_router)
     app.include_router(specs_router)
+    app.include_router(aliases_router)
     app.include_router(nonconformances_router)
     app.include_router(feature_flags_router)
 

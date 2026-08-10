@@ -479,6 +479,39 @@ class SpecVersionResponse(APIRequestModel):
     updated_at: datetime
 
 
+class StandardTestItemAliasCreateRequest(APIRequestModel):
+    standard_test_item_id: UUID
+    alias_text: Annotated[str, Field(min_length=1, max_length=256)]
+    supplier_id: UUID | None = None
+    material_id: UUID | None = None
+    model_id: UUID | None = None
+    priority: int
+    active: bool = True
+
+
+class StandardTestItemAliasUpdateRequest(StandardTestItemAliasCreateRequest):
+    pass
+
+
+class StandardTestItemAliasResponse(APIRequestModel):
+    id: UUID
+    standard_test_item_id: UUID
+    alias_text: str
+    supplier_id: UUID | None
+    material_id: UUID | None
+    model_id: UUID | None
+    priority: int
+    active: bool
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class InspectionReturnRequest(APIRequestModel):
+    reason: Annotated[str, Field(min_length=1)]
+    target_spec_item_id: UUID | None = None
+
+
 class NonconformanceDispositionResponse(APIRequestModel):
     id: UUID
     code: str

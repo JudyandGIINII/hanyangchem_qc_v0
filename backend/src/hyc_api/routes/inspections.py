@@ -4,17 +4,21 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.exc import StaleDataError
 
 from hyc_api.auth import require_principal, require_role
 from hyc_api.contracts import (
     ApprovalRequest,
     InspectionCreateRequest,
     InspectionResponse,
+    InspectionReturnRequest,
     InternalResultsRequest,
     LineageRequest,
 )
 from hyc_api.dependencies import database_session
+from hyc_api.routes.nonconformances import _is_domain_invariant_violation
 from hyc_api.services.p3 import (
     approve_inspection,
     clone_lineage,
@@ -25,6 +29,7 @@ from hyc_api.services.p3 import (
     require_idempotency_key,
     require_if_match,
     reserve_idempotency,
+    return_inspection,
     submit_inspection,
 )
 from hyc_data.models import InspectionCase
@@ -147,6 +152,45 @@ def approval(
     complete_idempotency(record, status=200, body=response, resource_ref=str(case.id))
     session.commit()
     return InspectionResponse.model_validate(response)
+
+
+@router.post("/inspections/{inspection_id}/return", response_model=InspectionResponse)
+def return_case(
+    request: Request,
+    inspection_id: UUID,
+    body: InspectionReturnRequest,
+    session: DBSession,
+    if_match: str | None = Header(default=None, alias="If-Match"),
+) -> InspectionResponse:
+    principal = require_principal(request)
+    require_role(principal, "LEAD")
+    try:
+        case = return_inspection(
+            session,
+            case=_case(session, inspection_id, lock=True),
+            expected_version=require_if_match(if_match),
+            principal=principal,
+            reason=body.reason,
+            target_spec_item_id=body.target_spec_item_id,
+        )
+        session.commit()
+    except StaleDataError as error:
+        session.rollback()
+        raise HTTPException(status_code=409, detail="Stale inspection version") from error
+    except IntegrityError as error:
+        session.rollback()
+        raise HTTPException(
+            status_code=409, detail="Inspection return conflicts with existing record"
+        ) from error
+    except DBAPIError as error:
+        session.rollback()
+        if not _is_domain_invariant_violation(error):
+            raise
+        raise HTTPException(
+            status_code=409, detail="Inspection return conflicts with existing record"
+        ) from error
+    session.refresh(case)
+    return InspectionResponse.model_validate(evaluate_inspection(session, case, persist=False))
 
 
 def _lineage(

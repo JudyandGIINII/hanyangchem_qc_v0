@@ -191,6 +191,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/inspections/{inspection_id}/return": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Return Case */
+        post: operations["return_case_api_v1_inspections__inspection_id__return_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/inspections/{inspection_id}/revisions": {
         parameters: {
             query?: never;
@@ -559,6 +576,60 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/standard-test-item-aliases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Aliases */
+        get: operations["list_aliases_api_v1_standard_test_item_aliases_get"];
+        put?: never;
+        /** Create Alias */
+        post: operations["create_alias_api_v1_standard_test_item_aliases_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/standard-test-item-aliases/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Lookup Aliases */
+        get: operations["lookup_aliases_api_v1_standard_test_item_aliases_lookup_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/standard-test-item-aliases/{alias_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Alias */
+        get: operations["get_alias_api_v1_standard_test_item_aliases__alias_id__get"];
+        /** Update Alias */
+        put: operations["update_alias_api_v1_standard_test_item_aliases__alias_id__put"];
+        post?: never;
+        /** Delete Alias */
+        delete: operations["delete_alias_api_v1_standard_test_item_aliases__alias_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/suppliers": {
         parameters: {
             query?: never;
@@ -887,6 +958,13 @@ export interface components {
             status: string;
             /** Version */
             version: number;
+        };
+        /** InspectionReturnRequest */
+        InspectionReturnRequest: {
+            /** Reason */
+            reason: string;
+            /** Target Spec Item Id */
+            target_spec_item_id?: string | null;
         };
         /** IntakeRequest */
         IntakeRequest: {
@@ -1501,6 +1579,89 @@ export interface components {
             /** Version */
             version: number;
         };
+        /** StandardTestItemAliasCreateRequest */
+        StandardTestItemAliasCreateRequest: {
+            /**
+             * Active
+             * @default true
+             */
+            active: boolean;
+            /** Alias Text */
+            alias_text: string;
+            /** Material Id */
+            material_id?: string | null;
+            /** Model Id */
+            model_id?: string | null;
+            /** Priority */
+            priority: number;
+            /**
+             * Standard Test Item Id
+             * Format: uuid
+             */
+            standard_test_item_id: string;
+            /** Supplier Id */
+            supplier_id?: string | null;
+        };
+        /** StandardTestItemAliasResponse */
+        StandardTestItemAliasResponse: {
+            /** Active */
+            active: boolean;
+            /** Alias Text */
+            alias_text: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Lock Version */
+            lock_version: number;
+            /** Material Id */
+            material_id: string | null;
+            /** Model Id */
+            model_id: string | null;
+            /** Priority */
+            priority: number;
+            /**
+             * Standard Test Item Id
+             * Format: uuid
+             */
+            standard_test_item_id: string;
+            /** Supplier Id */
+            supplier_id: string | null;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+        };
+        /** StandardTestItemAliasUpdateRequest */
+        StandardTestItemAliasUpdateRequest: {
+            /**
+             * Active
+             * @default true
+             */
+            active: boolean;
+            /** Alias Text */
+            alias_text: string;
+            /** Material Id */
+            material_id?: string | null;
+            /** Model Id */
+            model_id?: string | null;
+            /** Priority */
+            priority: number;
+            /**
+             * Standard Test Item Id
+             * Format: uuid
+             */
+            standard_test_item_id: string;
+            /** Supplier Id */
+            supplier_id?: string | null;
+        };
         /** SupplierCreateRequest */
         SupplierCreateRequest: {
             /**
@@ -1906,6 +2067,43 @@ export interface operations {
         responses: {
             /** @description Successful Response */
             201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InspectionResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    return_case_api_v1_inspections__inspection_id__return_post: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                inspection_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InspectionReturnRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2926,6 +3124,192 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["SpecVersionResponse"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_aliases_api_v1_standard_test_item_aliases_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardTestItemAliasResponse"][];
+                };
+            };
+        };
+    };
+    create_alias_api_v1_standard_test_item_aliases_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StandardTestItemAliasCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardTestItemAliasResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    lookup_aliases_api_v1_standard_test_item_aliases_lookup_get: {
+        parameters: {
+            query: {
+                alias_text: string;
+                supplier_id?: string | null;
+                material_id?: string | null;
+                model_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardTestItemAliasResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_alias_api_v1_standard_test_item_aliases__alias_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                alias_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardTestItemAliasResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_alias_api_v1_standard_test_item_aliases__alias_id__put: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                alias_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StandardTestItemAliasUpdateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StandardTestItemAliasResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_alias_api_v1_standard_test_item_aliases__alias_id__delete: {
+        parameters: {
+            query?: never;
+            header?: {
+                "If-Match"?: string | null;
+            };
+            path: {
+                alias_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {
