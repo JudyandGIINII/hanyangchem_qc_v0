@@ -1248,6 +1248,40 @@
         "title": "MaterialUpdateRequest",
         "type": "object"
       },
+      "ModuleFeatureFlagsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "ncr_approver_module_enabled": {
+            "title": "Ncr Approver Module Enabled",
+            "type": "boolean"
+          },
+          "ncr_attachment_module_enabled": {
+            "title": "Ncr Attachment Module Enabled",
+            "type": "boolean"
+          },
+          "ncr_completion_date_module_enabled": {
+            "title": "Ncr Completion Date Module Enabled",
+            "type": "boolean"
+          },
+          "ncr_report_module_enabled": {
+            "title": "Ncr Report Module Enabled",
+            "type": "boolean"
+          },
+          "ncr_retest_module_enabled": {
+            "title": "Ncr Retest Module Enabled",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "ncr_report_module_enabled",
+          "ncr_approver_module_enabled",
+          "ncr_retest_module_enabled",
+          "ncr_attachment_module_enabled",
+          "ncr_completion_date_module_enabled"
+        ],
+        "title": "ModuleFeatureFlagsResponse",
+        "type": "object"
+      },
       "ReviewRequest": {
         "additionalProperties": false,
         "properties": {
@@ -2002,6 +2036,27 @@
         "summary": "Review Document",
         "tags": [
           "p3-documents"
+        ]
+      }
+    },
+    "/api/v1/feature-flags": {
+      "get": {
+        "operationId": "feature_flags_api_v1_feature_flags_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ModuleFeatureFlagsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Feature Flags",
+        "tags": [
+          "p5-feature-flags"
         ]
       }
     },

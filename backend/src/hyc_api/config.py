@@ -14,7 +14,32 @@ class Settings(BaseSettings):
     redis_url: str = "redis://redis:6379/0"
     check_database_on_ready: bool = True
     check_redis_on_ready: bool = True
-    ncr_feature_enabled: bool = False
+    ncr_report_module_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("HYC_NCR_REPORT_MODULE_ENABLED", "NCR_REPORT_MODULE_ENABLED"),
+    )
+    ncr_approver_module_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "HYC_NCR_APPROVER_MODULE_ENABLED", "NCR_APPROVER_MODULE_ENABLED"
+        ),
+    )
+    ncr_retest_module_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("HYC_NCR_RETEST_MODULE_ENABLED", "NCR_RETEST_MODULE_ENABLED"),
+    )
+    ncr_attachment_module_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "HYC_NCR_ATTACHMENT_MODULE_ENABLED", "NCR_ATTACHMENT_MODULE_ENABLED"
+        ),
+    )
+    ncr_completion_date_module_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "HYC_NCR_COMPLETION_DATE_MODULE_ENABLED", "NCR_COMPLETION_DATE_MODULE_ENABLED"
+        ),
+    )
     request_timeout_seconds: float = Field(default=1.0, gt=0, le=10)
     p3_fixture_mode: bool = False
     p3_storage_root: str = "/tmp/hyc-p3-documents"

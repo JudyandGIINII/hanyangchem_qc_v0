@@ -479,6 +479,14 @@ class SpecVersionResponse(APIRequestModel):
     updated_at: datetime
 
 
+class ModuleFeatureFlagsResponse(APIRequestModel):
+    ncr_report_module_enabled: bool
+    ncr_approver_module_enabled: bool
+    ncr_retest_module_enabled: bool
+    ncr_attachment_module_enabled: bool
+    ncr_completion_date_module_enabled: bool
+
+
 def to_seoul_display(value: datetime) -> datetime:
     """Display-only conversion. Storage/API boundaries remain UTC."""
     if value.tzinfo is None:

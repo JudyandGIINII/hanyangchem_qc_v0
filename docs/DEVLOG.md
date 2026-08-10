@@ -1050,3 +1050,34 @@ Both rows again needed no new table and no migration, because P2 had already del
 ### P5 status
 
 Six of the 21 P5-tagged rows are now implemented: FR-MST-001, FR-MST-002, FR-MST-003, FR-MST-004, FR-MST-005, and FR-SPEC-002. Still open are FR-NCR-004 (feature flag module), FR-MAP-001 and FR-NCR-001/002/003 (all requiring new tables and an Alembic migration), FR-INT-006, FR-APR-003, and the re-confirmation rows FR-JDG-004 and FR-INT-001/002/003. The four QUALITY/AP-02-gated rows remain deliberately unimplemented. P5 is not complete.
+
+## 2026-08-10 — P5 third increment: FR-NCR-004 module feature flags, plus re-confirmation of four inherited rows
+
+### Implemented — FR-NCR-004
+
+`config.py` already declared `ncr_feature_enabled`, but it was a dead declaration: it was referenced nowhere in `backend/` or `frontend/` and was absent from `.env.example`. The PRD requires per-module control — 부적합 보고서, 승인자, 재검사, 첨부, 완료일 등의 세부 기능은 모듈별로 활성/비활성화할 수 있다 — so the single dead flag was replaced with five module flags, all defaulting to `False` so behavior is unchanged unless explicitly enabled: `ncr_report_module_enabled`, `ncr_approver_module_enabled`, `ncr_retest_module_enabled`, `ncr_attachment_module_enabled`, and `ncr_completion_date_module_enabled`, each with the existing `HYC_`-prefixed `AliasChoices` convention. The five variables were added to `.env.example`.
+
+The gate on this row is that an invariant guard must be impossible to disable. Two structural measures enforce it rather than merely asserting current behavior:
+
+- `backend/src/hyc_api/module_exposure.py` holds a frozen `ModuleExposureFlags` dataclass documented as UI exposure only. Flags are resolved there and exposed through a read-only `GET /api/v1/feature-flags`; they are never threaded into domain or DB guards.
+- `backend/tests/unit/test_feature_flags.py` enumerates **all 32 combinations** via `itertools.product((False, True), repeat=5)` and, for each, exercises the real domain engine to confirm the fail-closed invariants still hold: extraction output stays `review_required`, `HUMAN_REVIEW_REQUIRED`/`LOW_CONFIDENCE`/`MISSING_REQUIRED` reason codes still appear, and `evaluate_item` still returns `ON_HOLD` for unmapped and low-confidence input. A second test asserts the flag identifiers do not appear in the domain, approval, or evidence sources at all, so the confinement is checked structurally and not only behaviorally.
+
+A residual weakness worth recording: parts of that second test assert on source substrings such as `session.add_all`, which is the same formatting-brittle style previously closed as a public-demo minor. The identifier-absence assertions are robust to refactoring, but the substring assertions are not, and they should be replaced when that area is next touched.
+
+### Re-confirmation of FR-JDG-004, FR-INT-001, FR-INT-002, FR-INT-003
+
+A read-only investigation was delegated and then independently re-verified, which mattered: one cited symbol did not exist.
+
+- Verified directly: `test_internal_results_api.py`, cited by the matrix for FR-INT-002, **does not exist**. The real coverage lives in `test_vertical_slice.py` and `test_internal_substitute_hold.py`, both of which do exist, as do `inspection-hold.spec.ts`, `EngineDecision`, `WorkflowState`, and `SamplePolicy`.
+- Corrected: the worker cited `REQUIRED_INTERNAL_ITEM_CODES` in `services/p3.py` as the internal-test requirement symbol. That identifier **does not exist anywhere in the repository**. The actual mechanism is blocker-driven `INTERNAL_TEST_PENDING` status handling in `services/p3.py`.
+- `SamplePolicy` is a `StrEnum` already offering `ALL_SAMPLES_IN_SPEC`, `AVERAGE_IN_SPEC`, `WORST_CASE_IN_SPEC`, `MIN_IN_SPEC`, `MAX_IN_SPEC`, and `MANUAL`. So for FR-INT-003 the sampling *mechanism* exists while the *assignment* of a policy to a given item is exactly what FR-SPEC-007 gates behind QUALITY approval. Completing FR-INT-003 therefore cannot be done without QUALITY input and remains deliberately open.
+- The remaining per-row verdicts are recorded as reported-and-partly-verified rather than as established fact, because the matrix citations proved unreliable in two of four rows.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 72 source files/0 errors, backend `705 passed, 151 deselected` (up from 671, the 32 flag combinations included), frontend Vitest `47 passed` across 6 files plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`.
+- `make p2-postgres-check` 16 passed; `make p3-postgres-check` 118 passed; `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+
+### P5 status
+
+Seven of the 21 P5-tagged rows are implemented: FR-MST-001/002/003/004/005, FR-SPEC-002, and FR-NCR-004. FR-JDG-004, FR-INT-001, and FR-INT-002 appear already satisfied by P2/P3 but their matrix citations need correcting. Still open: FR-MAP-001 and FR-NCR-001/002/003, which all require new tables and an Alembic migration, plus FR-INT-006 and FR-APR-003. FR-INT-003 is blocked by the same QUALITY gate as FR-SPEC-007. The four QUALITY/AP-02-gated rows remain deliberately unimplemented, so P5 is not complete.

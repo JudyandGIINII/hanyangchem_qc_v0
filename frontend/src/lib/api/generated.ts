@@ -72,6 +72,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/feature-flags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Feature Flags */
+        get: operations["feature_flags_api_v1_feature_flags_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/fixtures/p3/context": {
         parameters: {
             query?: never;
@@ -1025,6 +1042,19 @@ export interface components {
             /** Name */
             name: string;
         };
+        /** ModuleFeatureFlagsResponse */
+        ModuleFeatureFlagsResponse: {
+            /** Ncr Approver Module Enabled */
+            ncr_approver_module_enabled: boolean;
+            /** Ncr Attachment Module Enabled */
+            ncr_attachment_module_enabled: boolean;
+            /** Ncr Completion Date Module Enabled */
+            ncr_completion_date_module_enabled: boolean;
+            /** Ncr Report Module Enabled */
+            ncr_report_module_enabled: boolean;
+            /** Ncr Retest Module Enabled */
+            ncr_retest_module_enabled: boolean;
+        };
         /** ReviewRequest */
         ReviewRequest: {
             /**
@@ -1365,6 +1395,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    feature_flags_api_v1_feature_flags_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ModuleFeatureFlagsResponse"];
                 };
             };
         };
