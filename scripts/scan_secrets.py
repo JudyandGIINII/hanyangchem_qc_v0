@@ -45,7 +45,7 @@ APPROVED_FIXTURES = {
         "60ab3f7e2fb14014257174ef47872bfaea4f046d9b33ca2cc9cf20aebb44ed5c"
     ),
     "backend/scripts/run_p2_postgres_tests.sh": (
-        "1aad16df84645c1b1eb9a39f590245d58e7b44e0d5327f8d509959c19d794cb6"
+        "8e8b0602458c5266434605c667ab8a64e96e5eedcde232de24af700b14272a11"
     ),
     "backend/tests/integration/importers/test_spec_workbook_dry_run.py": (
         "c0799b0413f093b06de41d56f9c27b20e388cb2448ef55e39de6e78120dba801"

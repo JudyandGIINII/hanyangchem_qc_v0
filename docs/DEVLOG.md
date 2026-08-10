@@ -1020,3 +1020,33 @@ The DATA layer already existed from P2; the `P2/P5` tag on these rows means P2 d
 ### Boundary
 
 This slice delivers five structural rows only and is not P5 Core MVP completion, which additionally requires the sequenced rows (FR-MST-004, FR-MAP-001, FR-SPEC-002, FR-INT-006, FR-APR-003, FR-NCR-001/002/003) and the four approval-gated rows. No policy invention, real-data apply/import, external Provider, network call, production or non-disposable migration, production DB-role activation, deployment, or release claim is made.
+
+## 2026-08-10 — P5 second structural increment (spec lifecycle, scope, master-data UI)
+
+### Regression introduced by the previous increment, and its fix
+
+The previous increment (`ad5b4a1`) broadened `backend/scripts/run_p2_postgres_tests.sh` to select the whole `integration/db` directory, but `make check` was not re-run after that edit, so the increment was committed and pushed with `origin/main` in a failing state. `scripts/scan_secrets.py` binds each approved fixture to a SHA-256 of its exact content, and `test_secret_scan_approved_fixture_cannot_be_renamed_or_shifted` asserts that binding, so editing the script invalidated its digest. This is the intended tamper-detection behavior rather than a defect in the guard. The approved digest for that path was updated from `1aad16df…94cb6` to `8e8b0602…272a11`, which is the correct procedure when an approved fixture changes for a legitimate reason. Lesson recorded: re-run `make check` after touching any file listed in `APPROVED_FIXTURES`.
+
+### Implemented — FR-SPEC-002 and FR-MST-004
+
+Both rows again needed no new table and no migration, because P2 had already delivered the schema: `spec_versions` already carried `UniqueConstraint(spec_profile_id, version)`, `CHECK status IN ('DRAFT','ACTIVE','RETIRED')`, `CHECK version > 0`, and `CHECK effective_to IS NULL OR effective_to >= effective_from`, and `spec_profiles` already modelled the 품목-공급사-모델 scope through `material_id` plus nullable `supplier_id` and `model_id`.
+
+- Added `backend/src/hyc_api/routes/specs.py` with list/get/create/update for spec profiles and versions plus explicit `POST /spec-versions/{id}/activate` and `/retire` transitions, following the `routes/masters.py` conventions: `require_principal`, `with_for_update()` row locks, `If-Match` optimistic locking on `lock_version`, 409 for stale versions and integrity conflicts, and soft deletes excluded from reads.
+- Lifecycle rules are mechanism only and encode no quality policy. `activate` accepts only a `DRAFT` source and `retire` only an `ACTIVE` source, so an illegal transition such as `RETIRED` back to `DRAFT` returns a stable 409. At most one `ACTIVE` version may exist per profile; the check locks the parent profile row and selects any competing `ACTIVE` row `with_for_update()`, so two concurrent activations serialize and the loser receives 409 rather than producing a second active version.
+- Added `backend/tests/integration/db/test_spec_version_lifecycle.py` and `test_supplier_material_model_scope.py`, the latter proving a profile may scope to material alone, to material plus supplier, or to material plus supplier plus model, and that a model belonging to a different material is rejected.
+- FR-SPEC-003 and FR-SPEC-007 were not touched; they remain QUALITY-gated.
+
+### Implemented — master-data read UI
+
+- Added `frontend/src/lib/api/master-data.ts` and `frontend/src/components/master-data/MasterDataWorkspace.tsx` reading the suppliers, materials, and material-models endpoints, with null master codes rendering an explicit placeholder rather than an empty cell or the literal string `null`, since those codes are intentionally nullable and assigned later.
+- The public synthetic demo boundary is preserved: the bootstrap effect returns early on `canUseBackend(publicDemo)` and renders synthetic local rows instead. `frontend/tests/master-data.test.tsx` asserts zero `fetch` calls when `publicDemo=true` and, as a positive control, that `fetch` is issued when `publicDemo=false`, plus the null-code placeholder and a 409 conflict surfacing as a message rather than a crash.
+
+### Verification actually run
+
+- `make check` exit 0: Ruff, strict mypy 70 source files/0 errors, backend `671 passed, 151 deselected`, frontend Vitest `47 passed` across 6 files plus the Next production build, migration contract `4 passed`, scans, and `docker compose config`.
+- `make p2-postgres-check` 16 passed (was 13); `make p3-postgres-check` 118 passed; `make p4-golden-check` 199 passed; `make p4-preflight-check` 97 passed. Disposable Docker containers/networks/volumes ended at 0/0/0.
+- `contracts/openapi.json` and the frontend generated client were regenerated together so `make contracts-check` stays green.
+
+### P5 status
+
+Six of the 21 P5-tagged rows are now implemented: FR-MST-001, FR-MST-002, FR-MST-003, FR-MST-004, FR-MST-005, and FR-SPEC-002. Still open are FR-NCR-004 (feature flag module), FR-MAP-001 and FR-NCR-001/002/003 (all requiring new tables and an Alembic migration), FR-INT-006, FR-APR-003, and the re-confirmation rows FR-JDG-004 and FR-INT-001/002/003. The four QUALITY/AP-02-gated rows remain deliberately unimplemented. P5 is not complete.

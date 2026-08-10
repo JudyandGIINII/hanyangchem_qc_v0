@@ -29,6 +29,7 @@ from hyc_api.routes.inspections import router as inspections_router
 from hyc_api.routes.intakes import router as intakes_router
 from hyc_api.routes.lots import router as lots_router
 from hyc_api.routes.masters import router as masters_router
+from hyc_api.routes.specs import router as specs_router
 
 LocalOcrProviderFactory = Callable[[Settings], ExtractionProvider]
 
@@ -189,6 +190,7 @@ def create_app(
     app.include_router(inspections_router)
     app.include_router(lots_router)
     app.include_router(masters_router)
+    app.include_router(specs_router)
 
     return app
 

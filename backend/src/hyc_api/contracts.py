@@ -433,6 +433,52 @@ class MaterialModelResponse(APIRequestModel):
     updated_at: datetime
 
 
+class SpecProfileCreateRequest(APIRequestModel):
+    material_id: UUID
+    supplier_id: UUID | None = None
+    model_id: UUID | None = None
+    name: Annotated[str, Field(min_length=1, max_length=256)]
+
+
+class SpecProfileUpdateRequest(SpecProfileCreateRequest):
+    pass
+
+
+class SpecProfileResponse(APIRequestModel):
+    id: UUID
+    material_id: UUID
+    supplier_id: UUID | None
+    model_id: UUID | None
+    name: str
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
+class SpecVersionCreateRequest(APIRequestModel):
+    version: Annotated[int, Field(gt=0)]
+    effective_from: date
+    effective_to: date | None = None
+    revision_reason: str | None = None
+
+
+class SpecVersionUpdateRequest(SpecVersionCreateRequest):
+    pass
+
+
+class SpecVersionResponse(APIRequestModel):
+    id: UUID
+    spec_profile_id: UUID
+    version: int
+    status: Literal["DRAFT", "ACTIVE", "RETIRED"]
+    effective_from: date
+    effective_to: date | None
+    revision_reason: str | None
+    lock_version: int
+    created_at: datetime
+    updated_at: datetime
+
+
 def to_seoul_display(value: datetime) -> datetime:
     """Display-only conversion. Storage/API boundaries remain UTC."""
     if value.tzinfo is None:
