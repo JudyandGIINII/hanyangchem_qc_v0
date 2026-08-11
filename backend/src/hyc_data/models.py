@@ -719,6 +719,54 @@ class LotMergeApproval(Base):
     )
 
 
+class ReportJob(Base):
+    __tablename__ = "report_jobs"
+    __table_args__ = (
+        CheckConstraint(
+            "state IN ('QUEUED','RUNNING','SUCCEEDED','FAILED')",
+            name="ck_report_job_state_allowlist",
+        ),
+        CheckConstraint(
+            "(state <> 'FAILED') OR (failure_code IS NOT NULL)",
+            name="ck_report_job_failure_code_present",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    kind: Mapped[str] = mapped_column(String(64), nullable=False)
+    parameters: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False, default=dict)
+    state: Mapped[str] = mapped_column(String(32), nullable=False)
+    failure_code: Mapped[str | None] = mapped_column(String(64))
+    requested_by_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class ReportArtifact(Base):
+    __tablename__ = "report_artifacts"
+    __table_args__ = (
+        CheckConstraint("length(content_digest) = 64", name="ck_report_artifact_digest_length"),
+        CheckConstraint(
+            lower_hex_check("content_digest"), name="ck_report_artifact_digest_lowercase"
+        ),
+        CheckConstraint("byte_size > 0", name="ck_report_artifact_byte_size_positive"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    report_job_id: Mapped[UUID] = mapped_column(
+        ForeignKey("report_jobs.id"), unique=True, nullable=False
+    )
+    content_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    storage_key: Mapped[str] = mapped_column(String(512), nullable=False)
+    byte_size: Mapped[int] = mapped_column(Integer, nullable=False)
+    media_type: Mapped[str] = mapped_column(String(128), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
 class AuditLog(Base):
     __tablename__ = "audit_logs"
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)

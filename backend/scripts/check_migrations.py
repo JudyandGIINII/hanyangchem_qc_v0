@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260810_0007"
+EXPECTED_MIGRATION_HEAD = "20260811_0008"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -61,6 +61,13 @@ EXPECTED_NCR_TRIGGERS: frozenset[str] = frozenset(
     }
 )
 
+EXPECTED_REPORT_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
+    {"hyc_deny_report_artifact_mutation"}
+)
+EXPECTED_REPORT_TRIGGERS: frozenset[str] = frozenset(
+    {"trg_report_artifact_immutable"}
+)
+
 EXPECTED_P2_TABLES: frozenset[str] = frozenset(
     {
         "approvals",
@@ -86,6 +93,8 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "nonconformances",
         "outbox_events",
         "receipt_lot_allocations",
+        "report_artifacts",
+        "report_jobs",
         "sample_measurements",
         "spec_items",
         "spec_profiles",
@@ -168,6 +177,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("NCR trigger functions are incomplete at head")
                 if not EXPECTED_NCR_TRIGGERS.issubset(triggers):
                     raise RuntimeError("NCR mutation triggers are incomplete at head")
+                if not EXPECTED_REPORT_TRIGGER_FUNCTIONS.issubset(functions):
+                    raise RuntimeError("report trigger functions are incomplete at head")
+                if not EXPECTED_REPORT_TRIGGERS.issubset(triggers):
+                    raise RuntimeError("report mutation triggers are incomplete at head")
     finally:
         engine.dispose()
     command.downgrade(config, "base")
@@ -190,6 +203,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("NCR trigger functions remain after downgrade")
                 if EXPECTED_NCR_TRIGGERS.intersection(triggers):
                     raise RuntimeError("NCR triggers remain after downgrade")
+                if EXPECTED_REPORT_TRIGGER_FUNCTIONS.intersection(functions):
+                    raise RuntimeError("report trigger functions remain after downgrade")
+                if EXPECTED_REPORT_TRIGGERS.intersection(triggers):
+                    raise RuntimeError("report triggers remain after downgrade")
     finally:
         engine.dispose()
     command.upgrade(config, "head")
