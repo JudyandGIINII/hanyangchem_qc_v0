@@ -1527,7 +1527,7 @@ export interface components {
          * ReportKind
          * @enum {string}
          */
-        ReportKind: "INTEGRATED_INSPECTION";
+        ReportKind: "INTEGRATED_INSPECTION" | "RAW_DATA" | "LOT_TRACE" | "SUPPLIER_QUALITY_STATISTICS";
         /** ReviewRequest */
         ReviewRequest: {
             /**

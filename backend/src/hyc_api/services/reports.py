@@ -13,10 +13,15 @@ from sqlalchemy.orm import Session
 from hyc_api.auth import Principal
 from hyc_api.config import Settings
 from hyc_api.reports.integrated import render_integrated_inspection_report
+from hyc_api.reports.raw_data import render_raw_data_report
 from hyc_api.reports.sources import (
     ReportSourceUnavailable,
     load_frozen_decision,
     load_reference_information,
+)
+from hyc_api.reports.statistics import (
+    build_statistics_rows,
+    render_supplier_quality_statistics_report,
 )
 from hyc_api.services.p3 import complete_idempotency, reserve_idempotency
 from hyc_api.storage import HashAddressedStorage, StoredObject
@@ -47,18 +52,23 @@ class InProcessReportRunner:
         self._settings = settings or Settings()
 
     def run(self, session: Session, job: ReportJob) -> ReportArtifact:
-        raw_case_id = job.parameters.get("inspection_case_id")
-        if not raw_case_id:
-            raise ReportSourceUnavailable("INVALID_PARAMETERS")
-        case_id = UUID(str(raw_case_id))
         include_audit = bool(job.parameters.get("include_audit", False))
+        try:
+            kind = ReportKind(job.kind)
+        except ValueError as error:
+            raise ReportSourceUnavailable("UNSUPPORTED_REPORT_KIND") from error
 
-        frozen = load_frozen_decision(session, case_id)
-        reference = load_reference_information(session, case_id)
-
-        workbook_bytes = render_integrated_inspection_report(
-            frozen, reference, include_audit=include_audit
-        )
+        if kind is ReportKind.SUPPLIER_QUALITY_STATISTICS:
+            workbook_bytes = self._render_statistics(session, job)
+        elif kind in (ReportKind.INTEGRATED_INSPECTION, ReportKind.RAW_DATA):
+            workbook_bytes = self._render_case_report(
+                session, job, kind=kind, include_audit=include_audit
+            )
+        else:
+            # LOT_TRACE is registered but not yet runnable: its generator reads a
+            # frozen.payload["allocations"] key that the approval snapshot does not
+            # carry, so its split-receipt sheet could only ever render empty.
+            raise ReportSourceUnavailable("REPORT_KIND_NOT_IMPLEMENTED")
 
         storage = HashAddressedStorage(self._settings.p6_report_storage_root)
         stored = _store_bytes_sync(storage, workbook_bytes)
@@ -73,6 +83,29 @@ class InProcessReportRunner:
         session.add(artifact)
         session.flush()
         return artifact
+
+    def _render_case_report(
+        self, session: Session, job: ReportJob, *, kind: ReportKind, include_audit: bool
+    ) -> bytes:
+        raw_case_id = job.parameters.get("inspection_case_id")
+        if not raw_case_id:
+            raise ReportSourceUnavailable("INVALID_PARAMETERS")
+        case_id = UUID(str(raw_case_id))
+        frozen = load_frozen_decision(session, case_id)
+        reference = load_reference_information(session, case_id)
+        if kind is ReportKind.RAW_DATA:
+            return render_raw_data_report(frozen, reference, include_audit=include_audit)
+        return render_integrated_inspection_report(frozen, reference, include_audit=include_audit)
+
+    def _render_statistics(self, session: Session, job: ReportJob) -> bytes:
+        period_start = str(job.parameters.get("period_start", ""))
+        period_end = str(job.parameters.get("period_end", ""))
+        if not period_start or not period_end:
+            raise ReportSourceUnavailable("INVALID_PARAMETERS")
+        rows = build_statistics_rows(session)
+        return render_supplier_quality_statistics_report(
+            rows, period_start, period_end, datetime.now(UTC)
+        )
 
 
 def create_report_job(
