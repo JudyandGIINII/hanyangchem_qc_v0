@@ -605,6 +605,46 @@ class ModuleFeatureFlagsResponse(APIRequestModel):
     ncr_completion_date_module_enabled: bool
 
 
+class PopulationStatistics(APIRequestModel):
+    approved_case_count: int
+    excluded_cancelled_count: int
+
+
+class MonthlyStatistic(APIRequestModel):
+    month: str
+    receipt_count: int
+    inspection_count: int
+
+
+class DecisionStatistic(APIRequestModel):
+    decision: str
+    count: int
+
+
+class DefectRateStatistic(APIRequestModel):
+    supplier_name: str | None = None
+    material_name: str | None = None
+    inspected: int
+    defective: int
+    defect_rate: str
+
+
+class QualityStatisticsResponse(APIRequestModel):
+    period_start: str
+    period_end: str
+    observed_at: str
+    population: PopulationStatistics
+    monthly: list[MonthlyStatistic]
+    by_decision: list[DecisionStatistic]
+    by_supplier: list[DefectRateStatistic]
+    by_material: list[DefectRateStatistic]
+    coa_missing_count: int
+    ocr_review_rate: str
+    internal_test_pending_count: int
+    average_handling_days: str
+    open_nonconformance_count: int
+
+
 def to_seoul_display(value: datetime) -> datetime:
     """Display-only conversion. Storage/API boundaries remain UTC."""
     if value.tzinfo is None:

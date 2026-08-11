@@ -63,6 +63,71 @@
         "title": "BoundingBox",
         "type": "object"
       },
+      "DecisionStatistic": {
+        "additionalProperties": false,
+        "properties": {
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "decision": {
+            "title": "Decision",
+            "type": "string"
+          }
+        },
+        "required": [
+          "decision",
+          "count"
+        ],
+        "title": "DecisionStatistic",
+        "type": "object"
+      },
+      "DefectRateStatistic": {
+        "additionalProperties": false,
+        "properties": {
+          "defect_rate": {
+            "title": "Defect Rate",
+            "type": "string"
+          },
+          "defective": {
+            "title": "Defective",
+            "type": "integer"
+          },
+          "inspected": {
+            "title": "Inspected",
+            "type": "integer"
+          },
+          "material_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Material Name"
+          },
+          "supplier_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Supplier Name"
+          }
+        },
+        "required": [
+          "inspected",
+          "defective",
+          "defect_rate"
+        ],
+        "title": "DefectRateStatistic",
+        "type": "object"
+      },
       "DocumentResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1309,6 +1374,30 @@
         "title": "ModuleFeatureFlagsResponse",
         "type": "object"
       },
+      "MonthlyStatistic": {
+        "additionalProperties": false,
+        "properties": {
+          "inspection_count": {
+            "title": "Inspection Count",
+            "type": "integer"
+          },
+          "month": {
+            "title": "Month",
+            "type": "string"
+          },
+          "receipt_count": {
+            "title": "Receipt Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "month",
+          "receipt_count",
+          "inspection_count"
+        ],
+        "title": "MonthlyStatistic",
+        "type": "object"
+      },
       "NonconformanceApprovalResponse": {
         "additionalProperties": false,
         "properties": {
@@ -1887,6 +1976,110 @@
           "quantity"
         ],
         "title": "NonconformanceUpdateRequest",
+        "type": "object"
+      },
+      "PopulationStatistics": {
+        "additionalProperties": false,
+        "properties": {
+          "approved_case_count": {
+            "title": "Approved Case Count",
+            "type": "integer"
+          },
+          "excluded_cancelled_count": {
+            "title": "Excluded Cancelled Count",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "approved_case_count",
+          "excluded_cancelled_count"
+        ],
+        "title": "PopulationStatistics",
+        "type": "object"
+      },
+      "QualityStatisticsResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "average_handling_days": {
+            "title": "Average Handling Days",
+            "type": "string"
+          },
+          "by_decision": {
+            "items": {
+              "$ref": "#/components/schemas/DecisionStatistic"
+            },
+            "title": "By Decision",
+            "type": "array"
+          },
+          "by_material": {
+            "items": {
+              "$ref": "#/components/schemas/DefectRateStatistic"
+            },
+            "title": "By Material",
+            "type": "array"
+          },
+          "by_supplier": {
+            "items": {
+              "$ref": "#/components/schemas/DefectRateStatistic"
+            },
+            "title": "By Supplier",
+            "type": "array"
+          },
+          "coa_missing_count": {
+            "title": "Coa Missing Count",
+            "type": "integer"
+          },
+          "internal_test_pending_count": {
+            "title": "Internal Test Pending Count",
+            "type": "integer"
+          },
+          "monthly": {
+            "items": {
+              "$ref": "#/components/schemas/MonthlyStatistic"
+            },
+            "title": "Monthly",
+            "type": "array"
+          },
+          "observed_at": {
+            "title": "Observed At",
+            "type": "string"
+          },
+          "ocr_review_rate": {
+            "title": "Ocr Review Rate",
+            "type": "string"
+          },
+          "open_nonconformance_count": {
+            "title": "Open Nonconformance Count",
+            "type": "integer"
+          },
+          "period_end": {
+            "title": "Period End",
+            "type": "string"
+          },
+          "period_start": {
+            "title": "Period Start",
+            "type": "string"
+          },
+          "population": {
+            "$ref": "#/components/schemas/PopulationStatistics"
+          }
+        },
+        "required": [
+          "period_start",
+          "period_end",
+          "observed_at",
+          "population",
+          "monthly",
+          "by_decision",
+          "by_supplier",
+          "by_material",
+          "coa_missing_count",
+          "ocr_review_rate",
+          "internal_test_pending_count",
+          "average_handling_days",
+          "open_nonconformance_count"
+        ],
+        "title": "QualityStatisticsResponse",
         "type": "object"
       },
       "ReportCreateRequest": {
@@ -5443,6 +5636,57 @@
         "summary": "Update Alias",
         "tags": [
           "p5-aliases"
+        ]
+      }
+    },
+    "/api/v1/statistics/quality": {
+      "get": {
+        "operationId": "get_quality_statistics_api_v1_statistics_quality_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "period_start",
+            "required": true,
+            "schema": {
+              "title": "Period Start",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "period_end",
+            "required": true,
+            "schema": {
+              "title": "Period End",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QualityStatisticsResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Quality Statistics",
+        "tags": [
+          "p6-statistics"
         ]
       }
     },

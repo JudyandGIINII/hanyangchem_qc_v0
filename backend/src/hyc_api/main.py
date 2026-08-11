@@ -34,6 +34,7 @@ from hyc_api.routes.masters import router as masters_router
 from hyc_api.routes.nonconformances import router as nonconformances_router
 from hyc_api.routes.reports import router as reports_router
 from hyc_api.routes.specs import router as specs_router
+from hyc_api.routes.statistics import router as statistics_router
 
 LocalOcrProviderFactory = Callable[[Settings], ExtractionProvider]
 
@@ -198,7 +199,9 @@ def create_app(
     app.include_router(aliases_router)
     app.include_router(nonconformances_router)
     app.include_router(reports_router)
+    app.include_router(statistics_router)
     app.include_router(feature_flags_router)
+
 
     return app
 

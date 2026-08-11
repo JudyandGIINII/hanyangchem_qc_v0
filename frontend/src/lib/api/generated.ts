@@ -681,6 +681,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/statistics/quality": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Quality Statistics */
+        get: operations["get_quality_statistics_api_v1_statistics_quality_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/suppliers": {
         parameters: {
             query?: never;
@@ -775,6 +792,26 @@ export interface components {
             right: number;
             /** Top */
             top: number;
+        };
+        /** DecisionStatistic */
+        DecisionStatistic: {
+            /** Count */
+            count: number;
+            /** Decision */
+            decision: string;
+        };
+        /** DefectRateStatistic */
+        DefectRateStatistic: {
+            /** Defect Rate */
+            defect_rate: string;
+            /** Defective */
+            defective: number;
+            /** Inspected */
+            inspected: number;
+            /** Material Name */
+            material_name?: string | null;
+            /** Supplier Name */
+            supplier_name?: string | null;
         };
         /** DocumentResponse */
         DocumentResponse: {
@@ -1289,6 +1326,15 @@ export interface components {
             /** Ncr Retest Module Enabled */
             ncr_retest_module_enabled: boolean;
         };
+        /** MonthlyStatistic */
+        MonthlyStatistic: {
+            /** Inspection Count */
+            inspection_count: number;
+            /** Month */
+            month: string;
+            /** Receipt Count */
+            receipt_count: number;
+        };
         /** NonconformanceApprovalResponse */
         NonconformanceApprovalResponse: {
             /**
@@ -1489,6 +1535,41 @@ export interface components {
             status: "DRAFT" | "SUBMITTED" | "APPROVED" | "REJECTED" | "CLOSED";
             /** Target Completion Date */
             target_completion_date?: string | null;
+        };
+        /** PopulationStatistics */
+        PopulationStatistics: {
+            /** Approved Case Count */
+            approved_case_count: number;
+            /** Excluded Cancelled Count */
+            excluded_cancelled_count: number;
+        };
+        /** QualityStatisticsResponse */
+        QualityStatisticsResponse: {
+            /** Average Handling Days */
+            average_handling_days: string;
+            /** By Decision */
+            by_decision: components["schemas"]["DecisionStatistic"][];
+            /** By Material */
+            by_material: components["schemas"]["DefectRateStatistic"][];
+            /** By Supplier */
+            by_supplier: components["schemas"]["DefectRateStatistic"][];
+            /** Coa Missing Count */
+            coa_missing_count: number;
+            /** Internal Test Pending Count */
+            internal_test_pending_count: number;
+            /** Monthly */
+            monthly: components["schemas"]["MonthlyStatistic"][];
+            /** Observed At */
+            observed_at: string;
+            /** Ocr Review Rate */
+            ocr_review_rate: string;
+            /** Open Nonconformance Count */
+            open_nonconformance_count: number;
+            /** Period End */
+            period_end: string;
+            /** Period Start */
+            period_start: string;
+            population: components["schemas"]["PopulationStatistics"];
         };
         /** ReportCreateRequest */
         ReportCreateRequest: {
@@ -3496,6 +3577,38 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_quality_statistics_api_v1_statistics_quality_get: {
+        parameters: {
+            query: {
+                period_start: string;
+                period_end: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["QualityStatisticsResponse"];
+                };
             };
             /** @description Validation Error */
             422: {

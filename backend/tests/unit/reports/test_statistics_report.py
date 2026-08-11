@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 
 from hyc_api.reports.deterministic import workbook_digest
 from hyc_api.reports.statistics import (
+    OCR_REVIEW_RATE_UNMEASURED,
     StatisticsRow,
     query_approved_inspection_cases,
     render_supplier_quality_statistics_report,
@@ -89,7 +90,7 @@ def test_rule_1_and_rule_2_query_helper_exclusions(session: Session) -> None:
         receipt_lot_allocation_id=alloc.id,
         spec_version_id=uuid4(),
         status="ACCEPTED",
-        final_decision="ACCEPTED",
+        final_decision=None,
     )
     # Case 2: Unapproved case (NO DecisionSnapshotRow) -> MUST BE EXCLUDED (Rule 1)
     c2 = InspectionCase(
@@ -97,7 +98,7 @@ def test_rule_1_and_rule_2_query_helper_exclusions(session: Session) -> None:
         receipt_lot_allocation_id=alloc.id,
         spec_version_id=uuid4(),
         status="DRAFT",
-        final_decision="ACCEPTED",
+        final_decision=None,
     )
     # Case 3: Cancelled case (has DecisionSnapshotRow, status CANCELLED) -> EXCLUDED (Rule 2)
     c3 = InspectionCase(
@@ -105,25 +106,42 @@ def test_rule_1_and_rule_2_query_helper_exclusions(session: Session) -> None:
         receipt_lot_allocation_id=alloc.id,
         spec_version_id=uuid4(),
         status="CANCELLED",
-        final_decision="REJECTED",
+        final_decision=None,
     )
     session.add_all([c1, c2, c3])
     session.flush()
 
+    c1.final_decision = "ACCEPTED"
+    c2.final_decision = "ACCEPTED"
+    c3.final_decision = "REJECTED"
+    session.flush()
+
+    payload_s1 = {
+        "overall_decision": "ACCEPTED",
+        "spec_version": {"semantic_version": "1.0.0", "status": "ACTIVE"},
+        "approver": {"actor_id": str(uuid4()), "role": "LEAD"},
+    }
+    payload_s3 = {
+        "overall_decision": "REJECTED",
+        "spec_version": {"semantic_version": "1.0.0", "status": "ACTIVE"},
+        "approver": {"actor_id": str(uuid4()), "role": "LEAD"},
+    }
+
     s1 = DecisionSnapshotRow(
         id=uuid4(),
         inspection_case_id=c1.id,
-        payload={"overall_decision": "ACCEPTED"},
+        payload=payload_s1,
         content_hash="1" * 64,
         created_at=datetime(2026, 5, 10, 10, 0, 0, tzinfo=UTC),
     )
     s3 = DecisionSnapshotRow(
         id=uuid4(),
         inspection_case_id=c3.id,
-        payload={"overall_decision": "REJECTED"},
+        payload=payload_s3,
         content_hash="3" * 64,
         created_at=datetime(2026, 5, 10, 10, 0, 0, tzinfo=UTC),
     )
+
     session.add_all([s1, s3])
     session.commit()
 
@@ -225,7 +243,11 @@ def test_statistics_report_in_memory_metrics_and_all_cell_values_are_strings() -
     assert metrics_map["부적합 건수"] == "1"
     assert metrics_map["부적합률"] == "50.00%"
     assert metrics_map["COA 누락률"] == "50.00%"
-    assert metrics_map["OCR 검토 필요율"] == "50.00%"
+    # Deliberately not "50.00%". Hand-built rows can set ocr_review_required, but
+    # build_statistics_rows never can: nothing in the schema records whether a case's
+    # extraction demanded review. A rate that only works in tests would show 0% in
+    # production, reading as "OCR needs no review" — the opposite of the guarantee.
+    assert metrics_map["OCR 검토 필요율"] == OCR_REVIEW_RATE_UNMEASURED
 
     for name in wb.sheetnames:
         sheet = wb[name]
@@ -234,3 +256,37 @@ def test_statistics_report_in_memory_metrics_and_all_cell_values_are_strings() -
                 if cell_val is not None:
                     err_msg = f"Cell in {name} is not str: {type(cell_val)}"
                     assert isinstance(cell_val, str), err_msg
+
+
+def test_ocr_review_rate_is_reported_as_unmeasured_never_as_zero() -> None:
+    """A fabricated 0% would assert the opposite of the human-review invariant.
+
+    Nothing in the schema records whether a case's extraction demanded review, so
+    the aggregate must say so rather than emit a number it cannot justify.
+    """
+    from datetime import UTC, datetime
+
+    from hyc_api.reports.statistics import (
+        OCR_REVIEW_RATE_UNMEASURED,
+        calculate_quality_statistics_data,
+    )
+
+    data = calculate_quality_statistics_data(
+        [
+            {
+                "inspection_case_id": "c1",
+                "snapshot_created_at": datetime(2026, 8, 10, 3, 0, tzinfo=UTC),
+                "status": "ACCEPTED",
+                "final_decision": "ACCEPTED",
+                "material_code": "M1",
+                "material_name": "염화칼슘",
+                "supplier_code": "S1",
+                "supplier_name": "세계로비드",
+            }
+        ],
+        "2026-08-01",
+        "2026-08-31",
+        datetime(2026, 9, 1, tzinfo=UTC),
+    )
+    assert data["ocr_review_rate"] == OCR_REVIEW_RATE_UNMEASURED
+    assert "%" not in str(data["ocr_review_rate"])

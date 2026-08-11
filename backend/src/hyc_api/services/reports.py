@@ -21,6 +21,7 @@ from hyc_api.reports.sources import (
 )
 from hyc_api.reports.statistics import (
     build_statistics_rows,
+    period_bounds_utc,
     render_supplier_quality_statistics_report,
 )
 from hyc_api.services.p3 import complete_idempotency, reserve_idempotency
@@ -102,7 +103,8 @@ class InProcessReportRunner:
         period_end = str(job.parameters.get("period_end", ""))
         if not period_start or not period_end:
             raise ReportSourceUnavailable("INVALID_PARAMETERS")
-        rows = build_statistics_rows(session)
+        start_utc, end_utc = period_bounds_utc(period_start, period_end)
+        rows = build_statistics_rows(session, start_utc, end_utc)
         return render_supplier_quality_statistics_report(
             rows, period_start, period_end, datetime.now(UTC)
         )
