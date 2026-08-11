@@ -43,6 +43,7 @@ class Settings(BaseSettings):
     request_timeout_seconds: float = Field(default=1.0, gt=0, le=10)
     p3_fixture_mode: bool = False
     p3_storage_root: str = "/tmp/hyc-p3-documents"
+    p6_report_storage_root: str = "./.local-report-artifacts"
     p3_fault_injection_enabled: bool = False
     local_ocr_enabled: bool = Field(
         default=False,
