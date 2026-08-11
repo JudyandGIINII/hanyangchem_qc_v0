@@ -32,6 +32,7 @@ __pycache__/
 .uv-cache/
 .venv/
 .local-ocr-models/
+.local-report-artifacts/
 
 # Node / Next.js.
 node_modules/

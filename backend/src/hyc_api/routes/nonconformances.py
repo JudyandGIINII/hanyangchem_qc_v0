@@ -5,9 +5,7 @@ from uuid import UUID
 
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response, status
 from sqlalchemy import select
-from sqlalchemy.exc import DBAPIError, IntegrityError
 from sqlalchemy.orm import Session
-from sqlalchemy.orm.exc import StaleDataError
 
 from hyc_api.auth import require_principal, require_role
 from hyc_api.contracts import (
@@ -18,6 +16,7 @@ from hyc_api.contracts import (
     NonconformanceResponse,
     NonconformanceUpdateRequest,
 )
+from hyc_api.db_errors import _commit
 from hyc_api.dependencies import database_session
 from hyc_api.services.p3 import require_if_match
 from hyc_data.models import (
@@ -94,40 +93,6 @@ def _document(session: Session, document_id: UUID, *, lock: bool) -> Document:
     if value is None:
         raise HTTPException(status_code=404, detail="Document not found")
     return value
-
-
-#: PostgreSQL assigns SQLSTATE P0001 to a bare ``RAISE EXCEPTION``. Every domain
-#: invariant this repository enforces in a trigger raises that way, so P0001 marks
-#: an intentional rule violation. Any other SQLSTATE is an infrastructure fault and
-#: must keep propagating rather than being reported as a business conflict.
-_DOMAIN_INVARIANT_SQLSTATE = "P0001"
-
-
-def _is_domain_invariant_violation(error: DBAPIError) -> bool:
-    original = getattr(error, "orig", None)
-    sqlstate = getattr(original, "sqlstate", None) or getattr(original, "pgcode", None)
-    return sqlstate == _DOMAIN_INVARIANT_SQLSTATE
-
-
-def _commit(session: Session) -> None:
-    try:
-        session.commit()
-    except StaleDataError as error:
-        session.rollback()
-        raise HTTPException(status_code=409, detail="Stale nonconformance version") from error
-    except IntegrityError as error:
-        session.rollback()
-        raise HTTPException(
-            status_code=409, detail="Nonconformance data conflicts with existing record"
-        ) from error
-    except DBAPIError as error:
-        session.rollback()
-        if not _is_domain_invariant_violation(error):
-            # Infrastructure failures must not masquerade as a business conflict.
-            raise
-        raise HTTPException(
-            status_code=409, detail="Nonconformance data conflicts with existing record"
-        ) from error
 
 
 def _require_current_version(current_version: int, if_match: str | None) -> None:
@@ -277,7 +242,11 @@ def create_nonconformance(
         ),
     )
     session.add(value)
-    _commit(session)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance data conflicts with existing record",
+    )
     session.refresh(value)
     return _response(value)
 
@@ -318,7 +287,11 @@ def update_nonconformance(
         )
     _apply(value, body)
     value.updated_at = utc_now()
-    _commit(session)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance data conflicts with existing record",
+    )
     session.refresh(value)
     return _response(value)
 
@@ -344,7 +317,11 @@ def _approve_or_reject(
         action=action,
     )
     session.add(approval)
-    _commit(session)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance data conflicts with existing record",
+    )
     session.refresh(approval)
     return _approval_response(approval)
 
@@ -406,7 +383,11 @@ def add_attachment(
     attachment = NonconformanceAttachment(nonconformance_id=value.id, document_id=document_id)
     value.updated_at = utc_now()
     session.add(attachment)
-    _commit(session)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance data conflicts with existing record",
+    )
     session.refresh(attachment)
     return _attachment_response(attachment)
 
@@ -437,5 +418,9 @@ def delete_attachment(
         raise HTTPException(status_code=404, detail="Nonconformance attachment not found")
     value.updated_at = utc_now()
     session.delete(attachment)
-    _commit(session)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance data conflicts with existing record",
+    )
     return Response(status_code=status.HTTP_204_NO_CONTENT)

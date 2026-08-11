@@ -63,6 +63,9 @@ p3-e2e:
 	if [ "$$status" -ne 0 ]; then docker compose -p "$$project" logs --no-color api web postgres redis; fi; \
 	cleanup; trap - EXIT INT TERM; exit "$$status"
 
+p6-report-check:
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q backend/tests/unit/reports
+
 p4-golden-check:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q backend/tests/golden backend/tests/contract/test_extraction_contract.py backend/tests/contract/test_extraction_port.py
 

@@ -17,8 +17,8 @@ from hyc_api.contracts import (
     StandardTestItemAliasResponse,
     StandardTestItemAliasUpdateRequest,
 )
+from hyc_api.db_errors import _is_domain_invariant_violation
 from hyc_api.dependencies import database_session
-from hyc_api.routes.nonconformances import _is_domain_invariant_violation
 from hyc_api.services.p3 import require_if_match
 from hyc_data.models import (
     Material,

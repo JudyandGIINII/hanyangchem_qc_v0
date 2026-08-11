@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from datetime import UTC, date, datetime
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
@@ -18,6 +18,8 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+
+from hyc_domain.reports import ReportKind
 
 CANONICAL_DECIMAL_STRING_PATTERN = r"^-?(?:0|[1-9][0-9]*)(?:\.[0-9]+)?$"
 
@@ -341,6 +343,24 @@ class InspectionResponse(APIRequestModel):
     revision_no: int
     blockers: list[str]
     judgments: list[JudgmentView]
+
+
+class ReportCreateRequest(APIRequestModel):
+    kind: ReportKind
+    parameters: dict[str, Any]
+
+
+class ReportCreateResponse(APIRequestModel):
+    job_id: UUID
+    state: str
+
+
+class ReportJobResponse(APIRequestModel):
+    job_id: UUID
+    kind: ReportKind
+    state: str
+    failure_code: str | None
+    artifact_digest: str | None
 
 
 class InternalResultItem(APIRequestModel):
