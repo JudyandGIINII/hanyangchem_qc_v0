@@ -889,6 +889,79 @@ class MasterImportRow(Base):
     )
 
 
+class BillOfMaterial(Base, Versioned):
+    __tablename__ = "bill_of_materials"
+    __table_args__ = (
+        UniqueConstraint(
+            "parent_material_id",
+            "component_material_id",
+            name="uq_bill_of_materials_parent_component",
+        ),
+        CheckConstraint(
+            "parent_material_id <> component_material_id",
+            name="ck_bill_of_materials_no_self_reference",
+        ),
+        CheckConstraint("quantity > 0", name="ck_bill_of_materials_quantity_positive"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    parent_material_id: Mapped[UUID] = mapped_column(
+        ForeignKey("materials.id"), nullable=False
+    )
+    component_material_id: Mapped[UUID] = mapped_column(
+        ForeignKey("materials.id"), nullable=False
+    )
+    quantity: Mapped[Decimal] = mapped_column(StrictNumeric(), nullable=False)
+    unit: Mapped[str] = mapped_column(String(32), nullable=False)
+
+
+class ProductionLot(Base, Versioned):
+    __tablename__ = "production_lots"
+    __table_args__ = (
+        UniqueConstraint("production_lot_no", name="uq_production_lots_lot_no"),
+        CheckConstraint(
+            "status IN ('DRAFT','PRODUCED','SHIPPED','CANCELLED')",
+            name="ck_production_lots_status",
+        ),
+        CheckConstraint("quantity > 0", name="ck_production_lots_quantity_positive"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    production_lot_no: Mapped[str] = mapped_column(String(64), nullable=False)
+    product_material_id: Mapped[UUID] = mapped_column(
+        ForeignKey("materials.id"), nullable=False
+    )
+    produced_on: Mapped[date] = mapped_column(Date, nullable=False)
+    quantity: Mapped[Decimal] = mapped_column(StrictNumeric(), nullable=False)
+    unit: Mapped[str] = mapped_column(String(32), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PRODUCED")
+
+
+class MaterialLotConsumption(Base):
+    __tablename__ = "material_lot_consumptions"
+    __table_args__ = (
+        UniqueConstraint(
+            "receipt_lot_allocation_id",
+            "production_lot_id",
+            name="uq_material_lot_consumption_allocation_production",
+        ),
+        CheckConstraint(
+            "consumed_quantity > 0",
+            name="ck_material_lot_consumptions_quantity_positive",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    receipt_lot_allocation_id: Mapped[UUID] = mapped_column(
+        ForeignKey("receipt_lot_allocations.id"), nullable=False
+    )
+    production_lot_id: Mapped[UUID] = mapped_column(
+        ForeignKey("production_lots.id"), nullable=False
+    )
+    consumed_quantity: Mapped[Decimal] = mapped_column(StrictNumeric(), nullable=False)
+    consumed_unit: Mapped[str] = mapped_column(String(32), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
 class AuditLog(Base):
     __tablename__ = "audit_logs"
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)

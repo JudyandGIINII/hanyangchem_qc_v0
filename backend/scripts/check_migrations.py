@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260813_0011"
+EXPECTED_MIGRATION_HEAD = "20260813_0012"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -74,10 +74,18 @@ EXPECTED_REPORT_TRIGGERS: frozenset[str] = frozenset(
     {"trg_report_artifact_immutable"}
 )
 
+EXPECTED_TRACEABILITY_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
+    {"hyc_deny_material_lot_consumption_mutation"}
+)
+EXPECTED_TRACEABILITY_TRIGGERS: frozenset[str] = frozenset(
+    {"trg_material_lot_consumption_immutable"}
+)
+
 EXPECTED_P2_TABLES: frozenset[str] = frozenset(
     {
         "approvals",
         "audit_logs",
+        "bill_of_materials",
         "decision_snapshots",
         "document_allocation_links",
         "document_sections",
@@ -95,6 +103,7 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "lot_merge_approvals",
         "material_lots",
         "material_models",
+        "material_lot_consumptions",
         "materials",
         "nonconformance_actions",
         "nonconformance_approvals",
@@ -102,6 +111,7 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "nonconformance_dispositions",
         "nonconformances",
         "outbox_events",
+        "production_lots",
         "receipt_lot_allocations",
         "report_artifacts",
         "report_jobs",
@@ -195,6 +205,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("report trigger functions are incomplete at head")
                 if not EXPECTED_REPORT_TRIGGERS.issubset(triggers):
                     raise RuntimeError("report mutation triggers are incomplete at head")
+                if not EXPECTED_TRACEABILITY_TRIGGER_FUNCTIONS.issubset(functions):
+                    raise RuntimeError("traceability trigger functions are incomplete at head")
+                if not EXPECTED_TRACEABILITY_TRIGGERS.issubset(triggers):
+                    raise RuntimeError("traceability mutation triggers are incomplete at head")
     finally:
         engine.dispose()
     command.downgrade(config, "base")
@@ -221,6 +235,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("report trigger functions remain after downgrade")
                 if EXPECTED_REPORT_TRIGGERS.intersection(triggers):
                     raise RuntimeError("report triggers remain after downgrade")
+                if EXPECTED_TRACEABILITY_TRIGGER_FUNCTIONS.intersection(functions):
+                    raise RuntimeError("traceability trigger functions remain after downgrade")
+                if EXPECTED_TRACEABILITY_TRIGGERS.intersection(triggers):
+                    raise RuntimeError("traceability triggers remain after downgrade")
     finally:
         engine.dispose()
     command.upgrade(config, "head")

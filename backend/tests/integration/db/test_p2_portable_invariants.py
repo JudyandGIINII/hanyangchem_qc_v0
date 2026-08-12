@@ -545,9 +545,14 @@ def test_every_quality_numeric_column_rejects_python_float(session: Session) -> 
         if column.type.__class__.__name__ == "StrictNumeric"
     }
     assert strict_columns == {
+        # P7 traceability quantities are Decimal for the same reason every other
+        # quantity here is: a float BOM quantity silently drifts on multiplication.
+        "bill_of_materials.quantity",
         "extraction_field_reviews.confidence",
         "internal_results.evaluated_value",
+        "material_lot_consumptions.consumed_quantity",
         "nonconformances.quantity",
+        "production_lots.quantity",
         "receipt_lot_allocations.quantity",
         "sample_measurements.numeric_value",
         "spec_items.lower_value",

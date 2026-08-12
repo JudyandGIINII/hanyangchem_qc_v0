@@ -63,3 +63,7 @@ class Settings(BaseSettings):
         default=False,
         validation_alias=AliasChoices("HYC_INGEST_ENABLED", "INGEST_ENABLED"),
     )
+    traceability_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("HYC_TRACEABILITY_ENABLED", "TRACEABILITY_ENABLED"),
+    )

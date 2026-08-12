@@ -13,6 +13,8 @@
 
 **2026-08-13 P6 종료:** 남은 네 조각이 모두 구현됐다. **FR-DOC-001/002/005와 ARCH-002/003**은 `hyc_ingest` seam으로 충족한다 — 포트·합성 어댑터·안정화·파이프라인이 있고 플래그 off 시 디렉터리를 읽지도 않으며 네트워크 호출이 0회임을 테스트가 고정한다. **실제 NAS/Drive 접속은 여전히 미승인이며 이 증분은 그것을 부여하지 않는다**; 실물이 오면 어댑터 구현과 설정만 남는다. **마스터 Import**는 미리보기 없는 적용 경로가 없고 거부 행이 하나라도 있으면 전량 미적용이며, 행 이력은 트리거로 불변이다. 실 엑셀은 커밋하지 않고 합성 워크북으로만 시험하므로 AP-05가 유지된다. **BACKUP-001**은 `scripts/backup.sh`와 `scripts/restore-verify.sh`, `make p6-backup-restore-verify`로 충족하며, 컨트롤러가 매니페스트를 훼손해 exit 1을 확인함으로써 리허설이 실제로 불일치를 잡는다는 것을 실증했다. **RET-001은 계속 범위 밖**이다 — 런북이 보존기간·만료·삭제 규칙과 RPO/RTO를 주장하지 않는다(AP-08 미승인). **OCR 운영 모니터링**은 관측만 제공하고 KPI 임계값을 만들지 않으며, 응답이 `kpi_thresholds: null`로 그 부재를 명시해 침묵이 목표 달성으로 읽히지 않게 한다. 미충족으로 남는 것은 **PRD §12.5 테스트 데이터 제외**(스키마에 식별 표시 없음)와 **REP-001의 QUALITY sample approval**(열 구조 호환성만 확보) 둘뿐이다. 아키텍처 기록: xlsx 파서는 `hyc_domain`이 아니라 `hyc_api`에 둔다 — 도메인 계층은 인프라 import가 금지이며 `test_domain_has_no_infrastructure_imports`가 이를 강제한다. 검증: `make check` exit 0(mypy 101/0, backend 770/187, frontend 78/11, migration 4, scans, compose), `p6-report-check` 41, P2 PostgreSQL 23, P3 PostgreSQL 147, Playwright 3/3, backup-restore 리허설 통과, P4 golden 199·preflight 97 불변.
 
+**2026-08-13 P7 seam 승인·구현:** 사용자 결정으로 **PRD Phase 3 추적성 확장이 seam 경계까지 승인**됐다. P6-4 NAS/Drive와 동일한 성격이며 **실제 ERP 호출·자격증명·실 생산 데이터는 계속 미승인**이다. AP-08이 요구하는 보안·품질·운영 승인은 실제 연결 시점 요건으로 유지되며 이 증분이 그것을 해제하지 않는다. **FR-MST-006**은 마이그레이션 `20260813_0012`의 `bill_of_materials`(자기참조 금지, 부모+구성 UNIQUE)로 실제 구현됐다 — 직전까지 이 행은 **존재하지 않는 테스트를 인용**하며 P2에서 준비 완료로 기록돼 있었고, 이번에 정정했다. **REP-003**의 production link seam도 `production_lots`와 append-only `material_lot_consumptions`로 구현됐으며, 인용됐던 `test_production_lot_link_seam.py` 역시 존재한 적이 없어 정정했다. 소비 기록은 `SELECT, INSERT`만 부여하고 UPDATE/DELETE 거부 트리거를 걸어 감사 흔적을 보장한다. 순회는 `hyc_domain/traceability.py`가 담당하며 도메인 인프라 import 금지 가드를 지킨다; **순환 그래프에서 종료·중복 없음·결정론적 순서**를 컨트롤러가 5초 타임아웃 프로브로 실증했다. 어댑터 `hyc_api/traceability_source.py`는 플래그 off일 때 SQL 문을 0건 실행하며 이를 문 실행 계수 회귀로 고정한다. **만들지 않은 것:** ERP 어댑터, CSV Import, BOM 편집 UI, 고객 출하 연결 — 전부 seam 경계 밖이다. 검증: `make check` exit 0(mypy 104/0, backend 779/191, frontend 78/11, migration 4, scans, compose), P2 PostgreSQL 27, P3 PostgreSQL 147, Playwright 3/3, backup 리허설 통과, P4 golden 199·preflight 97 불변.
+
 **정본:** `Prd.md`  
 **계획:** `docs/plans/2026-07-30-integrated-implementation-plan.md`  
 **규칙:** 아래 경로는 모두 구현 시 `Create` 대상이다. `Planned`는 통과를 의미하지 않는다. 각 행은 해당 Phase의 테스트가 실제 exit 0이고 Hermes 독립 QA가 증빙을 확인해야 `Verified`로 바뀐다.
@@ -142,7 +144,7 @@ P4-A CI는 generated non-sensitive synthetic fixture, fixture provider, stable c
 |FR-MST-003|모델 마스터|P2/P5|DATA/API/WEB|`backend/tests/integration/api/test_model_master.py`|P5|
 |FR-MST-004|품목-공급사-모델 매핑|P2/P5|DATA/API|`backend/tests/integration/db/test_supplier_material_model_scope.py`|P2|
 |FR-MST-005|nullable 코드/후속 업데이트|P2/P5|DATA/API|`backend/tests/integration/db/test_nullable_code_uniqueness.py`; import dry-run|P5|
-|FR-MST-006|BOM 확장 준비|P2|DATA/API|`backend/tests/contract/test_erp_bom_seam.py`(feature OFF)|AP-08; 자동연계 비범위|
+|FR-MST-006|BOM 확장 준비|P2→P7|DATA/API|**정정(2026-08-13):** 인용됐던 `backend/tests/contract/test_erp_bom_seam.py`는 **존재한 적이 없고** `models.py`에 BOM 컬럼도 없었다. P2에서 준비 완료로 기록된 것은 근거가 없었다. 실제 구현은 P7 seam 증분이 수행한다|AP-08; 자동연계 비범위|
 |FR-SPEC-001|공통/공급사/모델 기준 프로파일|P2|DOMAIN/DATA|`backend/tests/unit/specifications/test_spec_selection.py`; overlap DB test|AP-03, P2|
 |FR-SPEC-002|Draft/Active 기준 버전·적용일|P2/P5|DOMAIN/DATA/API|`backend/tests/integration/db/test_spec_version_lifecycle.py`|P2/P5|
 |FR-SPEC-003|표준 검사항목|P2/P5|DATA/API/QUALITY|seed replay + `test_standard_test_items.py`|QUALITY review|
@@ -210,7 +212,7 @@ P4-A CI는 generated non-sensitive synthetic fixture, fixture provider, stable c
 |API-003|§15.2 RBAC/correlation/error/page/filter/sort/version/reason/size/Job ID|P1~P5|API|P1 accepted correlation/error envelope contract; remaining surface P2~P5|P1 accepted/P5|
 |REP-001|§16.1 Raw 호환+Long+Documents+optional Audit, 무절단|P5|WORKER/QUALITY|`test_raw_excel_lossless.py`|QUALITY sample approval|
 |REP-002|§16.2 승인 Snapshot 통합보고서·정정 버전|P5|WORKER/DATA|`test_integrated_report_from_snapshot.py`|P5|
-|REP-003|§16.3 LOT trace·분할 입고·production link seam|P3/P5|API/WORKER|`test_split_lot_trace.py`; `test_production_lot_link_seam.py`|AP-08; 자동 ERP 비범위|
+|REP-003|§16.3 LOT trace·분할 입고·production link seam|P3/P5/P7|API/WORKER|분할 입고는 `test_split_lot_trace.py`와 P6-2의 `test_lot_trace_report.py`(입고 2건 → 2행 회귀)로 충족. **정정(2026-08-13):** 인용됐던 `test_production_lot_link_seam.py`는 **존재한 적이 없다**; production link seam은 P7 seam 증분이 수행한다|AP-08; 자동 ERP 비범위|
 |REP-004|§16.4 월별/공급사 품질 통계|P5|API/WORKER|`test_supplier_quality_report.py`|P5|
 |ARCH-001|§17.1 stack와 OCR/판정 분리|P1/P2|HERMES-QA|P1 accepted process/component health smoke; import-linter remains P2|P1 accepted/P2|
 |ARCH-002|§17.2 API/DB/storage/queue/worker/ERP adapter|P1~P6|API/WORKER/OPS|contract/smoke/feature-off tests|P6|
