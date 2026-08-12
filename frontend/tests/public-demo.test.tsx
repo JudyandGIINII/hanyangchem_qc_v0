@@ -44,7 +44,7 @@ describe("public synthetic demo boundary", () => {
     expect(markup).not.toContain("P3 API 실행 제어");
     expect(markup).not.toContain("현재 역할로 API 승인");
     expect(markup).not.toContain("Failed to fetch");
-    for (const stage of ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적", "보고서·통계"]) {
+    for (const stage of ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적", "부적합", "보고서·통계"]) {
       expect(markup).toContain(stage);
     }
   });

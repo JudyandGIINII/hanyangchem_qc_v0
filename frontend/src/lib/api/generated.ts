@@ -418,6 +418,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/nonconformances/{nonconformance_id}/actions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Nonconformance Actions */
+        get: operations["list_nonconformance_actions_api_v1_nonconformances__nonconformance_id__actions_get"];
+        put?: never;
+        /** Create Nonconformance Action */
+        post: operations["create_nonconformance_action_api_v1_nonconformances__nonconformance_id__actions_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/nonconformances/{nonconformance_id}/approve": {
         parameters: {
             query?: never;
@@ -1334,6 +1352,59 @@ export interface components {
             month: string;
             /** Receipt Count */
             receipt_count: number;
+        };
+        /** NonconformanceActionCreateRequest */
+        NonconformanceActionCreateRequest: {
+            /**
+             * Action Type
+             * @enum {string}
+             */
+            action_type: "CORRECTIVE" | "PREVENTIVE" | "VERIFICATION" | "COMPLETION";
+            /** Description */
+            description: string;
+            /** Performed At */
+            performed_at?: string | null;
+            /** Result */
+            result?: string | null;
+        };
+        /** NonconformanceActionResponse */
+        NonconformanceActionResponse: {
+            /**
+             * Action Type
+             * @enum {string}
+             */
+            action_type: "CORRECTIVE" | "PREVENTIVE" | "VERIFICATION" | "COMPLETION";
+            /** Actor Role */
+            actor_role: string;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Description */
+            description: string;
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Nonconformance Id
+             * Format: uuid
+             */
+            nonconformance_id: string;
+            /**
+             * Performed At
+             * Format: date-time
+             */
+            performed_at: string;
+            /**
+             * Performed By Id
+             * Format: uuid
+             */
+            performed_by_id: string;
+            /** Result */
+            result?: string | null;
         };
         /** NonconformanceApprovalResponse */
         NonconformanceApprovalResponse: {
@@ -2840,6 +2911,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["NonconformanceResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_nonconformance_actions_api_v1_nonconformances__nonconformance_id__actions_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                nonconformance_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NonconformanceActionResponse"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_nonconformance_action_api_v1_nonconformances__nonconformance_id__actions_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                nonconformance_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NonconformanceActionCreateRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["NonconformanceActionResponse"];
                 };
             };
             /** @description Validation Error */

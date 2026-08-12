@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260811_0008"
+EXPECTED_MIGRATION_HEAD = "20260812_0009"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -87,6 +87,7 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "material_lots",
         "material_models",
         "materials",
+        "nonconformance_actions",
         "nonconformance_approvals",
         "nonconformance_attachments",
         "nonconformance_dispositions",

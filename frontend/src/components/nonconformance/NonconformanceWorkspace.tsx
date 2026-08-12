@@ -15,6 +15,7 @@ import type {
   NonconformanceDisposition,
 } from "../../lib/api/nonconformance";
 import { canUseBackend, PUBLIC_DEMO_MODE } from "../../lib/public-demo";
+import { ActionTimeline } from "./ActionTimeline";
 
 const syntheticDispositions: NonconformanceDisposition[] = [
   {
@@ -106,7 +107,12 @@ export function renderDispositionFromSnapshot(record: Nonconformance) {
   return <span className="placeholder-text" data-testid="disposition-placeholder">처리방안 미지정</span>;
 }
 
-export function NonconformanceWorkspace({ publicDemo = PUBLIC_DEMO_MODE }: { publicDemo?: boolean }) {
+export function NonconformanceWorkspace({
+  publicDemo = PUBLIC_DEMO_MODE,
+  role = "INSPECTOR",
+}: { publicDemo?: boolean; role?: string }) {
+  // Defaults to INSPECTOR deliberately: 종결 is LEAD-only, so an unspecified
+  // caller must not be handed the more privileged option by accident.
   const [items, setItems] = useState<Nonconformance[]>(publicDemo ? syntheticNonconformances : []);
   const [dispositions, setDispositions] = useState<NonconformanceDisposition[]>(publicDemo ? syntheticDispositions : []);
   const [selectedId, setSelectedId] = useState<string | null>(publicDemo ? "fx-ncr-01" : null);
@@ -440,6 +446,13 @@ export function NonconformanceWorkspace({ publicDemo = PUBLIC_DEMO_MODE }: { pub
             </div>
           </div>
         </section>
+      ) : null}
+      {selected ? (
+        <ActionTimeline
+          publicDemo={publicDemo}
+          nonconformanceId={selected.id}
+          role={role}
+        />
       ) : null}
     </main>
   );

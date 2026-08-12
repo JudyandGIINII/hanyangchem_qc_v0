@@ -9,6 +9,8 @@ from sqlalchemy.orm import Session
 
 from hyc_api.auth import require_principal, require_role
 from hyc_api.contracts import (
+    NonconformanceActionCreateRequest,
+    NonconformanceActionResponse,
     NonconformanceApprovalResponse,
     NonconformanceAttachmentResponse,
     NonconformanceCreateRequest,
@@ -23,6 +25,7 @@ from hyc_data.models import (
     Document,
     InspectionCase,
     Nonconformance,
+    NonconformanceAction,
     NonconformanceApproval,
     NonconformanceAttachment,
     NonconformanceDisposition,
@@ -424,3 +427,82 @@ def delete_attachment(
         conflict_detail="Nonconformance data conflicts with existing record",
     )
     return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+
+def _action_response(value: NonconformanceAction) -> NonconformanceActionResponse:
+    return NonconformanceActionResponse(
+        id=value.id,
+        nonconformance_id=value.nonconformance_id,
+        action_type=cast(
+            Literal["CORRECTIVE", "PREVENTIVE", "VERIFICATION", "COMPLETION"],
+            value.action_type,
+        ),
+        description=value.description,
+        result=value.result,
+        performed_by_id=value.performed_by_id,
+        actor_role=value.actor_role,
+        performed_at=value.performed_at,
+        created_at=value.created_at,
+    )
+
+
+@router.get(
+    "/nonconformances/{nonconformance_id}/actions",
+    response_model=list[NonconformanceActionResponse],
+)
+def list_nonconformance_actions(
+    request: Request,
+    nonconformance_id: UUID,
+    session: DBSession,
+) -> list[NonconformanceActionResponse]:
+    require_principal(request)
+    _nonconformance(session, nonconformance_id)
+    statement = (
+        select(NonconformanceAction)
+        .where(NonconformanceAction.nonconformance_id == nonconformance_id)
+        .order_by(NonconformanceAction.performed_at, NonconformanceAction.id)
+    )
+    return [_action_response(a) for a in session.scalars(statement)]
+
+
+@router.post(
+    "/nonconformances/{nonconformance_id}/actions",
+    response_model=NonconformanceActionResponse,
+    status_code=status.HTTP_201_CREATED,
+)
+def create_nonconformance_action(
+    request: Request,
+    nonconformance_id: UUID,
+    body: NonconformanceActionCreateRequest,
+    session: DBSession,
+) -> NonconformanceActionResponse:
+    principal = require_principal(request)
+    if body.action_type == "COMPLETION":
+        require_role(principal, "LEAD")
+    else:
+        require_role(principal, "INSPECTOR", "LEAD")
+
+    if not body.description or not body.description.strip():
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="description cannot be empty",
+        )
+
+    nc = _nonconformance(session, nonconformance_id)
+    action = NonconformanceAction(
+        nonconformance_id=nc.id,
+        action_type=body.action_type,
+        description=body.description,
+        result=body.result,
+        performed_by_id=principal.actor_id,
+        actor_role=principal.role,
+        performed_at=body.performed_at or utc_now(),
+    )
+    session.add(action)
+    _commit(
+        session,
+        stale_detail="Stale nonconformance version",
+        conflict_detail="Nonconformance action data conflicts with existing record",
+    )
+    session.refresh(action)
+    return _action_response(action)

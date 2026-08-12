@@ -767,6 +767,37 @@ class ReportArtifact(Base):
     )
 
 
+class NonconformanceAction(Base):
+    __tablename__ = "nonconformance_actions"
+    __table_args__ = (
+        CheckConstraint(
+            "action_type IN ('CORRECTIVE','PREVENTIVE','VERIFICATION','COMPLETION')",
+            name="ck_nonconformance_actions_type",
+        ),
+        CheckConstraint(
+            "length(trim(description)) > 0",
+            name="ck_nonconformance_actions_description_nonempty",
+        ),
+        CheckConstraint(
+            "action_type <> 'COMPLETION' OR actor_role = 'LEAD'",
+            name="ck_nonconformance_actions_completion_lead",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    nonconformance_id: Mapped[UUID] = mapped_column(
+        ForeignKey("nonconformances.id"), nullable=False
+    )
+    action_type: Mapped[str] = mapped_column(String(32), nullable=False)
+    description: Mapped[str] = mapped_column(Text, nullable=False)
+    result: Mapped[str | None] = mapped_column(Text)
+    performed_by_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    performed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
 class AuditLog(Base):
     __tablename__ = "audit_logs"
     id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)

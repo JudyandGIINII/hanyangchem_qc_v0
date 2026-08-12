@@ -597,6 +597,26 @@ class NonconformanceAttachmentResponse(APIRequestModel):
     document_id: UUID
 
 
+class NonconformanceActionCreateRequest(APIRequestModel):
+    action_type: Literal["CORRECTIVE", "PREVENTIVE", "VERIFICATION", "COMPLETION"]
+    description: str
+    result: str | None = None
+    performed_at: datetime | None = None
+
+
+class NonconformanceActionResponse(APIRequestModel):
+    id: UUID
+    nonconformance_id: UUID
+    action_type: Literal["CORRECTIVE", "PREVENTIVE", "VERIFICATION", "COMPLETION"]
+    description: str
+    result: str | None = None
+    performed_by_id: UUID
+    actor_role: str
+    performed_at: datetime
+    created_at: datetime
+
+
+
 class ModuleFeatureFlagsResponse(APIRequestModel):
     ncr_report_module_enabled: bool
     ncr_approver_module_enabled: bool

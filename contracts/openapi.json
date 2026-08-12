@@ -1398,6 +1398,125 @@
         "title": "MonthlyStatistic",
         "type": "object"
       },
+      "NonconformanceActionCreateRequest": {
+        "additionalProperties": false,
+        "properties": {
+          "action_type": {
+            "enum": [
+              "CORRECTIVE",
+              "PREVENTIVE",
+              "VERIFICATION",
+              "COMPLETION"
+            ],
+            "title": "Action Type",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "performed_at": {
+            "anyOf": [
+              {
+                "format": "date-time",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Performed At"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "required": [
+          "action_type",
+          "description"
+        ],
+        "title": "NonconformanceActionCreateRequest",
+        "type": "object"
+      },
+      "NonconformanceActionResponse": {
+        "additionalProperties": false,
+        "properties": {
+          "action_type": {
+            "enum": [
+              "CORRECTIVE",
+              "PREVENTIVE",
+              "VERIFICATION",
+              "COMPLETION"
+            ],
+            "title": "Action Type",
+            "type": "string"
+          },
+          "actor_role": {
+            "title": "Actor Role",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "title": "Created At",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "title": "Id",
+            "type": "string"
+          },
+          "nonconformance_id": {
+            "format": "uuid",
+            "title": "Nonconformance Id",
+            "type": "string"
+          },
+          "performed_at": {
+            "format": "date-time",
+            "title": "Performed At",
+            "type": "string"
+          },
+          "performed_by_id": {
+            "format": "uuid",
+            "title": "Performed By Id",
+            "type": "string"
+          },
+          "result": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Result"
+          }
+        },
+        "required": [
+          "id",
+          "nonconformance_id",
+          "action_type",
+          "description",
+          "performed_by_id",
+          "actor_role",
+          "performed_at",
+          "created_at"
+        ],
+        "title": "NonconformanceActionResponse",
+        "type": "object"
+      },
       "NonconformanceApprovalResponse": {
         "additionalProperties": false,
         "properties": {
@@ -4423,6 +4542,104 @@
           }
         },
         "summary": "Update Nonconformance",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      }
+    },
+    "/api/v1/nonconformances/{nonconformance_id}/actions": {
+      "get": {
+        "operationId": "list_nonconformance_actions_api_v1_nonconformances__nonconformance_id__actions_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/NonconformanceActionResponse"
+                  },
+                  "title": "Response List Nonconformance Actions Api V1 Nonconformances  Nonconformance Id  Actions Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Nonconformance Actions",
+        "tags": [
+          "p5-nonconformances"
+        ]
+      },
+      "post": {
+        "operationId": "create_nonconformance_action_api_v1_nonconformances__nonconformance_id__actions_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "nonconformance_id",
+            "required": true,
+            "schema": {
+              "format": "uuid",
+              "title": "Nonconformance Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NonconformanceActionCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NonconformanceActionResponse"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Create Nonconformance Action",
         "tags": [
           "p5-nonconformances"
         ]
