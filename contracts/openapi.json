@@ -5856,6 +5856,30 @@
         ]
       }
     },
+    "/api/v1/statistics/ocr-operations": {
+      "get": {
+        "description": "Observations only.\n\nNo period parameter: this reports current standing state (how much is waiting\non a human) rather than a windowed rate, and a window would invite reading it\nas a quality trend before any baseline exists.",
+        "operationId": "get_ocr_operations_api_v1_statistics_ocr_operations_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Ocr Operations Api V1 Statistics Ocr Operations Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Ocr Operations",
+        "tags": [
+          "p6-statistics"
+        ]
+      }
+    },
     "/api/v1/statistics/quality": {
       "get": {
         "operationId": "get_quality_statistics_api_v1_statistics_quality_get",

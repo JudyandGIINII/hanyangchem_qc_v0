@@ -59,3 +59,7 @@ class Settings(BaseSettings):
         default=".local-ocr-models/models",
         validation_alias=AliasChoices("HYC_LOCAL_OCR_MODELS_ROOT", "LOCAL_OCR_MODELS_ROOT"),
     )
+    ingest_enabled: bool = Field(
+        default=False,
+        validation_alias=AliasChoices("HYC_INGEST_ENABLED", "INGEST_ENABLED"),
+    )

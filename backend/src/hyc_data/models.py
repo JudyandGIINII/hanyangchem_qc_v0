@@ -7,6 +7,7 @@ from uuid import UUID, uuid4
 
 from sqlalchemy import (
     JSON,
+    BigInteger,
     Boolean,
     CheckConstraint,
     Date,
@@ -793,6 +794,96 @@ class NonconformanceAction(Base):
     performed_by_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
     actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
     performed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
+class IngestCursor(Base):
+    __tablename__ = "ingest_cursors"
+    __table_args__ = (
+        UniqueConstraint("source_id", "entry_id", name="uq_ingest_cursors_source_entry"),
+        CheckConstraint(
+            "status IN ('PENDING_STABILITY','INGESTED','FAILED','VANISHED')",
+            name="ck_ingest_cursors_status",
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    source_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    entry_id: Mapped[str] = mapped_column(String(512), nullable=False)
+    status: Mapped[str] = mapped_column(String(32), nullable=False, default="PENDING_STABILITY")
+    size_bytes: Mapped[int | None] = mapped_column(BigInteger)
+    modified_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    first_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    last_seen_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    document_id: Mapped[UUID | None] = mapped_column(ForeignKey("documents.id"))
+    checksum_sha256: Mapped[str | None] = mapped_column(String(64))
+    error_reason: Mapped[str | None] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now, onupdate=utc_now
+    )
+
+
+class MasterImportBatch(Base):
+    __tablename__ = "master_import_batches"
+    __table_args__ = (
+        CheckConstraint(
+            "entity IN ('MATERIAL','SUPPLIER','MATERIAL_MODEL')",
+            name="ck_master_import_entity",
+        ),
+        CheckConstraint(
+            "state IN ('PREVIEWED','APPLIED','REVERTED')",
+            name="ck_master_import_state",
+        ),
+        CheckConstraint(
+            "(state <> 'REVERTED') OR (reverted_at IS NOT NULL)",
+            name="ck_master_import_reverted_at_present",
+        ),
+        CheckConstraint("length(source_digest) = 64", name="ck_master_import_digest_length"),
+        CheckConstraint(
+            lower_hex_check("source_digest"), name="ck_master_import_digest_lower"
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    entity: Mapped[str] = mapped_column(String(32), nullable=False)
+    source_filename: Mapped[str] = mapped_column(String(512), nullable=False)
+    source_digest: Mapped[str] = mapped_column(String(64), nullable=False)
+    state: Mapped[str] = mapped_column(String(32), nullable=False, default="PREVIEWED")
+    requested_by_id: Mapped[UUID] = mapped_column(Uuid, nullable=False)
+    actor_role: Mapped[str] = mapped_column(String(32), nullable=False)
+    reverted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False, default=utc_now
+    )
+
+
+class MasterImportRow(Base):
+    __tablename__ = "master_import_rows"
+    __table_args__ = (
+        UniqueConstraint("batch_id", "row_number", name="uq_master_import_row_number"),
+        CheckConstraint(
+            "action IN ('CREATE','UPDATE','UNCHANGED','REJECT')",
+            name="ck_master_import_row_action",
+        ),
+        CheckConstraint("row_number >= 1", name="ck_master_import_row_number_positive"),
+    )
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    batch_id: Mapped[UUID] = mapped_column(
+        ForeignKey("master_import_batches.id"), nullable=False
+    )
+    row_number: Mapped[int] = mapped_column(Integer, nullable=False)
+    action: Mapped[str] = mapped_column(String(16), nullable=False)
+    code: Mapped[str | None] = mapped_column(String(64))
+    name: Mapped[str | None] = mapped_column(String(256))
+    errors: Mapped[list[Any]] = mapped_column(JSON, nullable=False, default=list)
+    target_id: Mapped[UUID | None] = mapped_column(Uuid)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=False, default=utc_now
     )

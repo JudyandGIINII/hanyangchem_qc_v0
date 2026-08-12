@@ -699,6 +699,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/statistics/ocr-operations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get Ocr Operations
+         * @description Observations only.
+         *
+         *     No period parameter: this reports current standing state (how much is waiting
+         *     on a human) rather than a windowed rate, and a window would invite reading it
+         *     as a quality trend before any baseline exists.
+         */
+        get: operations["get_ocr_operations_api_v1_statistics_ocr_operations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/statistics/quality": {
         parameters: {
             query?: never;
@@ -3722,6 +3746,28 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_ocr_operations_api_v1_statistics_ocr_operations_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": {
+                        [key: string]: unknown;
+                    };
                 };
             };
         };

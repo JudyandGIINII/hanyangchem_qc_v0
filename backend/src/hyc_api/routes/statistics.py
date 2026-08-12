@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import UTC, date, datetime
-from typing import Annotated
+from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy import func, select
@@ -10,6 +10,7 @@ from sqlalchemy.orm import Session
 from hyc_api.auth import require_principal
 from hyc_api.contracts import QualityStatisticsResponse
 from hyc_api.dependencies import database_session
+from hyc_api.reports.ocr_operations import collect_ocr_operations
 from hyc_api.reports.statistics import (
     build_statistics_rows,
     calculate_quality_statistics_data,
@@ -80,3 +81,15 @@ def get_quality_statistics(
     clean_data = {k: v for k, v in data.items() if not k.startswith("_")}
     return QualityStatisticsResponse.model_validate(clean_data)
 
+
+@router.get("/statistics/ocr-operations", status_code=status.HTTP_200_OK)
+def get_ocr_operations(request: Request, session: DBSession) -> dict[str, Any]:
+    """Observations only.
+
+    No period parameter: this reports current standing state (how much is waiting
+    on a human) rather than a windowed rate, and a window would invite reading it
+    as a quality trend before any baseline exists.
+    """
+
+    require_principal(request)
+    return collect_ocr_operations(session).as_payload()

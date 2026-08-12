@@ -1,4 +1,4 @@
-.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p4-golden-check p4-benchmark-fixture p4-preflight-check local-ocr-bootstrap p4-local-ocr-preflight p4-local-ocr-smoke secret-scan sensitive-documents-check check
+.PHONY: bootstrap contracts contracts-check backend-check frontend-check migration-check p2-postgres-check p3-postgres-check p3-e2e p6-backup-restore-verify p4-golden-check p4-benchmark-fixture p4-preflight-check local-ocr-bootstrap p4-local-ocr-preflight p4-local-ocr-smoke secret-scan sensitive-documents-check check
 
 bootstrap:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv sync --project backend --extra dev
@@ -62,6 +62,30 @@ p3-e2e:
 	set -e; \
 	if [ "$$status" -ne 0 ]; then docker compose -p "$$project" logs --no-color api web postgres redis; fi; \
 	cleanup; trap - EXIT INT TERM; exit "$$status"
+
+p6-backup-restore-verify:
+	@set -eu; \
+	root="$(PWD)"; \
+	port=$$(python3 -c 'import socket; s=socket.socket(); s.bind(("127.0.0.1",0)); print(s.getsockname()[1]); s.close()'); \
+	project="hyc-p6-backup-$$(date +%s)-$$$$"; \
+	source_storage=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-p6-source-storage.XXXXXX"); \
+	restore_storage=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-p6-restore-storage.XXXXXX"); \
+	backup_dir=$$(mktemp -d "$${TMPDIR:-/tmp}/hyc-p6-backup-output.XXXXXX"); \
+	source_db="hyc_p6_disposable_$$(date +%s)_$$$$"; \
+	restore_db="hyc_p6_restore_$$(date +%s)_$$$$"; \
+	cleanup() { docker compose -p "$$project" down --volumes --remove-orphans >/dev/null 2>&1 || true; for path in "$$source_storage" "$$restore_storage" "$$backup_dir"; do if [ -d "$$path" ]; then find "$$path" -depth -delete; fi; test ! -e "$$path"; done; test -z "$$(docker ps -aq --filter label=com.docker.compose.project=$$project)"; test -z "$$(docker network ls -q --filter label=com.docker.compose.project=$$project)"; test -z "$$(docker volume ls -q --filter label=com.docker.compose.project=$$project)"; }; \
+	trap cleanup EXIT INT TERM; \
+	COMPOSE_BAKE=0 DOCKER_BUILDKIT=0 HYC_POSTGRES_HOST_PORT="$$port" docker compose -p "$$project" up --detach --wait postgres; \
+	docker compose -p "$$project" exec -T postgres createdb --username local_user "$$source_db"; \
+	docker compose -p "$$project" exec -T postgres createdb --username local_user "$$restore_db"; \
+	source_dsn="postgresql+psycopg://local_user:local-placeholder-only@127.0.0.1:$$port/$$source_db"; \
+	restore_dsn="postgresql+psycopg://local_user:local-placeholder-only@127.0.0.1:$$port/$$restore_db"; \
+	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$$root/.uv-cache}" uv run --project "$$root/backend" python -c 'from alembic import command; from alembic.config import Config; import sys; config = Config(sys.argv[1]); config.set_main_option("sqlalchemy.url", sys.argv[2]); command.upgrade(config, "head")' "$$root/backend/alembic.ini" "$$source_dsn"; \
+	docker compose -p "$$project" exec -T postgres psql -v ON_ERROR_STOP=1 --username local_user --dbname "$$source_db" --command "CREATE TABLE p6_backup_probe (id integer PRIMARY KEY, value text NOT NULL); INSERT INTO p6_backup_probe (id, value) VALUES (1, 'backup-restore-rehearsal');"; \
+	cp "$$root/.env.example" "$$source_storage/p6-backup-probe.env"; \
+	HYC_P6_DISPOSABLE=1 "$$root/scripts/backup.sh" --database-url "$$source_dsn" --storage-root "$$source_storage" --output-dir "$$backup_dir"; \
+	HYC_P6_DISPOSABLE=1 "$$root/scripts/restore-verify.sh" --database-url "$$restore_dsn" --storage-root "$$restore_storage" --backup-dir "$$backup_dir"; \
+	true
 
 p6-report-check:
 	XDG_CACHE_HOME="$${XDG_CACHE_HOME:-$(PWD)/.uv-cache}" uv run --project backend pytest -q backend/tests/unit/reports

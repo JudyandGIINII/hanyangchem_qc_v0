@@ -19,7 +19,7 @@ sys.path.insert(0, str(ROOT / "backend" / "src"))
 
 from hyc_data.models import Base  # noqa: E402
 
-EXPECTED_MIGRATION_HEAD = "20260812_0009"
+EXPECTED_MIGRATION_HEAD = "20260813_0011"
 
 EXPECTED_P3_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {
@@ -61,6 +61,12 @@ EXPECTED_NCR_TRIGGERS: frozenset[str] = frozenset(
     }
 )
 
+EXPECTED_MASTER_IMPORT_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
+    {"hyc_deny_master_import_row_mutation"}
+)
+EXPECTED_MASTER_IMPORT_TRIGGERS: frozenset[str] = frozenset(
+    {"trg_master_import_row_immutable"}
+)
 EXPECTED_REPORT_TRIGGER_FUNCTIONS: frozenset[str] = frozenset(
     {"hyc_deny_report_artifact_mutation"}
 )
@@ -80,6 +86,9 @@ EXPECTED_P2_TABLES: frozenset[str] = frozenset(
         "extraction_runs",
         "idempotency_keys",
         "inbound_receipts",
+        "ingest_cursors",
+        "master_import_batches",
+        "master_import_rows",
         "inspection_cases",
         "inspection_return_reasons",
         "internal_results",
@@ -178,6 +187,10 @@ def run_cycle(database_url: str, *, expected_tables: AbstractSet[str]) -> None:
                     raise RuntimeError("NCR trigger functions are incomplete at head")
                 if not EXPECTED_NCR_TRIGGERS.issubset(triggers):
                     raise RuntimeError("NCR mutation triggers are incomplete at head")
+                if not EXPECTED_MASTER_IMPORT_TRIGGER_FUNCTIONS.issubset(functions):
+                    raise RuntimeError("master import trigger functions are incomplete at head")
+                if not EXPECTED_MASTER_IMPORT_TRIGGERS.issubset(triggers):
+                    raise RuntimeError("master import mutation triggers are incomplete at head")
                 if not EXPECTED_REPORT_TRIGGER_FUNCTIONS.issubset(functions):
                     raise RuntimeError("report trigger functions are incomplete at head")
                 if not EXPECTED_REPORT_TRIGGERS.issubset(triggers):
