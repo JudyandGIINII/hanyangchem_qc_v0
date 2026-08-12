@@ -17,6 +17,7 @@ from hyc_data.models import (
     Document,
     DocumentAllocationLink,
     DocumentSection,
+    ExtractionRun,
     InspectionCase,
     InternalResult,
     Material,
@@ -28,10 +29,6 @@ from hyc_data.models import (
 )
 
 SEOUL_TZ = ZoneInfo("Asia/Seoul")
-
-#: Sentinel for a metric the schema cannot support yet.  Kept as a string so the
-#: frontend renders it verbatim alongside real rates without special-casing.
-OCR_REVIEW_RATE_UNMEASURED = "미측정"
 
 
 @dataclass(frozen=True, slots=True)
@@ -212,10 +209,32 @@ def build_statistics_rows(
             )
             is not None
         )
-        # ocr_review_required has no persisted counterpart: review_required lives on a
-        # runtime extraction candidate and is never stored per case.  It is left False
-        # here and the aggregate reports it as unmeasured rather than as a rate.
+        # Every run is created with status REVIEW_REQUIRED by contract and only becomes
+        # CONFIRMED after a human confirms it, so the existence of a run is the durable
+        # evidence that review was demanded, whereas the current status only tells you
+        # whether that review has since happened.
         ocr_required = False
+        if case.receipt_lot_allocation_id:
+            ocr_required = (
+                session.scalar(
+                    select(ExtractionRun.id)
+                    .join(Document, Document.id == ExtractionRun.document_id)
+                    .join(DocumentSection, DocumentSection.document_id == Document.id)
+                    .join(
+                        DocumentAllocationLink,
+                        DocumentAllocationLink.document_section_id == DocumentSection.id,
+                    )
+                    .where(
+                        DocumentAllocationLink.receipt_lot_allocation_id
+                        == case.receipt_lot_allocation_id,
+                        Document.deleted_at.is_(None),
+                        ExtractionRun.deleted_at.is_(None),
+                    )
+                    .limit(1)
+                )
+                is not None
+            )
+
 
         reasons = payload.get("decision_reasons", {})
         final_decision_val = (
@@ -364,7 +383,11 @@ def calculate_quality_statistics_data(
         if not r.get("has_coa_document", True) or r.get("status") == "DOCUMENT_PENDING":
             coa_missing_count += 1
 
-        if r.get("ocr_review_required", False) or r.get("status") == "SUPPLIER_REVIEW":
+        # Deliberately does not also test status == "SUPPLIER_REVIEW". That was the
+        # original heuristic and it is unreachable here: every case in this population
+        # is approved and has long left that state. Keeping it would suggest the
+        # current status is a valid signal for whether review was once demanded.
+        if r.get("ocr_review_required", False):
             ocr_review_count += 1
 
         internal_pending = (
@@ -429,7 +452,11 @@ def calculate_quality_statistics_data(
             }
         )
 
-    # No OCR review rate is computed on purpose; see OCR_REVIEW_RATE_UNMEASURED.
+    ocr_rate_val = (
+        (Decimal(ocr_review_count) / Decimal(total_count) * Decimal(100))
+        if total_count > 0
+        else Decimal(0)
+    )
     avg_days_val = (
         (Decimal(str(handling_seconds_total)) / Decimal(total_count) / Decimal(86400))
         if total_count > 0
@@ -449,13 +476,10 @@ def calculate_quality_statistics_data(
         "by_supplier": by_supplier,
         "by_material": by_material,
         "coa_missing_count": coa_missing_count,
-        # Reported as unmeasured, never as a rate.  Nothing in the schema records
-        # whether a case's extraction demanded human review, so any number here
-        # would be fabricated -- and a fabricated 0% would read as "OCR needs no
-        # review", the precise opposite of what this system guarantees.
-        "ocr_review_rate": OCR_REVIEW_RATE_UNMEASURED,
+        "ocr_review_rate": f"{ocr_rate_val:.2f}%",
         "internal_test_pending_count": internal_pending_count,
         "average_handling_days": f"{avg_days_val:.2f}",
+
         "open_nonconformance_count": total_open_ncr_count,
         "_item_defects": item_defects,
         "_disposition_counts": disposition_counts,

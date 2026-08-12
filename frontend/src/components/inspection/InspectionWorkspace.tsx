@@ -12,8 +12,10 @@ import { ApiError } from "../../lib/api/client";
 import { approveInspection, confirmReview, createInspection, createIntake, createLineage, extractDocument, fixtureContext, fixtureSession, getExtractionRun, getInspection, getTrace, putInternalResult, returnInspection, submitInspection, uploadDocument } from "../../lib/api/p3";
 import type { DocumentRecord, ExtractionRun, FixtureContext, Inspection, Intake, LotTrace } from "../../lib/api/p3";
 import { canUseBackend, PUBLIC_DEMO_MODE } from "../../lib/public-demo";
+import { ReportPanel } from "../reports/ReportPanel";
+import { StatisticsPanel } from "../statistics/StatisticsPanel";
 
-const stages = ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적"] as const;
+const stages = ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적", "보고서·통계"] as const;
 type Stage = (typeof stages)[number];
 const statusCopy: Record<InspectionFixtureState["workflowStatus"], string> = { REVIEW_REQUIRED: "검토 필요", INTERNAL_TEST_PENDING: "자체검사 대기", READY_TO_SUBMIT: "제출 준비", SUBMITTED: "팀장 검토 대기", RETURNED: "반려됨", APPROVED: "승인·동결" };
 const serverStatusCopy: Record<string, string> = {
@@ -81,6 +83,20 @@ export function InspectionWorkspace({ publicDemo = PUBLIC_DEMO_MODE }: { publicD
     allocationQuantity: isCanonicalDecimalString(state.receipt.allocationQuantity) ? "" : "배분 수량은 정본 소수 문자열만 허용합니다.",
     unit: state.receipt.unit.trim() ? "" : "입고 단위를 입력하세요.",
   }), [state.receipt]);
+  // Statistics default to the current KST month, which is the calendar the backend
+  // buckets on. Deriving it here rather than hardcoding a window keeps the panel
+  // showing the period a user would expect on the day they open it.
+  const reportPeriod = useMemo(() => {
+    const now = new Date();
+    const seoul = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+    const year = seoul.getUTCFullYear();
+    const month = seoul.getUTCMonth();
+    const iso = (d: Date) => d.toISOString().slice(0, 10);
+    return {
+      start: iso(new Date(Date.UTC(year, month, 1))),
+      end: iso(new Date(Date.UTC(year, month + 1, 0))),
+    };
+  }, []);
   const selected = (state.caseName.includes(query) || state.fixtureId.includes(query) || state.receipt.canonicalLot.includes(query)) && (filter === "ALL" || filter === state.workflowStatus);
   const go = (stage: Stage) => setActive(stage);
   const tokenFor = (role = state.selectedRole) => sessionHandles[role];
@@ -200,6 +216,7 @@ export function InspectionWorkspace({ publicDemo = PUBLIC_DEMO_MODE }: { publicD
       </section>}
 
       {active === "LOT 추적" && <section className="stage-content" aria-labelledby="trace-title"><div className="section-heading"><div><p className="eyebrow">08 / LOT TRACE</p><h2 id="trace-title">LOT 추적</h2><p>분할 입고 배분, 합성 문서 section, 검사·규격·감사 관계를 시간순으로 표시합니다.</p></div><span className="fixture-chip">DETERMINISTIC TRACE</span></div><div className="relationship-strip"><div><span>정본 LOT</span><strong>{state.receipt.canonicalLot}</strong></div><b aria-hidden="true">→</b><div><span>입고 배분</span><strong>FX-ALLOC-01 / FX-ALLOC-02</strong></div><b aria-hidden="true">→</b><div><span>문서 section</span><strong>FX-SECTION-COA-01</strong></div><b aria-hidden="true">→</b><div><span>검사·승인</span><strong>FX-INSP-ROUND-01</strong></div></div><ol className="timeline">{[...state.trace].sort((left, right) => left.order - right.order).map((event) => <li key={event.id}><span>{String(event.order).padStart(2, "0")}</span><div><small>{event.type} · {event.id}</small><h3>{event.title}</h3><p>{event.detail}</p></div></li>)}</ol><Notice tone="warn">production LOT automatic ERP link is not enabled. 생산 LOT 자동 ERP 연계는 이 fixture UX와 현재 범위에서 활성화되어 있지 않습니다.</Notice></section>}
+      {active === "보고서·통계" && <section className="stage-content" aria-labelledby="reports-title"><div className="section-heading"><div><p className="eyebrow">09 / REPORTS &amp; STATISTICS</p><h2 id="reports-title">보고서·통계</h2><p>승인 완료 검사 건의 출력물과 품질 통계입니다.</p></div></div><ReportPanel publicDemo={publicDemo} caseId={inspection?.inspection_id ?? state.fixtureId} /><StatisticsPanel publicDemo={publicDemo} periodStart={reportPeriod.start} periodEnd={reportPeriod.end} /></section>}
     </section>
   </main>;
 }

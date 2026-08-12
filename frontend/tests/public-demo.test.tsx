@@ -44,7 +44,7 @@ describe("public synthetic demo boundary", () => {
     expect(markup).not.toContain("P3 API 실행 제어");
     expect(markup).not.toContain("현재 역할로 API 승인");
     expect(markup).not.toContain("Failed to fetch");
-    for (const stage of ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적"]) {
+    for (const stage of ["목록", "입고/LOT", "문서 검토", "매칭", "자체검사", "제출", "팀장 검토", "LOT 추적", "보고서·통계"]) {
       expect(markup).toContain(stage);
     }
   });
@@ -59,6 +59,51 @@ describe("public synthetic demo boundary", () => {
     expect(markup).toContain("실제 서버 상태");
     expect(markup).toContain("SESSION_READY");
     expect(markup).not.toContain("공개 합성 데모 경계");
+  });
+
+  it("executes ZERO fetch calls after navigating to the 보고서·통계 stage under publicDemo=true", async () => {
+    // The report and statistics panels are rendered only when that stage is active,
+    // so the broader zero-fetch test never mounts them. Without this case a fetch
+    // leaking from either panel would ship to the public demo uncaught.
+    const originalFetch = globalThis.fetch;
+    const fetchSpy = vi.fn().mockImplementation(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({}),
+    }));
+    globalThis.fetch = fetchSpy as any;
+
+    try {
+      const container = document.body.appendChild(document.createElement("div"));
+      const root = createRoot(container);
+      await act(async () => {
+        root.render(React.createElement(InspectionWorkspace, { publicDemo: true }));
+      });
+
+      const stageBtn = Array.from(container.querySelectorAll("button")).find((btn) =>
+        btn.textContent?.includes("보고서·통계"),
+      );
+      expect(stageBtn).not.toBeNull();
+      await act(async () => {
+        (stageBtn as HTMLButtonElement).click();
+      });
+
+      // Prove the stage really mounted, so the zero-fetch assertion cannot pass
+      // simply because nothing rendered.
+      expect(container.textContent).toContain("보고서·통계");
+
+      const reportBtn = Array.from(container.querySelectorAll("button")).find((btn) =>
+        btn.textContent?.includes("보고서 생성"),
+      );
+      expect(reportBtn).not.toBeNull();
+      await act(async () => {
+        (reportBtn as HTMLButtonElement).click();
+      });
+
+      expect(fetchSpy).not.toHaveBeenCalled();
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
   });
 
   it("executes ZERO fetch calls at runtime when mounted with publicDemo=true during bootstrap, role switching, and synthetic actions", async () => {

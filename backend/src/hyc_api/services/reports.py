@@ -13,10 +13,12 @@ from sqlalchemy.orm import Session
 from hyc_api.auth import Principal
 from hyc_api.config import Settings
 from hyc_api.reports.integrated import render_integrated_inspection_report
+from hyc_api.reports.lot_trace import render_lot_trace_report
 from hyc_api.reports.raw_data import render_raw_data_report
 from hyc_api.reports.sources import (
     ReportSourceUnavailable,
     load_frozen_decision,
+    load_lot_trace_sources,
     load_reference_information,
 )
 from hyc_api.reports.statistics import (
@@ -65,10 +67,11 @@ class InProcessReportRunner:
             workbook_bytes = self._render_case_report(
                 session, job, kind=kind, include_audit=include_audit
             )
+        elif kind is ReportKind.LOT_TRACE:
+            workbook_bytes = self._render_lot_trace(
+                session, job, include_audit=include_audit
+            )
         else:
-            # LOT_TRACE is registered but not yet runnable: its generator reads a
-            # frozen.payload["allocations"] key that the approval snapshot does not
-            # carry, so its split-receipt sheet could only ever render empty.
             raise ReportSourceUnavailable("REPORT_KIND_NOT_IMPLEMENTED")
 
         storage = HashAddressedStorage(self._settings.p6_report_storage_root)
@@ -98,7 +101,18 @@ class InProcessReportRunner:
             return render_raw_data_report(frozen, reference, include_audit=include_audit)
         return render_integrated_inspection_report(frozen, reference, include_audit=include_audit)
 
+    def _render_lot_trace(
+        self, session: Session, job: ReportJob, *, include_audit: bool
+    ) -> bytes:
+        raw_lot_id = job.parameters.get("material_lot_id")
+        if not raw_lot_id:
+            raise ReportSourceUnavailable("INVALID_PARAMETERS")
+        lot_id = UUID(str(raw_lot_id))
+        sources = load_lot_trace_sources(session, lot_id)
+        return render_lot_trace_report(sources, include_audit=include_audit)
+
     def _render_statistics(self, session: Session, job: ReportJob) -> bytes:
+
         period_start = str(job.parameters.get("period_start", ""))
         period_end = str(job.parameters.get("period_end", ""))
         if not period_start or not period_end:

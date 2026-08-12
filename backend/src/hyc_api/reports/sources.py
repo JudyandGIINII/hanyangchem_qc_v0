@@ -13,6 +13,7 @@ from hyc_data.models import (
     Document,
     DocumentAllocationLink,
     DocumentSection,
+    InboundReceipt,
     InspectionCase,
     Material,
     MaterialLot,
@@ -159,5 +160,155 @@ def load_reference_information(session: Session, case_id: UUID) -> LookedUpRefer
         documents=documents,
         nonconformances=nonconformances,
         attachments=attachments,
+        observed_at=datetime.now(UTC),
+    )
+
+
+@dataclass(frozen=True, slots=True)
+class LotTraceAllocation:
+    allocation_id: str
+    inbound_no: str
+    receipt_date: str
+    model_name: str
+    quantity: str
+    quantity_unit: str
+    status: str
+
+
+@dataclass(frozen=True, slots=True)
+class LotTraceCasePair:
+    frozen: FrozenDecisionSource
+    reference: LookedUpReferenceSource
+
+
+@dataclass(frozen=True, slots=True)
+class LotTraceSources:
+    material_lot_id: str
+    supplier_lot_no_raw: str
+    identity_key: str
+    identity_status: str
+    production_date_evidence: str
+    merged_into_id: str
+    supplier_name: str
+    material_name: str
+    model_name: str
+    allocations: list[LotTraceAllocation]
+    case_pairs: list[LotTraceCasePair]
+    observed_at: datetime
+
+
+def load_lot_trace_sources(
+    session: Session, material_lot_id: UUID | str
+) -> LotTraceSources:
+    lot_uuid = (
+        UUID(str(material_lot_id))
+        if isinstance(material_lot_id, str)
+        else material_lot_id
+    )
+    lot = session.scalar(
+        select(MaterialLot).where(
+            MaterialLot.id == lot_uuid,
+            MaterialLot.deleted_at.is_(None),
+        )
+    )
+    if lot is None:
+        raise ReportSourceUnavailable("LOT_NOT_FOUND")
+
+    supplier = session.scalar(
+        select(Supplier).where(
+            Supplier.id == lot.supplier_id,
+            Supplier.deleted_at.is_(None),
+        )
+    )
+    supplier_name = str(supplier.name or "") if supplier else ""
+
+    material = session.scalar(
+        select(Material).where(
+            Material.id == lot.material_id,
+            Material.deleted_at.is_(None),
+        )
+    )
+    material_name = str(material.name or "") if material else ""
+
+    alloc_stmt = (
+        select(ReceiptLotAllocation, InboundReceipt, MaterialModel)
+        .join(
+            InboundReceipt,
+            ReceiptLotAllocation.inbound_receipt_id == InboundReceipt.id,
+        )
+        .outerjoin(
+            MaterialModel,
+            ReceiptLotAllocation.model_id == MaterialModel.id,
+        )
+        .where(
+            ReceiptLotAllocation.material_lot_id == lot.id,
+            ReceiptLotAllocation.deleted_at.is_(None),
+            InboundReceipt.deleted_at.is_(None),
+        )
+        .order_by(
+            InboundReceipt.receipt_date,
+            InboundReceipt.inbound_no,
+            ReceiptLotAllocation.id,
+        )
+    )
+
+    alloc_rows = session.execute(alloc_stmt).all()
+    allocations: list[LotTraceAllocation] = []
+    alloc_ids: list[UUID] = []
+    primary_model_name = ""
+
+    for alloc, receipt, model in alloc_rows:
+        alloc_ids.append(alloc.id)
+        mod_name = str(model.name or "") if model else ""
+        if not primary_model_name and mod_name:
+            primary_model_name = mod_name
+        allocations.append(
+            LotTraceAllocation(
+                allocation_id=str(alloc.id),
+                inbound_no=str(receipt.inbound_no or ""),
+                receipt_date=str(receipt.receipt_date or ""),
+                model_name=mod_name,
+                quantity=str(alloc.quantity),
+                quantity_unit=str(alloc.quantity_unit or ""),
+                status=str(receipt.status or ""),
+            )
+        )
+
+    case_pairs: list[LotTraceCasePair] = []
+    if alloc_ids:
+        case_stmt = (
+            select(InspectionCase, DecisionSnapshotRow)
+            .join(
+                DecisionSnapshotRow,
+                DecisionSnapshotRow.inspection_case_id == InspectionCase.id,
+            )
+            .where(
+                InspectionCase.receipt_lot_allocation_id.in_(alloc_ids),
+                InspectionCase.deleted_at.is_(None),
+                InspectionCase.status != "CANCELLED",
+            )
+            .order_by(
+                DecisionSnapshotRow.created_at,
+                InspectionCase.id,
+            )
+        )
+        case_rows = session.execute(case_stmt).tuples().all()
+        for case, _snapshot in case_rows:
+            frozen = load_frozen_decision(session, case.id)
+            ref = load_reference_information(session, case.id)
+            case_pairs.append(LotTraceCasePair(frozen=frozen, reference=ref))
+
+    return LotTraceSources(
+        material_lot_id=str(lot.id),
+        supplier_lot_no_raw=str(lot.supplier_lot_no_raw or ""),
+        identity_key=str(lot.identity_key or ""),
+        identity_status=str(lot.identity_status or ""),
+        production_date_evidence=str(lot.production_date_evidence or ""),
+        merged_into_id=str(lot.merged_into_id or ""),
+        supplier_name=supplier_name,
+        material_name=material_name,
+        model_name=primary_model_name,
+        allocations=allocations,
+        case_pairs=case_pairs,
         observed_at=datetime.now(UTC),
     )

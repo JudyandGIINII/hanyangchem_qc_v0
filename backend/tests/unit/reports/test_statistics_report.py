@@ -14,26 +14,36 @@ from sqlalchemy.orm import Session
 
 from hyc_api.reports.deterministic import workbook_digest
 from hyc_api.reports.statistics import (
-    OCR_REVIEW_RATE_UNMEASURED,
     StatisticsRow,
+    build_statistics_rows,
+    calculate_quality_statistics_data,
     query_approved_inspection_cases,
     render_supplier_quality_statistics_report,
 )
 from hyc_data.models import (
     Base,
     DecisionSnapshotRow,
+    Document,
+    DocumentAllocationLink,
+    DocumentSection,
+    ExtractionRun,
     InboundReceipt,
     InspectionCase,
     Material,
     MaterialLot,
     ReceiptLotAllocation,
+    SpecProfile,
+    SpecVersion,
     Supplier,
 )
 
 POSTGRES_DSN = os.environ.get("HYC_P3_TEST_POSTGRES_DSN") or os.environ.get(
     "HYC_P2_TEST_POSTGRES_DSN"
 )
-pytestmark = pytest.mark.postgres
+# Only the two database-backed cases below carry the postgres marker.  Marking the
+# whole module would deselect the in-memory regressions -- the Asia/Seoul month
+# boundary and the all-cells-are-strings rule -- from `make check`, which is the
+# gate that actually runs on every change.
 
 
 @pytest.fixture
@@ -243,11 +253,7 @@ def test_statistics_report_in_memory_metrics_and_all_cell_values_are_strings() -
     assert metrics_map["부적합 건수"] == "1"
     assert metrics_map["부적합률"] == "50.00%"
     assert metrics_map["COA 누락률"] == "50.00%"
-    # Deliberately not "50.00%". Hand-built rows can set ocr_review_required, but
-    # build_statistics_rows never can: nothing in the schema records whether a case's
-    # extraction demanded review. A rate that only works in tests would show 0% in
-    # production, reading as "OCR needs no review" — the opposite of the guarantee.
-    assert metrics_map["OCR 검토 필요율"] == OCR_REVIEW_RATE_UNMEASURED
+    assert metrics_map["OCR 검토 필요율"] == "50.00%"
 
     for name in wb.sheetnames:
         sheet = wb[name]
@@ -258,19 +264,8 @@ def test_statistics_report_in_memory_metrics_and_all_cell_values_are_strings() -
                     assert isinstance(cell_val, str), err_msg
 
 
-def test_ocr_review_rate_is_reported_as_unmeasured_never_as_zero() -> None:
-    """A fabricated 0% would assert the opposite of the human-review invariant.
-
-    Nothing in the schema records whether a case's extraction demanded review, so
-    the aggregate must say so rather than emit a number it cannot justify.
-    """
-    from datetime import UTC, datetime
-
-    from hyc_api.reports.statistics import (
-        OCR_REVIEW_RATE_UNMEASURED,
-        calculate_quality_statistics_data,
-    )
-
+def test_ocr_review_rate_is_reported_as_percentage() -> None:
+    """Verify that ocr_review_rate is computed as a Decimal percentage string."""
     data = calculate_quality_statistics_data(
         [
             {
@@ -282,11 +277,232 @@ def test_ocr_review_rate_is_reported_as_unmeasured_never_as_zero() -> None:
                 "material_name": "염화칼슘",
                 "supplier_code": "S1",
                 "supplier_name": "세계로비드",
-            }
+                "ocr_review_required": True,
+            },
+            {
+                "inspection_case_id": "c2",
+                "snapshot_created_at": datetime(2026, 8, 11, 3, 0, tzinfo=UTC),
+                "status": "ACCEPTED",
+                "final_decision": "ACCEPTED",
+                "material_code": "M1",
+                "material_name": "염화칼슘",
+                "supplier_code": "S1",
+                "supplier_name": "세계로비드",
+                "ocr_review_required": False,
+            },
         ],
         "2026-08-01",
         "2026-08-31",
         datetime(2026, 9, 1, tzinfo=UTC),
     )
-    assert data["ocr_review_rate"] == OCR_REVIEW_RATE_UNMEASURED
-    assert "%" not in str(data["ocr_review_rate"])
+    assert data["ocr_review_rate"] == "50.00%"
+
+
+def test_ocr_review_rate_derived_from_extraction_run_both_directions(session: Session) -> None:
+    """Regression test proving OCR review rate is genuinely non-zero for a case with an
+    ExtractionRun and zero for a case without.
+
+    Proves both directions via build_statistics_rows against the real schema.
+    """
+    supplier = Supplier(id=uuid4(), name="세계로비드", supplier_code="SUP-001")
+    material = Material(id=uuid4(), name="염화칼슘", material_code="MAT-001")
+    session.add_all([supplier, material])
+    session.flush()
+
+    spec_prof = SpecProfile(
+        id=uuid4(),
+        material_id=material.id,
+        name="염화칼슘 규격",
+    )
+    session.add(spec_prof)
+    session.flush()
+
+    spec_ver = SpecVersion(
+        id=uuid4(),
+        spec_profile_id=spec_prof.id,
+        version=1,
+        status="ACTIVE",
+        effective_from=date(2026, 1, 1),
+    )
+    session.add(spec_ver)
+    session.flush()
+
+    # Lot 1 & Receipt 1 & Alloc 1: WITH ExtractionRun
+    lot1 = MaterialLot(
+        id=uuid4(),
+        supplier_id=supplier.id,
+        material_id=material.id,
+        identity_policy_version="v1",
+        identity_key="LOT-OCR-001",
+        identity_status="CANONICAL",
+    )
+    receipt1 = InboundReceipt(
+        id=uuid4(),
+        inbound_no="INB-OCR-1",
+        supplier_id=supplier.id,
+        receipt_date=date(2026, 5, 1),
+    )
+    session.add_all([lot1, receipt1])
+    session.flush()
+
+    alloc1 = ReceiptLotAllocation(
+        id=uuid4(),
+        inbound_receipt_id=receipt1.id,
+        material_lot_id=lot1.id,
+        quantity=Decimal("10.00"),
+        quantity_unit="kg",
+    )
+    session.add(alloc1)
+    session.flush()
+
+    # Document & Section & AllocationLink & ExtractionRun for Case 1
+    doc1 = Document(
+        id=uuid4(),
+        document_type="COA",
+        checksum_sha256="1" * 64,
+        original_filename="coa1.pdf",
+        storage_key="storage/coa1.pdf",
+        immutable=True,
+    )
+    session.add(doc1)
+    session.flush()
+
+    sec1 = DocumentSection(
+        id=uuid4(),
+        document_id=doc1.id,
+        section_index=0,
+        page_from=1,
+        page_to=1,
+        status="MATCHED",
+    )
+    session.add(sec1)
+    session.flush()
+
+    link1 = DocumentAllocationLink(
+        id=uuid4(),
+        document_section_id=sec1.id,
+        receipt_lot_allocation_id=alloc1.id,
+        match_status="CONFIRMED",
+    )
+    session.add(link1)
+    session.flush()
+
+
+    run1 = ExtractionRun(
+        id=uuid4(),
+        document_id=doc1.id,
+        provider_name="LOCAL_PADDLE_OCR",
+        status="REVIEW_REQUIRED",
+        candidate_payload={"items": []},
+    )
+    session.add(run1)
+    session.flush()
+
+    c1 = InspectionCase(
+        id=uuid4(),
+        receipt_lot_allocation_id=alloc1.id,
+        spec_version_id=spec_ver.id,
+        status="ACCEPTED",
+        final_decision=None,
+        created_at=datetime(2026, 5, 1, 0, 0, tzinfo=UTC),
+    )
+    session.add(c1)
+    session.flush()
+
+    c1.final_decision = "ACCEPTED"
+    session.flush()
+
+    s1 = DecisionSnapshotRow(
+        id=uuid4(),
+        inspection_case_id=c1.id,
+        payload={
+            "overall_decision": "ACCEPTED",
+            "spec_version": {"semantic_version": "1.0.0", "status": "ACTIVE"},
+            "approver": {"actor_id": str(uuid4()), "role": "LEAD"},
+        },
+        content_hash="1" * 64,
+        created_at=datetime(2026, 5, 2, 12, 0, tzinfo=UTC),
+    )
+    session.add(s1)
+    session.flush()
+
+    # Direction 1: Single case with ExtractionRun -> ocr_review_required is True,
+    # ocr_review_rate is "100.00%"
+    rows_c1 = build_statistics_rows(session)
+    assert len(rows_c1) == 1
+    assert rows_c1[0].ocr_review_required is True
+
+    data_c1 = calculate_quality_statistics_data(
+        rows_c1, "2026-05-01", "2026-05-31", datetime(2026, 5, 3, tzinfo=UTC)
+    )
+    assert data_c1["ocr_review_rate"] == "100.00%"
+
+    # Lot 2 & Receipt 2 & Alloc 2: WITHOUT ExtractionRun
+    lot2 = MaterialLot(
+        id=uuid4(),
+        supplier_id=supplier.id,
+        material_id=material.id,
+        identity_policy_version="v1",
+        identity_key="LOT-OCR-002",
+        identity_status="CANONICAL",
+    )
+    receipt2 = InboundReceipt(
+        id=uuid4(),
+        inbound_no="INB-OCR-2",
+        supplier_id=supplier.id,
+        receipt_date=date(2026, 5, 1),
+    )
+    session.add_all([lot2, receipt2])
+    session.flush()
+
+    alloc2 = ReceiptLotAllocation(
+        id=uuid4(),
+        inbound_receipt_id=receipt2.id,
+        material_lot_id=lot2.id,
+        quantity=Decimal("10.00"),
+        quantity_unit="kg",
+    )
+    session.add(alloc2)
+    session.flush()
+
+    c2 = InspectionCase(
+        id=uuid4(),
+        receipt_lot_allocation_id=alloc2.id,
+        spec_version_id=spec_ver.id,
+        status="ACCEPTED",
+        final_decision=None,
+        created_at=datetime(2026, 5, 3, 0, 0, tzinfo=UTC),
+    )
+    session.add(c2)
+    session.flush()
+
+    c2.final_decision = "ACCEPTED"
+    session.flush()
+
+    s2 = DecisionSnapshotRow(
+        id=uuid4(),
+        inspection_case_id=c2.id,
+        payload={
+            "overall_decision": "ACCEPTED",
+            "spec_version": {"semantic_version": "1.0.0", "status": "ACTIVE"},
+            "approver": {"actor_id": str(uuid4()), "role": "LEAD"},
+        },
+        content_hash="2" * 64,
+        created_at=datetime(2026, 5, 4, 12, 0, tzinfo=UTC),
+    )
+    session.add(s2)
+    session.commit()
+
+    # Both cases together: 1 with run, 1 without run -> rate is 50.00%
+    all_rows = build_statistics_rows(session)
+    assert len(all_rows) == 2
+    c1_row = next(r for r in all_rows if r.inspection_case_id == str(c1.id))
+    c2_row = next(r for r in all_rows if r.inspection_case_id == str(c2.id))
+
+    assert c1_row.ocr_review_required is True
+    assert c2_row.ocr_review_required is False
+
+    data_both = calculate_quality_statistics_data(
+        all_rows, "2026-05-01", "2026-05-31", datetime(2026, 5, 5, tzinfo=UTC)
+    )
+    assert data_both["ocr_review_rate"] == "50.00%"

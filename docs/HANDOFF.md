@@ -76,7 +76,7 @@ P6는 KANBAN의 "수집/운영/Pilot"이며 PRD `Phase 2: Operations`에 해당�
 
 ### 7. P6 착수 전 알아야 할 환경·운영 사실
 
-- `make p3-e2e`는 이 체크아웃 경로에 비ASCII 문자가 있어 Docker bake가 실패하므로 `COMPOSE_BAKE=false make p3-e2e`로 실행한다
+- `make p3-e2e`는 이 체크아웃 경로에 비ASCII 문자가 있어 Docker bake가 실패한다. **2026-08-12 확인: `COMPOSE_BAKE=false`는 더 이상 듣지 않는다.** 실패 메시지 `x-docker-expose-session-sharedkey contains value with non-printable ASCII characters`는 buildx가 경로에서 세션 키를 만들면서 발생하므로 BuildKit 자체를 꺼야 한다. **`COMPOSE_BAKE=0 DOCKER_BUILDKIT=0 make p3-e2e`로 실행하면 통과한다**(이 조합으로 Playwright 3/3 확인). 환경 제약이며 코드 결함이 아니다
 - `make p4-local-ocr-preflight`는 모델 아티팩트가 부트스트랩되지 않아 `LOCAL_OCR_MODEL_MISSING`으로 **정상적으로 fail closed** 된다. 실제 실행에는 `make local-ocr-bootstrap`이 필요하며 이는 모델 아카이브를 내려받는다
 - `contracts/openapi.json`을 재생성하면 `frontend/src/lib/api/generated.ts`도 함께 재생성해야 `make contracts-check`가 통과한다
 - `scripts/scan_secrets.py`의 `APPROVED_FIXTURES`에 등재된 파일을 수정하면 SHA-256 다이제스트를 갱신해야 한다. 갱신 없이 커밋하면 `make check`가 깨진다
