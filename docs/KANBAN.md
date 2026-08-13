@@ -88,6 +88,8 @@
 
 ## 실행 Backlog
 
+> **2026-08-13: 1차 개발 MVP 종료.** 엔지니어링으로 진행 가능한 항목이 남지 않았고, 남은 전 항목은 승인 또는 실물 부재로 막혀 있다. **추가 개발은 (1) 시험 샘플 확보와 (2) NAS/Google Drive 접속 확인 후 재개한다.** 인계 정본은 [`HANDOFF.md`](HANDOFF.md)의 2026-08-13 섹션이며 재개 착수 지점은 그 §7에 있다.
+
 1. P0A read-only evidence freeze — Completed, source immutable PASS
 2. P0B evidence tooling/fixture bootstrap와 ADR — Completed/accepted
 3. P1 Repository/Contract foundation — Completed/accepted through user-authorized Hermes direct QA
@@ -97,4 +99,7 @@
 7. P5 Core MVP — 21개 P5 행 중 12행 구현(FR-MST-001~005, FR-SPEC-002, FR-NCR-001/002/004, FR-MAP-001, FR-APR-003, FR-INT-006). FR-NCR-003은 기존 lineage로 충족. **비게이트 작업은 완료**이며 남은 FR-SPEC-003, FR-SPEC-007, FR-MAP-003, FR-OCR-001, FR-INT-003은 전부 QUALITY/AP-02 승인 대기로 엔지니어링 이슈가 아니다. 승인 없이는 P5 추가 진행 불가.
 8. P6 Operations — **2026-08-11 사용자 결정으로 전체 승인**되어 착수 가능. 범위·설계 정본은 [`plans/2026-08-11-p6-operations-scope-plan.md`](plans/2026-08-11-p6-operations-scope-plan.md)이며 인계 배경은 `HANDOFF.md`의 2026-08-10 섹션이다. 7조각 순서: P6-1 보고서 공통 틀+통합검사보고서 → P6-2 LOT추적·통계·통계화면·Raw Data 엑셀 → P6-3 부적합 후속조치 → P6-4 NAS/Drive 수집 준비 → P6-5 마스터 Import 준비 → P6-6 OCR 운영 모니터링 → P6-7 백업/복구. 앞 3조각은 완성품이고 뒤 4조각은 seam 준비다. **이전 상태(마스터 Import·NAS/Drive 금지)는 이 승인으로 갱신됐다** — 다만 승인된 것은 코드이며 실제 접속·자격증명·실 엑셀 커밋은 계속 금지다. Feature Flag는 FR-NCR-004로 이미 완료라 재작업 없음. 보존 정책(RET-001)은 사용자 결정으로 제외. OCR KPI 임계값은 승인과 무관하게 COA 샘플 부재로 만들 수 없다(PRD §3.3). P5 미완료 5행의 QUALITY/AP-02 게이트는 계속 유효하며 P6가 이를 해제하지 않는다.
 
-P1/P2/P3와 delivered P4-A/preflight/local-only OCR 기록은 유지된다. **현재 truthful next boundary는 P6-1 착수다** — 2026-08-11 P6 승인으로 갱신됐다. P4-B는 real-corpus validation을 원할 때만 QUALITY corpus approval과 human-label/independent-review evidence를 확보하는 별도 게이트로 남고, P4-C는 external-Provider opt-in이 별도로 요청될 때만 적용되며 현재 account request는 없다. **P5 Core MVP는 21행 중 12행 구현으로 미완료이며, 잔여 5행은 전부 QUALITY/AP-02 승인 대기다** (이전의 "P5 unstarted" 서술은 2026-08-10 P5 증분으로 대체됐다). Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 유지한다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP **실제 호출**, 실 PDF/XLSX 커밋, 비일회성/production DB, production DB-role activation, 보존기간·삭제 규칙, OCR KPI 임계값, release/production readiness는 계속 시작하지 않는다. Public synthetic Vercel demo는 별도 frontend-only 경계이며 live identity는 deployment API/browser evidence로 확인한다.
+9. P7 Traceability seam — **완료**. 2026-08-13 사용자 결정으로 seam 경계까지 승인. BOM·생산 LOT·소비 링크 스키마, 순환에서 종료하는 순수 순회, 플래그 off 기본 어댑터. 실제 ERP 연계는 AP-08 대기.
+10. **1차 MVP 종료** — 최종 트리 `ff98896`. `make check` exit 0(mypy 104/0, backend 779/191, frontend 78/11, migration 4, scans, compose), P2 27, P3 147, `p6-report-check` 41, Playwright 3/3, backup 리허설 통과, P4 golden 199·preflight 97 불변, Docker 잔여 0/0/0. 재개 조건 2건은 위 인용 참조.
+
+P1/P2/P3와 delivered P4-A/preflight/local-only OCR 기록은 유지된다. **현재 truthful next boundary는 재개 조건 2건의 확보다** — 시험 샘플과 NAS/Google Drive 접속 확인이며, 2026-08-13 1차 MVP 종료로 갱신됐다(이전의 'P6-1 착수'는 완료됐다). P4-B는 real-corpus validation을 원할 때만 QUALITY corpus approval과 human-label/independent-review evidence를 확보하는 별도 게이트로 남고, P4-C는 external-Provider opt-in이 별도로 요청될 때만 적용되며 현재 account request는 없다. **P5 Core MVP는 21행 중 12행 구현으로 미완료이며, 잔여 5행은 전부 QUALITY/AP-02 승인 대기다** (이전의 "P5 unstarted" 서술은 2026-08-10 P5 증분으로 대체됐다). Fixture-only N-1/N-2/N-5와 P2 N-M3는 accepted debt로 유지한다. 실데이터 apply/import, 외부 OCR/AI/NAS/Drive/ERP **실제 호출**, 실 PDF/XLSX 커밋, 비일회성/production DB, production DB-role activation, 보존기간·삭제 규칙, OCR KPI 임계값, release/production readiness는 계속 시작하지 않는다. Public synthetic Vercel demo는 별도 frontend-only 경계이며 live identity는 deployment API/browser evidence로 확인한다.

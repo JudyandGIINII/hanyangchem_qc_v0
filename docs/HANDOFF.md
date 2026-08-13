@@ -1,6 +1,126 @@
-# 한양화학 v0 인계 문서 — P5 종료 / P6 착수 준비
+# 한양화학 v0 인계 문서 — 1차 개발 MVP 종료
 
-## 2026-08-10 P5 종료 및 P6 handoff (현행 인계 문서)
+## 2026-08-13 1차 MVP 종료 및 재개 조건 (현행 인계 문서)
+
+이 섹션이 현재 인계 상태의 정본이다. 아래 P5 이하 섹션은 각 증분의 역사적 증거로 계속 유효하며 이 섹션이 그것을 무효화하지 않는다.
+
+### 1. 결론
+
+**1차 개발 MVP를 종료한다.** 엔지니어링으로 더 진행할 수 있는 항목이 남지 않았다. 남은 전 항목은 **승인 또는 실물 부재**로 막혀 있으며 코드 부채가 아니다.
+
+**추가 개발은 두 가지가 확보된 뒤에 재개한다.**
+
+1. **시험 샘플(COA 등) 확보** — OCR 품질 기준선 측정과 P4-B 대표 코퍼스에 필요하다
+2. **NAS / Google Drive 접속 확인** — 수집 seam에 실제 어댑터를 붙이는 데 필요하다
+
+두 조건이 갖춰지기 전에는 아래 §6의 금지가 그대로 유지된다.
+
+### 2. 이번 MVP 증분 범위
+
+`59ad9c9`(P6 승인·계획) 이후 `ff98896`까지 **9개 커밋, 87개 파일, +9816/−58**. 전부 `origin/main`에 non-force fast-forward로 전달됐고 병합 커밋이나 rebase는 없다.
+
+|증분|내용|
+|---|---|
+|P6-1|보고서 공통 틀(Job·산출물 불변성) + 통합 검사보고서|
+|P6-2|Raw Data 엑셀 · 월별/공급사 통계 · 통계 화면|
+|P6-3|부적합 후속조치 append-only 이력|
+|P6-4|NAS/Drive 수집 seam|
+|P6-5|마스터 Import (미리보기→적용→되돌리기)|
+|P6-6|OCR 운영 모니터링|
+|P6-7|백업/복구와 복원 리허설|
+|P7|추적성 seam (BOM · 생산 LOT · 영향 범위)|
+
+### 3. 최종 검증 상태
+
+최종 트리(`ff98896`) 기준.
+
+|게이트|결과|
+|---|---|
+|`make check`|**exit 0** (Ruff, strict mypy **104 files/0 errors**, backend **779 passed/191 deselected**, frontend Vitest **78/11 files** + Next production build, migration contract 4, secret·sensitive scans, Compose)|
+|`make p2-postgres-check`|**27**|
+|`make p3-postgres-check`|**147**|
+|`make p6-report-check`|**41**|
+|`make p3-e2e` (Playwright)|**3/3**|
+|`make p6-backup-restore-verify`|매니페스트 diff 통과|
+|`make p4-golden-check` / `p4-preflight-check`|**199 / 97 — 불변**|
+|HYC Docker 잔여|**0/0/0** (사용자 소유 n8n만 running, untouched)|
+
+P4 수치가 전 증분에서 한 번도 변하지 않은 것이 P4 경계를 침범하지 않았다는 증거다.
+
+### 4. 설계상 확정되어 되돌리면 안 되는 결정
+
+- **보고서 바이트 재현성.** openpyxl이 xlsx zip 멤버마다 현재 시각을 박으므로 아카이브를 고정 타임스탬프로 재작성한다. 같은 검사가 초마다 다른 파일이 되면 "그때 받은 그 파일"을 증명할 수 없다
+- **보고서 출처 이원화.** 판정값은 `decision_snapshots`에서만 읽고 명칭·COA 메타·부적합·첨부는 조회 시점 값을 쓰되 각 시트 1행에 출처를 렌더한다. 스냅샷 스키마는 확장하지 않는다 — `APPROVAL_SNAPSHOT_REQUIRED_KEYS` 변경은 기존 `content_hash` 계약을 깨고, **부적합은 승인 이후 발생하는 사후 사건**이라 승인 스냅샷에 얼리는 것이 모델링상 틀리다
+- **승인된 부적합은 불변.** 그래서 후속조치 완료는 NCR 행 수정이 아니라 append-only 이력에 기록한다. 행 수정으로 구현하면 런타임에 `P0001`을 맞는다
+- **통계 모집단.** `decision_snapshots` 행이 있는 승인 완료 건만, `CANCELLED` 제외. 월 경계는 Asia/Seoul
+- **통계 기간은 SQL로 밀어 넣는다.** 기간 없이 전체 이력을 적재하면 검사가 쌓일수록 제곱으로 느려진다(실제로 P3 게이트가 32초 → 600초 초과로 악화된 적 있음)
+- **화면과 엑셀은 단일 집계 엔진을 공유한다.** 두 곳에서 따로 집계하면 품질팀 앞에서 숫자가 갈라진다
+- **Import는 미리보기 없이 적용할 수 없다.** 거부 행이 하나라도 있으면 전량 미적용
+- **추적성 순회는 순환에서 종료한다.** 실제 BOM은 입력 오류로 순환이 생기고, 고객 이슈 대응 중 무한 루프에 빠지는 영향 분석은 제한된 결과보다 나쁘다
+- **seam은 플래그 off일 때 부수효과가 0이다.** 수집·추적성 모두 off에서 테이블을 읽지도 않는다
+
+### 5. 값을 만들지 않고 부재를 명시한 항목
+
+근거 없는 숫자를 만드는 것보다 못 잰다고 말하는 편이 낫다는 원칙을 적용한 지점이다.
+
+|항목|처리|사유|
+|---|---|---|
+|OCR 품질 KPI 임계값|`kpi_thresholds: null` + 사유 문구|PRD §3.3이 초기 운영 데이터로 기준선 측정을 요구. COA 샘플 없음|
+|OCR 운영 지표 무관측|`0%`가 아니라 `관측 없음`|"검토 안 됨"과 "추출이 없음"은 다른 주장|
+|PRD §12.5 테스트 데이터 제외|미구현 + 쿼리 헬퍼에 갭 주석|스키마에 테스트 레코드 식별 표시가 없어 제외 불가|
+|부적합 severity·목표일 산정|미구현|QUALITY 정책|
+|Import UPDATE 되돌리기|생성분만 되돌리고 한계 명시|이전 값을 기록하지 않으므로 추측 복원은 더 나쁨|
+
+### 6. 재개 전까지 계속 금지
+
+실데이터 apply/import, 외부 OCR/AI/**NAS/Drive/ERP 실제 호출**, 실 PDF/XLSX 커밋(AP-05), 보존기간·만료·삭제 규칙(RET-001/AP-08), OCR KPI 임계값, 비일회성·production migration, production DB-role activation, release·production readiness 선언.
+
+이 인계 문서 자체는 어떤 승인 권한도 부여하지 않는다.
+
+### 7. 재개 시 착수 지점
+
+**시험 샘플이 확보되면**
+
+1. `docs/approvals/P4B_QUALITY_CORPUS_DECISION_PACKET.md`를 완성하고 QUALITY 승인자를 지정한다
+2. human-label과 독립 검토 증거를 확보한다(현재 후보 4건 / 적격 0건)
+3. 기준선을 측정한 뒤에만 OCR KPI 임계값을 설정한다. `hyc_api/reports/ocr_operations.py`가 임계값 상수 도입 시 실패하는 구조적 가드를 갖고 있으므로 그 가드도 함께 갱신해야 한다
+4. P5 잔여 5행(FR-SPEC-003/007, FR-MAP-003, FR-OCR-001, FR-INT-003)의 판정·샘플 정책을 확정한다
+
+**NAS / Google Drive 접속이 확인되면**
+
+1. `backend/src/hyc_ingest/ports.py`의 `SourceAdapter`를 구현하는 실 어댑터를 추가한다. `LocalDirectorySourceAdapter`가 참조 구현이다
+2. 접속 정보를 설정으로 주입하고 수집 플래그를 켠다. 파이프라인·안정화·중복차단은 이미 있다
+3. AP-06(mirror)과 AP-01 경계를 재확인한다
+
+**둘 다 무관하게 가능한 것**
+
+- REP-001 산출물을 품질팀에 보여주고 `QUALITY sample approval`을 받는다. 열 구조 호환성은 이미 확보돼 있다
+- 매트릭스 인용 경로 전수 검증(§8 참조)
+
+### 8. 인계받는 사람이 알아야 할 함정
+
+이번 작업에서 **실제로 발생한** 것만 적는다.
+
+- **매트릭스가 존재하지 않는 테스트를 인용한 사례가 3건 있었다** — P5의 `test_internal_results_api.py`, FR-MST-006의 `test_erp_bom_seam.py`, REP-003의 `test_production_lot_link_seam.py`. 세 건 모두 "구현 완료"로 기록돼 있었다. **매트릭스의 근거 경로는 실재를 확인하기 전까지 신뢰하지 말 것.** 남은 행의 전수 검증은 아직 하지 않았다
+- **단위 테스트에 `pytest.mark.postgres`를 붙이면 어디에서도 실행되지 않는다.** `make check`는 `-m "not postgres"`로 제외하고, postgres 게이트는 `integration/`만 대상으로 한다. 이 실수가 4번 발생했다. `backend/tests/unit/`의 fixture는 DSN이 없으면 sqlite로 폴백하므로 마커가 불필요하다
+- **워커 CLI가 존재하지 않는 산출물을 구체적 수치와 함께 완료 보고한 사례가 2건 있었다.** 전사는 응답의 증거일 뿐 산출물이 아니다. 파일 존재와 게이트 수치 증가로 직접 확인할 것
+- **`make p3-e2e`는 `COMPOSE_BAKE=false`로 더 이상 통과하지 않는다.** 저장소 경로의 비ASCII 문자가 buildx 세션 키를 깨므로 **`COMPOSE_BAKE=0 DOCKER_BUILDKIT=0`**이 필요하다
+- **`contracts/openapi.json` 재생성 시 `frontend/src/lib/api/generated.ts`도 함께 재생성**해야 `make contracts-check`가 통과한다
+- **`check_migrations.py`는 head 리비전·예상 테이블 집합·트리거 목록을 고정**한다. 신규 마이그레이션은 셋 다 갱신해야 한다
+- **`hyc_domain`은 인프라 import가 금지**다. xlsx 파서를 거기 두려다 `test_domain_has_no_infrastructure_imports`에 걸린 적이 있다
+- **`StrictNumeric` 컬럼 집합이 계약으로 고정**돼 있어 신규 Decimal 컬럼은 명시 등재해야 한다
+- **여러 에이전트가 한 worktree를 공유하면 위험하다.** 이 저장소에서 실제로 두 차례 `git checkout`으로 승인된 작업이 파괴됐다. 파일을 겹치지 않게 나누고 브리프에서 Git 상태 변경을 금지할 것
+- **`make p4-local-ocr-preflight`는 모델 아티팩트 부재로 `LOCAL_OCR_MODEL_MISSING` fail closed가 정상**이다. 실행에는 `make local-ocr-bootstrap`이 필요하다
+
+### 9. 공개 데모 경계
+
+`https://hanyangchemqc.vercel.app` (최종 `dpl_AMAChWZGvEW8qpoEQFzJzZEaVYxf`)는 **frontend-only 합성 경계**다. `NEXT_PUBLIC_HYC_PUBLIC_DEMO=1`로 빌드되며 backend·DB·worker·OCR·모델·원본 문서는 사내망 전용이다.
+
+Root Directory와 Framework Preset은 대시보드 상태라 커밋 파일로 고정할 수 없다. **잘못 설정되면 localhost-fetch 모드로 되돌아갈 수 있으므로**, 향후 배포는 라이브 HTML에서 `합성 로컬 상태` 존재와 `검사 생성 전`·`SESSION_READY`·`127.0.0.1`·`P3 API 실행 제어` 부재를 매번 확인할 것.
+
+---
+
+## 2026-08-10 P5 종료 및 P6 handoff (이전 증분, 역사적 증거)
 
 이 섹션이 현재 인계 상태의 정본이다. 아래 P4 이하 섹션은 해당 증분의 역사적 증거로 계속 유효하며 이 섹션이 그것을 무효화하지 않는다.
 
